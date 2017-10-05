@@ -1,12 +1,17 @@
 
 
-read_sgf <- function(file){
-  if(length(file)==1){
-    raw <- readLines(file)
+read_sgf <- function(sgf_file){
+  if(length(sgf_file)==1){
+    raw <- readLines(sgf_file)
     output <- parse_sgf(raw)
+    if(is.null(names(output))){
+      for(i in 1:length(output)) output[[i]]$filename <- sgf_file
+    } else {
+      output$filename <- sgf_file
+    }
   } else {
-    output <- sapply_pb(file, read_sgf)
-  }  
+    output <- sapply_pb(sgf_file, read_sgf)
+  }
   return(output)
 }
 
