@@ -8,12 +8,29 @@ library(testthat)
 
 my_files <- list.files("./normal_sgf", pattern="*.sgf", full.names=TRUE)
 
+sgf_lines <- readLines(my_files[1])
+x <- parse_sgf(sgf_lines)
+
+test_that("one file parses", {
+  expect_true(length(x)==22)
+  expect_true(!is.null(names(x)))
+})
+
 test_that("loads lines with no errors", {
   for(i in 1:length(my_files)){
     sgf_lines <- readLines(my_files[i])
     expect_silent(x <- parse_sgf(sgf_lines))
   }
 })
+
+x <- read_sgf(my_files[1])
+
+test_that("one file reads", {
+  expect_true(length(x)==23)
+  expect_true(!is.null(names(x)))
+})
+
+
 
 my_files <- list.files("./normal_sgf", pattern="*.sgf", full.names=TRUE)
 

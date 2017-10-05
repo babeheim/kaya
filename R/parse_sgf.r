@@ -1,9 +1,11 @@
 
 
-# identify ( and ), if more than one, save starts and stops, and
-# to loop over them
+# test: variable number of games per file
+# test: with funny characters in the tags, e.g. kanji
+# test: duplicated keys 
 
-# next, test variable number of games per file
+# need to rotate game into standard position before assigning the hash... 
+# need to consider branching sgf files
 
 parse_sgf <- function(sgf_lines){
 
@@ -18,8 +20,10 @@ parse_sgf <- function(sgf_lines){
 
   if( n_games == 1 ){
 
-    sgf_lines <- gsub("\\)$", "", sgf_lines) # revisit when deal with multiple games in one file
-    sgf_lines <- gsub("^\\(;", "", sgf_lines) # revisit when deal with multiple games in one file
+    game_start <- regexpr("\\(;", sgf_lines)[1]
+    game_stop <- max(gregexpr(")", sgf_lines)[[1]])
+
+    sgf_lines <- substr(sgf_lines, game_start+2, game_stop-1)
 
     sgf_lines <- strsplit(sgf_lines, ";")
 
@@ -34,7 +38,7 @@ parse_sgf <- function(sgf_lines){
     hash_id <- NA
     n_moves <- 0
 
-    if(length(sgf_lines[[1]])>1){
+    if( length(sgf_lines[[1]]) > 1 ){
 
       move_string <- sgf_lines[[1]][2:length(sgf_lines[[1]])]
 
@@ -68,13 +72,10 @@ parse_sgf <- function(sgf_lines){
 
   if( n_games > 1 ){
 
-    output <- lapply(sgf_lines, parse_sgf)
+    output <- lapply_pb(sgf_lines, parse_sgf)
 
   }
 
-  # need to rotate game into standard position before assigning the hash... 
-  # need to consider multiple () inside one sgf file
-  # need to consider branching sgf files
   return(output)
 
 }
