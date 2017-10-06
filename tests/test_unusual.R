@@ -1,11 +1,33 @@
 
 rm(list=ls())
 
+
+my_game <- './unusual_sgf/comments_have_semicolons.sgf'
+
+sgf_lines <- readLines(my_game)
+
+d <- read_sgf(my_game)
+
+test_that("comments with semicolons okay", {
+
+  expect_true("comment;another" %in% d$moves$comment)
+  expect_true(validate_game(d))
+
+})
+
+
 my_game <- './unusual_sgf/comments_with_parentheses.sgf'
 
 sgf_lines <- readLines(my_game)
 
 d <- read_sgf(my_game)
+
+test_that("comments work", {
+
+  expect_true("aburry 13k*: very good (1)" %in% d$moves$comment)
+  expect_true(validate_game(d))
+
+})
 
 
 
@@ -16,6 +38,14 @@ sgf_lines <- readLines(my_game)
 
 d <- read_sgf(my_game)
 
+test_that("comments work", {
+
+  expect_true(length(d)==19)
+  expect_true(nrow(d$moves)==58)
+  expect_true(d$filename=="./unusual_sgf/characters_outside_games.sgf")
+  expect_true(validate_game(d))
+
+})
 
 
 
@@ -27,6 +57,7 @@ d <- read_sgf(my_game)
 test_that("multigame files read right", {
 
   expect_true(length(d)==3)
+  expect_true(validate_game(d))
 
 })
 
@@ -41,5 +72,6 @@ test_that("no-move game reads correctly", {
   expect_true(d$GM=="1")
   expect_true(nrow(d$moves)==0)
   expect_true(all(nchar(names(d)) > 1))
+  expect_true(validate_game(d))
 
 })

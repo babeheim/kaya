@@ -1,19 +1,25 @@
 
+validate_game <- function(game_data){
 
-# read_sgf <- function(sgf_file){
-#   if(length(sgf_file)==1){
-#     raw <- readLines(sgf_file)
-#     output <- parse_sgf(raw)
-#     if(is.null(names(output))){
-#       for(i in 1:length(output)) output[[i]]$filename <- sgf_file
-#     } else {
-#       output$filename <- sgf_file
-#     }
-#   } else {
-#     output <- sapply_pb(sgf_file, read_sgf)
-#   }
-#   return(output)
-# }
+  coords <- as.character(game_data$moves$coord_sgf)
+
+  coords_invalid <- !all(unlist(strsplit(coords, "")) %in% letters[1:20])
+
+  coords_wronglength <- !all(nchar(coords) %in% c(0, 2))
+
+  duplicate_key <- length(grep("\\.1", names(game_data))) > 0
+
+  long_keys <- unlist(lapply(game_data, length)>1)
+  long_keys <- names(long_keys[long_keys])
+
+  long_key_error <- !all(long_keys %in% c("moves", "AB", "AW"))
+
+  output <- !(long_key_error | duplicate_key | coords_wronglength | coords_invalid)
+
+  return(output)
+
+}
+
 
 read_sgf <- function(sgf_file){
   if(length(sgf_file)!=1) stop("only one path allowed")

@@ -1,5 +1,7 @@
 
 
+# need a kaya class, so its clearer
+
 # fix: tags have non-ASCII characters
 
 # clean: what if somene puts a )( inside a tag? it would split up the file
@@ -32,7 +34,9 @@ parse_sgf <- function(sgf_lines){
 
     sgf_lines <- substr(sgf_lines, game_start+2, game_stop-1)
 
-    sgf_lines <- strsplit(sgf_lines, ";")[[1]]
+#    sgf_lines <- strsplit(sgf_lines, ";")[[1]]
+    sgf_lines <- gsub("\\];", "\\]~tagbreak~;", sgf_lines)
+    sgf_lines <- strsplit(sgf_lines, "~tagbreak~;")[[1]]
 
     metadata <- sgf_lines[1]
 

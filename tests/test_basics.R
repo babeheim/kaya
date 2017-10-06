@@ -6,7 +6,7 @@ rm(list=ls())
 
 library(testthat)
 
-my_files <- list.files("./normal_sgf", pattern="*.sgf", full.names=TRUE)
+my_files <- "./normal_sgf/2009-09-01-1.sgf"
 
 sgf_lines <- readLines(my_files[1])
 x <- parse_sgf(sgf_lines)
@@ -15,6 +15,10 @@ test_that("one file parses", {
   expect_true(length(x)==22)
   expect_true(!is.null(names(x)))
 })
+
+## 
+
+my_files <- list.files("./normal_sgf", pattern="*.sgf", full.names=TRUE)
 
 test_that("loads lines with no errors", {
   for(i in 1:length(my_files)){
@@ -34,24 +38,21 @@ test_that("one file reads", {
 
 my_files <- list.files("./normal_sgf", pattern="*.sgf", full.names=TRUE)
 
-test_that("reads individual files with no errors", {
+test_that("reads several files with no errors", {
   for(i in 1:length(my_files)){
     expect_silent(x <- read_sgf(my_files[i]))
   }
 })
 
-# my_files <- list.files("./normal_sgf", pattern="*.sgf", full.names=TRUE)
 
-# test_that("reads multiple files with no errors", {
-#   d_all <- read_sgf(my_files)
-#   expect_true(length(d_all)==length(my_files))
-# })
+d_all <- lapply_pb( my_files, read_sgf )
 
-d_all <- list()
-for(i in 1:length(my_files)){
-  d_all[[i]] <- read_sgf(my_files[i])
-  if(i %% 100 == 0) print(i)
-}
+test_that("all games pass audit",{
+
+  valid <- unlist(lapply(d_all, validate_game))
+  expect_true(all(valid))
+
+})
 
 
 library(yamltools)
@@ -65,6 +66,8 @@ chunk_json <- "test.json"
 writeLines(dj, chunk_json)
 
 d_full <- read_json(chunk_json, simplifyVector=TRUE)
+
+file.remove("test.json")
 
 d <- d_full
 
