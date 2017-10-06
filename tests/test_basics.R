@@ -40,15 +40,19 @@ test_that("reads individual files with no errors", {
   }
 })
 
-my_files <- list.files("./normal_sgf", pattern="*.sgf", full.names=TRUE)
+# my_files <- list.files("./normal_sgf", pattern="*.sgf", full.names=TRUE)
 
-test_that("reads multiple files with no errors", {
-  d_all <- read_sgf(my_files)
-  expect_true(length(d_all)==length(my_files))
-})
+# test_that("reads multiple files with no errors", {
+#   d_all <- read_sgf(my_files)
+#   expect_true(length(d_all)==length(my_files))
+# })
 
+d_all <- list()
+for(i in 1:length(my_files)){
+  d_all[[i]] <- read_sgf(my_files[i])
+  if(i %% 100 == 0) print(i)
+}
 
-d_all <- read_sgf(my_files)
 
 library(yamltools)
 
