@@ -1,5 +1,23 @@
 
 
+# test: coordinates have bad values, error!
+# test: comments have non-ASCII characters, ok!?
+# test: comments have ( )  [ ], supposedly okay but ow can you
+# possibly fix??
+
+# theres no solution to the bracket issue, they have to be right
+
+# test: what if somene puts a )( inside a tag?
+
+# test: with funny characters in the tags, e.g. kanji
+# test: duplicated keys 
+
+# comments for each move and also for beginning of game...
+
+# error: rounded braces in the comments...)(
+
+# error: corrupted moves!
+
 # test: variable number of games per file
 # test: with funny characters in the tags, e.g. kanji
 # test: duplicated keys 
@@ -12,6 +30,7 @@ parse_sgf <- function(sgf_lines){
   sgf_lines <- paste(sgf_lines, collapse="\n")
   sgf_lines <- gsub("\n", "", sgf_lines)
 
+  # if multiple games, and nothing in-between them
   sgf_lines <- gsub("\\)\\(", "\\)~split~\\(", sgf_lines)
   sgf_lines <- strsplit(sgf_lines, "~split~")[[1]]
 
@@ -25,9 +44,9 @@ parse_sgf <- function(sgf_lines){
 
     sgf_lines <- substr(sgf_lines, game_start+2, game_stop-1)
 
-    sgf_lines <- strsplit(sgf_lines, ";")
+    sgf_lines <- strsplit(sgf_lines, ";")[[1]]
 
-    metadata <- sgf_lines[[1]][1]
+    metadata <- sgf_lines[1]
 
     metadata <- gsub("\\]","\\]~split~", metadata)
     metadata <- gsub("\\]~split~\\[","\\]\\[", metadata)
@@ -38,9 +57,9 @@ parse_sgf <- function(sgf_lines){
     hash_id <- NA
     n_moves <- 0
 
-    if( length(sgf_lines[[1]]) > 1 ){
+    if( length(sgf_lines) > 1 ){
 
-      move_string <- sgf_lines[[1]][2:length(sgf_lines[[1]])]
+      move_string <- sgf_lines[2:length(sgf_lines)]
 
       moves <- substr(move_string, 1, 5) # strip out comments, if any
 
@@ -48,8 +67,10 @@ parse_sgf <- function(sgf_lines){
 
       move <- 1:length(moves)
       color <- substr(moves, 1, 1)
-      coord_sgf <- substr(moves, 3, 4)
 
+      coord_sgf <- sapply(moves, function(z) as.character(extract_sgf_tag(z)))
+      coord_sgf <- as.character(coord_sgf)
+  
       moves <- data.frame(move, color, coord_sgf)
 
       n_moves <- nrow(moves)
