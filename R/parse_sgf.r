@@ -21,8 +21,8 @@ parse_sgf <- function(sgf_lines){
   sgf_lines <- gsub("\n", "", sgf_lines)
 
   # if multiple games, and nothing in-between them
-  sgf_lines <- gsub("\\)\\(", "\\)~split~\\(", sgf_lines)
-  sgf_lines <- strsplit(sgf_lines, "~split~")[[1]]
+  sgf_lines <- gsub("\\)\\(", "\\)~tb~\\(", sgf_lines)
+  sgf_lines <- strsplit(sgf_lines, "~tb~")[[1]]
 
   n_games <- length(sgf_lines)
   output <- list()
@@ -35,14 +35,14 @@ parse_sgf <- function(sgf_lines){
     sgf_lines <- substr(sgf_lines, game_start+2, game_stop-1)
 
 #    sgf_lines <- strsplit(sgf_lines, ";")[[1]]
-    sgf_lines <- gsub("\\];", "\\]~tagbreak~;", sgf_lines)
-    sgf_lines <- strsplit(sgf_lines, "~tagbreak~;")[[1]]
+    sgf_lines <- gsub("\\];", "\\]~tb~;", sgf_lines)
+    sgf_lines <- strsplit(sgf_lines, "~tb~;")[[1]]
 
     metadata <- sgf_lines[1]
 
-    metadata <- gsub("\\]","\\]~split~", metadata)
-    metadata <- gsub("\\]~split~\\[","\\]\\[", metadata)
-    metadata <- strsplit(metadata, "~split~")[[1]]
+    metadata <- gsub("\\]","\\]~tb~", metadata)
+    metadata <- gsub("\\]~tb~\\[","\\]\\[", metadata)
+    metadata <- strsplit(metadata, "~tb~")[[1]]
 
     moves <- data.frame(move=character(), 
       color=character(), coord_sgf=character())
@@ -56,6 +56,10 @@ parse_sgf <- function(sgf_lines){
       comment <- rep("", length(move_stuff))
       comment_moves <- grep("C\\[", move_stuff)
       if(length(comment_moves)>0){
+        move_stuff <- stringi::stri_trans_general(move_stuff, "latin-ascii") # convert non-ASCII to closest ascii
+        move_stuff <- gsub("[\x01-\x1F]", "", move_stuff) # takes care of non-printing ASCII
+        move_stuff <- iconv(move_stuff, "latin1", "ASCII", sub="") # strip out non-ASCII entirely
+        # slow!
         comment <- substr(move_stuff, 6, nchar(move_stuff))
         comment[comment_moves] <- sapply(comment[comment_moves], function(z) as.character(extract_sgf_tag(z)))
         comment <- as.character(comment)

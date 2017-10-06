@@ -28,6 +28,16 @@ test_that("missing brackets caught",{
 })
 
 
+test_that("duplicated tags caught",{
+
+  my_game <- './invalid_sgf/duplicate_tag.sgf'
+  d <- read_sgf(my_game)
+  expect_false(validate_game(d))
+
+})
+
+
+
 test_that("invalid sgf coordinates caught",{
 
   my_game <- './invalid_sgf/invalid_moves.sgf'

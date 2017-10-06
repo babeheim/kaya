@@ -7,7 +7,7 @@ validate_game <- function(game_data){
 
   coords_wronglength <- !all(nchar(coords) %in% c(0, 2))
 
-  duplicate_key <- length(grep("\\.1", names(game_data))) > 0
+  duplicate_key <- any(duplicated(names(game_data)))
 
   long_keys <- unlist(lapply(game_data, length)>1)
   long_keys <- names(long_keys[long_keys])
