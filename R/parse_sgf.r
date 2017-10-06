@@ -1,26 +1,14 @@
 
 
-# test: coordinates have bad values, error!
-# test: comments have non-ASCII characters, ok!?
-# test: comments have ( )  [ ], supposedly okay but ow can you
-# possibly fix??
+# fix: tags have non-ASCII characters
 
-# theres no solution to the bracket issue, they have to be right
+# clean: what if somene puts a )( inside a tag? it would split up the file
+# clean: duplicated keys 
+# clean: corrupted moves!
+# clean: duplicated keys 
 
-# test: what if somene puts a )( inside a tag?
-
-# test: with funny characters in the tags, e.g. kanji
-# test: duplicated keys 
-
-# comments for each move and also for beginning of game...
-
-# error: rounded braces in the comments...)(
-
-# error: corrupted moves!
-
-# test: variable number of games per file
-# test: with funny characters in the tags, e.g. kanji
-# test: duplicated keys 
+# test: rounded braces in the comments [x]
+# test: variable number of games per file [x]
 
 # need to rotate game into standard position before assigning the hash... 
 # need to consider branching sgf files
@@ -59,19 +47,24 @@ parse_sgf <- function(sgf_lines){
 
     if( length(sgf_lines) > 1 ){
 
-      move_string <- sgf_lines[2:length(sgf_lines)]
+      move_stuff <- sgf_lines[2:length(sgf_lines)]
 
-      moves <- substr(move_string, 1, 5) # strip out comments, if any
+      comment <- rep("", length(move_stuff))
+      comment_moves <- grep("C\\[", move_stuff)
+      if(length(comment_moves)>0){
+        comment <- substr(move_stuff, 6, nchar(move_stuff))
+        comment[comment_moves] <- sapply(comment[comment_moves], function(z) as.character(extract_sgf_tag(z)))
+        comment <- as.character(comment)
+      }
 
+      moves <- substr(move_stuff, 1, 5) # strip out comments, if any
       hash_id <- substr(digest::sha1(moves), 1, 19)
-
       move <- 1:length(moves)
       color <- substr(moves, 1, 1)
-
       coord_sgf <- sapply(moves, function(z) as.character(extract_sgf_tag(z)))
       coord_sgf <- as.character(coord_sgf)
   
-      moves <- data.frame(move, color, coord_sgf)
+      moves <- data.frame(move, color, coord_sgf, comment)
 
       n_moves <- nrow(moves)
 

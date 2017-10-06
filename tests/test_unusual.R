@@ -1,6 +1,14 @@
 
 rm(list=ls())
 
+my_game <- './unusual_sgf/comments_with_parentheses.sgf'
+
+sgf_lines <- readLines(my_game)
+
+d <- read_sgf(my_game)
+
+
+
 
 my_game <- './unusual_sgf/characters_outside_games.sgf'
 
