@@ -4,11 +4,11 @@
 
 # fix: tags have non-ASCII characters
 
-# clean: what if somene puts a )( inside a tag? it would split up the file
 # clean: duplicated keys 
 # clean: corrupted moves!
 # clean: duplicated keys 
 
+# test: what if somene puts a )( inside a tag? [x]
 # test: rounded braces in the comments [x]
 # test: variable number of games per file [x]
 
@@ -21,7 +21,7 @@ parse_sgf <- function(sgf_lines){
   sgf_lines <- gsub("\n", "", sgf_lines)
 
   # if multiple games, and nothing in-between them
-  sgf_lines <- gsub("\\)\\(", "\\)~tb~\\(", sgf_lines)
+  sgf_lines <- gsub("\\)\\(;", "\\)~tb~\\(;", sgf_lines)
   sgf_lines <- strsplit(sgf_lines, "~tb~")[[1]]
 
   n_games <- length(sgf_lines)

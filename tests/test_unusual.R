@@ -2,6 +2,21 @@
 rm(list=ls())
 
 
+my_game <- './unusual_sgf/hourglass_parentheses_problem.sgf'
+
+sgf_lines <- readLines(my_game)
+
+d <- read_sgf(my_game)
+
+test_that("strings with )( okay", {
+
+  expect_true(grep("\\)\\(", d$moves$comment) > 1)
+  expect_true(length(d)>0)
+  expect_true(validate_game(d))
+
+})
+
+
 my_game <- './unusual_sgf/comments_have_semicolons.sgf'
 
 sgf_lines <- readLines(my_game)

@@ -1,0 +1,128 @@
+
+(;
+GM[1]US[Brought to you by No Name Go Server]
+CoPyright[
+  This game was played on the No Name Go Server
+  Permission to reproduce this game is given.]
+GN[gnik-ODonnell(B) (Tournement) NNGS]
+EV[None]
+RE[W+Resign]
+PW[gnik]WR[3k*]
+PB[ODonnell]BR[5k*]
+PC[NNGS Worldwide: nngs.cosmic.org 9696]
+DT[1997-12-06]
+SZ[19]TM[1200]KM[0.5]
+
+;B[pd]C[
+  ODonnell 5k*: Do i get 2 stones???
+]
+;W[dp];B[pp]C[
+  gnik 3k*: sorry, wrong tell
+  gnik 3k*: no you don't
+]
+;W[dd]C[
+  ODonnell 5k*: rats
+  ODonnell 5k*: that way maybe i could win...
+]
+;B[qj];W[nq];B[pn]C[
+  gnik 3k*: It's bad enough that I don't have any komi
+]
+;W[jq]C[
+  ODonnell 5k*: ah, yes, just noticed that :-)
+]
+;B[fc];W[hc];B[cf];W[fd];B[cc];W[dc];B[cd];W[cb];B[bb];W[db];B[de];W[nc]
+;B[ee];W[gd]C[
+  pem started observation.
+]
+;B[ed];W[fb];B[ec];W[eb];B[pf];W[kd];B[pb];W[ne];B[cn];W[fq];B[bp]C[
+  guest started observation.
+]
+;W[cl];B[cq];W[ci];B[en];W[co];B[bn];W[bo];B[ao];W[dn];B[dm];W[do];B[cm]
+;W[em]C[
+  ODonnell 5k*: we both have nice shape there :0)(
+]
+;B[fn];W[el];B[bl]C[
+  gnik 3k*: yes, those empty triangles again :-)
+]
+;W[dl];B[eq];W[dq];B[er];W[ep];B[fp];W[fo];B[gp];W[go]C[
+  ODonnell 5k*: I've seen this one in Ishida somewhere...
+  gnik 3k*: really :-)
+  ODonnell 5k*: We'll have to call it "The Dango Masterpiece"
+  gnik 3k*: :-)
+]
+;B[gq];W[dr];B[fr];W[bk];B[cr];W[ds];B[cs];W[al]C[
+  gnik 3k*: ATARI
+  ODonnell 5k*: Oh gosh I'd better connect.  Glasgow Club Rules!!!
+]
+;B[ar];W[bm];B[an];W[ap];B[aq];W[am];B[ap];W[ho];B[ip];W[hp];B[hq];W[iq]
+;B[ir];W[jr];B[hs];W[gm]C[
+  gnik 3k*: that was a long joseki
+  ODonnell 5k*: It's not over yet!
+]
+;B[jo];W[ko];B[kn];W[lo];B[jn];W[mm];B[lq];W[jp]C[
+  ODonnell 5k*: This is one of those `Two Corner Josekis'
+]
+;B[io];W[lp];B[hn];W[gn];B[mq]C[
+  gnik 3k*: A bit like the group capturing masterpiece :-)
+]
+;W[np];B[mp];W[mo];B[no];W[mr]C[
+  ODonnell 5k*: the "group capturing travesty" would be more a propos
+]
+;B[lr];W[nr];B[js];W[ks];B[ls]C[
+  dfan started observation.
+]
+;W[is];B[mn];W[hr];B[ln];W[kp];B[nn];W[qq];B[pq];W[pr];B[qp];W[rr];B[rq]
+;W[qr];B[ng];W[oj];B[mj];W[qk];B[qi]C[
+  ODonnell 5k*: The great thing about having so many dead stones is that...
+]
+;W[ro]C[
+  ODonnell 5k*: ...hmmm.... is there *anything* great about it??
+]
+;B[rp];W[qm]C[
+  gnik 3k*: Was happened to my outside thinkness :-(
+]
+;B[pk]C[
+  ODonnell 5k*: well, that was my strategy all along:
+  gnik 3k*: or even thickness
+  ODonnell 5k*: my aim was to build "thick-headedness"
+]
+;W[pl];B[rk];W[rl];B[ql];W[qe];B[pe];W[qk];B[rj];W[ok]C[
+  JBRU started observation.
+]
+;B[pj]C[
+  ODonnell 5k*: the double empty triangle is better than the ko
+]
+;W[om];B[nl];W[nm];B[ml];W[lm];B[jk]C[
+  ODonnell 5k*: our usual style of game:  calm and peaceful
+]
+;W[kl]C[
+  gnik 3k*: yeah :-)
+]
+;B[ij];W[lk];B[nj]C[
+  ODonnell 5k*: Suggestion: let's do addtime as necessary, because this
+  ODonnell 5k*: 1 minute per move time won't work very well here
+]
+;W[lj]C[
+  gnik 3k*: sure
+]
+;B[mh];W[ki];B[jg];W[km];B[il];W[kg];B[kf];W[lg];B[li];W[kj];B[jh];W[kh]
+;B[lf];W[mf];B[mg];W[jf];B[je];W[if];B[me];W[nf];B[ke]C[
+  schorsch started observation.
+]
+;W[ie];B[ld]C[
+  ODonnell 5k*: oops
+  gnik 3k*: do you want an undo?
+  ODonnell 5k*: no, that was a braino, not a typo
+]
+;W[jd];B[ib];W[gb];B[nb];W[mc];B[mb];W[kb];B[lb];W[lc];B[pm];W[ol];B[ql]
+;W[oi];B[og];W[ph];B[qg];W[qk];B[gs];W[es];B[ql];W[pg];B[of];W[qk];B[gr]
+;W[ir];B[ql];W[qh];B[rh];W[qk];B[kr];W[fs];B[ql];W[rg];B[qf];W[qk];B[js]
+;W[fq];B[ql];W[sh];B[rf];W[qk];B[or];W[oq];B[ql];W[bg];B[bf];W[qk];B[os]
+;W[ns];B[ql];W[bs];B[br];W[qk];B[op];W[ps];B[ql];W[ri];B[rm];W[qk];B[qn]
+;W[ql];B[sl];W[rn]C[
+  ODonnell 5k*: arrgh,  just not my game...
+  ODonnell 5k*: thanks for the game
+]
+;)
+
+---
