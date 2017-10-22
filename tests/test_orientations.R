@@ -5,6 +5,21 @@ library(kaya)
 
 library(testthat)
 
+
+test_that("game with passes can be reoriented", {
+  sgf_lines <- readLines("./normal_sgf/2009-09-01-10.sgf")
+
+  d <- parse_sgf(sgf_lines, rotate=FALSE)
+
+  sgf_moves <- d$moves$coord_sgf
+
+  expect_silent(orient_sgf(sgf_moves))
+
+  expect_silent(parse_sgf(sgf_lines, rotate=TRUE))
+  
+})
+
+
 test_that("all orientations work", {
 
 

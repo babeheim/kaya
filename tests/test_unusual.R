@@ -35,7 +35,7 @@ my_game <- './unusual_sgf/comments_with_parentheses.sgf'
 
 sgf_lines <- readLines(my_game)
 
-d <- read_sgf(my_game)
+d <- read_sgf(my_game, rotate=FALSE)
 
 test_that("comments work", {
 
@@ -55,7 +55,7 @@ d <- read_sgf(my_game)
 
 test_that("comments work", {
 
-  expect_true(length(d)==19)
+  expect_true(length(d)==20)
   expect_true(nrow(d$moves)==58)
   expect_true(d$filename=="./unusual_sgf/characters_outside_games.sgf")
   expect_true(validate_game(d))
@@ -83,7 +83,7 @@ d <- read_sgf(my_game)
 
 test_that("no-move game reads correctly", {
 
-  expect_true(length(d)==20)
+  expect_true(length(d)==21)
   expect_true(d$GM=="1")
   expect_true(nrow(d$moves)==0)
   expect_true(all(nchar(names(d)) > 1))

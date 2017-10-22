@@ -9,7 +9,7 @@ library(testthat)
 my_files <- "./normal_sgf/2009-09-01-1.sgf"
 
 sgf_lines <- readLines(my_files[1])
-x <- parse_sgf(sgf_lines)
+x <- parse_sgf(sgf_lines, rotate=FALSE)
 
 test_that("one file parses", {
   expect_true(length(x)==22)
@@ -27,7 +27,8 @@ test_that("loads lines with no errors", {
   }
 })
 
-x <- read_sgf(my_files[1])
+
+x <- read_sgf(my_files[1], rotate=FALSE)
 
 test_that("one file reads", {
   expect_true(length(x)==23)

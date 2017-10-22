@@ -2,7 +2,9 @@
 
 orient_sgf <- function(sgf_moves){
 
-  coord_sgf <- sgf_moves
+  coord_sgf <- as.character(sgf_moves)
+
+  # how to handle passes? convert to NA
 
   # seperate this into its own function
   rows <- rep(1:19, each=19)
@@ -30,11 +32,16 @@ orient_sgf <- function(sgf_moves){
   coord_row_letter <- substr(coord_sgf, 2, 2)
   coord_col_letter <- substr(coord_sgf, 1, 1)
 
-  coord_rows <- match(coord_row_letter, letters)
-  coord_cols <- match(coord_col_letter, letters)
+  coord_rows <- match(coord_row_letter, letters[1:19])
+  coord_cols <- match(coord_col_letter, letters[1:19])
 
-  coord_liberty <- NA
-  for(i in 1:length(coord_rows)) coord_liberty[i] <- lookup$liberty[lookup$row==coord_rows[i] & lookup$col==coord_cols[i]]
+  coord_rows[coord_rows>19] <- NA
+  coord_cols[coord_cols>19] <- NA
+
+  coord_liberty <- rep(NA, length(coord_rows))
+  for(i in 1:length(coord_rows)){
+    if(!is.na(coord_rows[i])) coord_liberty[i] <- lookup$liberty[lookup$row==coord_rows[i] & lookup$col==coord_cols[i]]
+  }
 
   coord_sector <- lookup$sector[match(coord_liberty, lookup$liberty)]
 
@@ -68,6 +75,10 @@ orient_sgf <- function(sgf_moves){
 
   new_coord_sgf <- paste(letters[new_cols], letters[new_rows], sep="")
   # transformed game! 
+
+  # leave old moves if the new ones failed to match
+  keep <- which(new_coord_sgf=="NANA")
+  if(length(keep)>0) new_coord_sgf[keep] <- coord_sgf[keep]
 
   return(new_coord_sgf)
 

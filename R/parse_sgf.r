@@ -1,7 +1,7 @@
 
 
 
-parse_sgf <- function(sgf_lines){
+parse_sgf <- function(sgf_lines, rotate=TRUE){
 
   sgf_lines <- paste(sgf_lines, collapse="\n")
   sgf_lines <- gsub("\n", "", sgf_lines)
@@ -52,15 +52,20 @@ parse_sgf <- function(sgf_lines){
       }
 
       moves <- substr(move_stuff, 1, 5) # strip out comments, if any
-      hash_id <- substr(digest::sha1(moves), 1, 19)
       move <- 1:length(moves)
       color <- substr(moves, 1, 1)
       coord_sgf <- sapply(moves, function(z) as.character(extract_sgf_tag(z)))
       coord_sgf <- as.character(coord_sgf)
-  
-      moves <- data.frame(move, color, coord_sgf, comment)
+      moves <- data.frame(move, color, coord_sgf)
 
       n_moves <- nrow(moves)
+
+      if(rotate==TRUE) moves$coord_sgf <- orient_sgf(moves$coord_sgf)
+
+      # hash must be a function of colors and moves only!
+      hash_id <- substr(digest::sha1(moves), 1, 19)
+      
+      moves$comments <- comment
 
     }
 
@@ -71,6 +76,8 @@ parse_sgf <- function(sgf_lines){
       meta <- c(meta, tag)
     }
     
+    if(rotate==TRUE) meta$kaya_notes <- "rotated game moves to standard position"
+
     output <- meta
     output$hash_id <- hash_id
     output$n_moves <- n_moves

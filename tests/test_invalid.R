@@ -37,6 +37,9 @@ test_that("duplicated tags caught",{
 })
 
 
+  my_game <- './invalid_sgf/more_invalid_moves.sgf'
+  d <- read_sgf(my_game, rotate=TRUE)
+
 
 test_that("invalid sgf coordinates caught",{
 
