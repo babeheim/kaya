@@ -1,19 +1,5 @@
 
 
-# need a kaya class, so its clearer
-
-# fix: tags have non-ASCII characters
-
-# clean: duplicated keys 
-# clean: corrupted moves!
-# clean: duplicated keys 
-
-# test: what if somene puts a )( inside a tag? [x]
-# test: rounded braces in the comments [x]
-# test: variable number of games per file [x]
-
-# need to rotate game into standard position before assigning the hash... 
-# need to consider branching sgf files
 
 parse_sgf <- function(sgf_lines){
 
