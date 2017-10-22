@@ -13,7 +13,6 @@ test_that("all orientations work", {
   d <- read_sgf('./orientation_sgf/sector 1.sgf')
 
   dat <- d$moves$coord_sgf
-  dat
   dat2 <- orient_sgf(dat)
 
   coord_sgf <- dat2
@@ -432,43 +431,13 @@ test_that("all orientations work", {
 test_that("games with no sector moves don't crash", {
   d <- read_sgf('./orientation_sgf/no sector.sgf')
   dat <- as.character(d$moves$coord_sgf)
-  dat
   expect_silent(dat2 <- orient_sgf(dat))
+  dat2 <- orient_sgf(dat)
   expect_equal(dat2, dat)
 })
 
 
 
-
-
-
-
-
-### ghetto move plotter...what if there's already stones?
-# it can't just be handi stones either! 
-
-moves <- dat2[1:5]
-
-goban.side <- par("pin")[1]
-stone.size <- goban.side/(19.44*0.076)  # the 5 here represents 5 inches, as specified in the plot_board as the fixed size of the board
-
-x.letter <- substr(moves,1,1)
-x.coord <- sapply(x.letter, function(z) which(letters==z))
-y.letter <- substr(moves,2,2)
-y.coord <- sapply(y.letter, function(z) 20-which(letters==z))
-
-colors <- ifelse( d$move$color=="B" , "black", "white" )[1:5]
-rev_colors <- ifelse( colors=="black", "white", "black" )
-
-nums <- d$moves$move[1:5]
-
-plot_board()
-
-if(!is.null(moves)){
-    if(is.na(colors)[1]) colors <- rep("gray", length(y.coord))
-    points(x.coord, y.coord, cex=stone.size,pch=21,bg=colors)
-    text(x.coord, y.coord, labels=nums, col=rev_colors)
-}
 
 
 
