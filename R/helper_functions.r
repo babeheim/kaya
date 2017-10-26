@@ -21,6 +21,18 @@ validate_game <- function(game_data){
 }
 
 
+
+write_sgf <- function(game_list, path){
+  tags <- names(game_list)
+  tags <- tags[-which(tags %in% c("kaya_notes", "hash_id", "n_moves", "moves", "filename"))]
+  meta <- paste0( tags, "[", game_list[tags], "]", collapse="" ) 
+  movestring <- paste0(game_data[[2]]$moves$color, "[", game_data[[2]]$moves$coord_sgf, "];", collapse="")
+  output <- paste0( "(;", meta, movestring, ")")
+  writeLines(output, path)
+}
+
+
+
 read_sgf <- function(sgf_file, ...){
   if(length(sgf_file)!=1) stop("only one path allowed")
   raw <- readLines(sgf_file)
