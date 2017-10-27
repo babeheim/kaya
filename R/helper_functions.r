@@ -1,6 +1,26 @@
 
 
-make_gif <- function(game_object, file, max=NA, number=FALSE, delay=50, n_loops=0){
+write_kifu <- function(game_object, file, max){
+
+  goban.side <- par("pin")[1]
+  stone.size <- goban.side/(19.44*0.076)  # the 5 here represents 5 inches, as specified in the plot_board as the fixed size of the board
+  if(is.na(max)) max <- nrow(game_object$moves)
+  x.coord <- game_object$moves$column[1:max]
+  y.coord <- game_object$moves$row[1:max]
+  colors <- game_object$moves$color[1:max]
+  rev_colors <- ifelse( colors=="black", "white", "black" )
+
+  pdf(file)
+  plot_board(goban.color=gray(0.8))
+  points(x.coord, y.coord, cex=stone.size, pch=21, bg=colors)
+  text(x.coord, y.coord, labels=1:max, col=rev_colors)
+  dev.off()
+
+} 
+
+
+
+write_gif <- function(game_object, file, max=NA, number=FALSE, delay=50, n_loops=0){
 
   goban.side <- par("pin")[1]
   stone.size <- goban.side/(19.44*0.076)  # the 5 here represents 5 inches, as specified in the plot_board as the fixed size of the board
@@ -72,9 +92,22 @@ validate_game <- function(game_data){
 write_sgf <- function(game_list, path){
   tags <- names(game_list)
   tags <- tags[-which(tags %in% c("kaya_notes", "hash_id", "n_moves", "moves", "filename"))]
+
+  if("AB" %in% tags) game_list$AB <- paste0("[", game_list$AB, "]", collapse="" )
+  if("AW" %in% tags) game_list$AW <- paste0("[", game_list$AW, "]", collapse="" )
+
   meta <- paste0( tags, "[", game_list[tags], "]", collapse="" ) 
-  movestring <- paste0(game_data[[2]]$moves$color, "[", game_data[[2]]$moves$coord_sgf, "];", collapse="")
-  output <- paste0( "(;", meta, movestring, ")")
+  meta <- gsub("\\[\\[", "[", meta)
+  meta <- gsub("\\]\\]", "]", meta)
+
+  coord_sgf <- paste0(letters[game_list$moves$column], letters[game_list$moves$row])
+
+  print("this doesn't do handicap stones yet")
+
+  colors <- ifelse(game_list$moves$color=="white", "B", "W")
+
+  movestring <- paste0(colors, "[", coord_sgf, "];", collapse="")
+  output <- paste0( "(;", meta, ";", movestring, ")")
   writeLines(output, path)
 }
 
