@@ -30,8 +30,9 @@ parse_sgf <- function(sgf_lines, rotate=TRUE){
     metadata <- gsub("\\]~tb~\\[","\\]\\[", metadata)
     metadata <- strsplit(metadata, "~tb~")[[1]]
 
-    moves <- data.frame(move=character(), 
-      color=character(), coord_sgf=character())
+    moves <- data.frame(
+      color=character(), column=character(), 
+      row=character())
     hash_id <- NA
     n_moves <- 0
 
@@ -52,15 +53,20 @@ parse_sgf <- function(sgf_lines, rotate=TRUE){
       }
 
       moves <- substr(move_stuff, 1, 5) # strip out comments, if any
-      move <- 1:length(moves)
       color <- substr(moves, 1, 1)
+      color[color=="B"] <- "black"
+      color[color=="W"] <- "white"
       coord_sgf <- sapply(moves, function(z) as.character(extract_sgf_tag(z)))
       coord_sgf <- as.character(coord_sgf)
-      moves <- data.frame(move, color, coord_sgf)
+
+      if(rotate==TRUE) coord_sgf <- orient_sgf(coord_sgf)
+
+      move_cols <- match(substr(coord_sgf, 1, 1), letters)
+      move_rows <- match(substr(coord_sgf, 2, 2), letters)
+      moves <- data.frame(color, column=move_cols, row=move_rows, stringsAsFactors=FALSE)
 
       n_moves <- nrow(moves)
 
-      if(rotate==TRUE) moves$coord_sgf <- orient_sgf(moves$coord_sgf)
 
       # hash must be a function of colors and moves only!
       hash_id <- substr(digest::sha1(moves), 1, 19)

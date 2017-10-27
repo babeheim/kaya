@@ -11,6 +11,8 @@ my_files <- "./normal_sgf/2009-09-01-1.sgf"
 sgf_lines <- readLines(my_files[1])
 x <- parse_sgf(sgf_lines, rotate=FALSE)
 
+
+
 test_that("one file parses", {
   expect_true(length(x)==22)
   expect_true(!is.null(names(x)))
