@@ -1,5 +1,40 @@
 
 
+make_gif <- function(game_object, file, max=NA, number=FALSE, delay=50, n_loops=0){
+
+  goban.side <- par("pin")[1]
+  stone.size <- goban.side/(19.44*0.076)  # the 5 here represents 5 inches, as specified in the plot_board as the fixed size of the board
+  if(is.na(max)) max <- nrow(game_object$moves)
+  x.coord <- game_object$moves$column[1:max]
+  y.coord <- game_object$moves$row[1:max]
+  colors <- game_object$moves$color[1:max]
+  rev_colors <- ifelse( colors=="black", "white", "black" )
+
+  print("producing animation panes")
+  for(i in 1:length(x.coord)){
+    pane_filename <- paste("animated_pane_", sprintf("%04d", i), ".png", sep="")
+    png(pane_filename)
+    plot_board()
+    points(x.coord[1:i], y.coord[1:i], cex=stone.size, pch=21, bg=colors[1:i])
+    if(number==TRUE) text(x.coord[1:i], y.coord[1:i], labels=1:i, col=rev_colors[1:i])
+    dev.off()
+  }
+
+  my_filename <- file
+
+  convert_call <- paste0("convert -loop ", n_loops, " -delay ", delay, " animated_pane* " , my_filename)
+
+  print("compiling gif")
+  system(convert_call)
+
+  pane_temp <- list.files(".", pattern="animated_pane*")
+
+  file.remove(pane_temp)
+
+}
+
+
+
 
 plot_game <- function(game_object, speed=NA, number=FALSE, max=NA){
   goban.side <- par("pin")[1]
@@ -16,7 +51,7 @@ plot_game <- function(game_object, speed=NA, number=FALSE, max=NA){
     if(number==TRUE) text(x.coord[i], y.coord[i], labels=i, col=rev_colors[i])
   }
 }
-
+  
 
 
 
