@@ -1,23 +1,35 @@
 
+
+
+plot_game <- function(game_object, speed=NA, number=FALSE, max=NA){
+  goban.side <- par("pin")[1]
+  stone.size <- goban.side/(19.44*0.076)  # the 5 here represents 5 inches, as specified in the plot_board as the fixed size of the board
+  if(is.na(max)) max <- nrow(game_object$moves)
+  x.coord <- game_object$moves$column[1:max]
+  y.coord <- game_object$moves$row[1:max]
+  colors <- game_object$moves$color[1:max]
+  rev_colors <- ifelse( colors=="black", "white", "black" )
+  plot_board()
+  for(i in 1:length(x.coord)){
+    if(!is.na(speed)) Sys.sleep(speed)
+    points(x.coord[i], y.coord[i], cex=stone.size, pch=21, bg=colors[i])
+    if(number==TRUE) text(x.coord[i], y.coord[i], labels=i, col=rev_colors[i])
+  }
+}
+
+
+
+
 validate_game <- function(game_data){
-
   coords <- as.character(game_data$moves$coord_sgf)
-
   coords_invalid <- !all(unlist(strsplit(coords, "")) %in% letters[1:20])
-
   coords_wronglength <- !all(nchar(coords) %in% c(0, 2))
-
   duplicate_key <- any(duplicated(names(game_data)))
-
   long_keys <- unlist(lapply(game_data, length)>1)
   long_keys <- names(long_keys[long_keys])
-
   long_key_error <- !all(long_keys %in% c("moves", "AB", "AW"))
-
   output <- !(long_key_error | duplicate_key | coords_wronglength | coords_invalid)
-
   return(output)
-
 }
 
 
