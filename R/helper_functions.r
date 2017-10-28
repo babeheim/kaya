@@ -167,7 +167,7 @@ extract_sgf_tag <- function(sgf_tag){
   sgf_tag <- strsplit(sgf_tag, "\\[|\\]\\[|\\]")[[1]]
   sgf_tag <- stringi::stri_trans_general(sgf_tag, "latin-ascii") # convert non-ASCII to closest ascii
   sgf_tag <- gsub("[\x01-\x1F]", "", sgf_tag) # takes care of non-printing ASCII
-  sgf_tag <- iconv(sgf_tag, "latin1", "ASCII", sub="") # strip out non-ASCII entirely
+  # sgf_tag <- iconv(sgf_tag, "latin1", "ASCII", sub="") # strip out non-ASCII entirely
   sgf_tag <- gsub(" *$|^ *", "", sgf_tag)
   output <- list()
   output[[1]] <- sgf_tag[2:length(sgf_tag)]

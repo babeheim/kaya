@@ -20,7 +20,6 @@ parse_sgf <- function(sgf_lines, rotate=TRUE){
 
     sgf_lines <- substr(sgf_lines, game_start+2, game_stop-1)
 
-#    sgf_lines <- strsplit(sgf_lines, ";")[[1]]
     sgf_lines <- gsub("\\];", "\\]~tb~;", sgf_lines)
     sgf_lines <- strsplit(sgf_lines, "~tb~;")[[1]]
 

@@ -2,6 +2,24 @@
 rm(list=ls())
 
 
+
+my_game <- './unusual_sgf/name_kanji.sgf'
+
+sgf_lines <- readLines(my_game)
+
+d <- read_sgf(my_game)
+
+test_that("kanji names okay", {
+
+  expect_true(d$PB=="ヒカル")
+  expect_true(d$PW=="お顔")
+  expect_true(validate_game(d))
+
+})
+
+
+
+
 my_game <- './unusual_sgf/hourglass_parentheses_problem.sgf'
 
 sgf_lines <- readLines(my_game)
