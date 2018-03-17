@@ -2,46 +2,18 @@
 
 
 
-update_status <- function(game_moves){
-  n_moves <- max(game_moves$number)
-  game_moves$n_liberties <- NA
-  for(i in 1:n_moves){
-    current_color <- game_moves$color[game_moves$number == i]
-    other_color <- ifelse(current_color == "black", "white", "black")
 
-    # 1. update group identity of stones of same color for all moves up to this move
-    update_rows <- which(game_moves$color == current_color & game_moves$number <= i & game_moves$group_id != "removed")
-    if(length(update_rows) > 0) game_moves$group_id[update_rows] <- id_groups(game_moves[update_rows, c("column", "row", "group_id")])
-
-    bad <- any(game_moves$group_id[which(game_moves$group_id != "removed" & game_moves$color=="black")] %in%  game_moves$group_id[which(game_moves$group_id != "removed" & game_moves$color=="white")])
-    if(bad) stop("mixup groups!")
-
-    # 2. recount liberties for all stones
-    active_rows <- which(game_moves$number <= i & game_moves$group_id != "removed")
-    game_moves$n_liberties[active_rows] <- count_liberties(game_moves[active_rows,])
-
-    # 3. remove enemy groups with 0 liberties! 
-    update_rows <- which(game_moves$color == other_color & game_moves$number < i & game_moves$group_id != "removed")
-    group_liberties <- tapply(game_moves$n_liberties[update_rows], game_moves$group_id[update_rows], sum)
-    removable_groups <- names(which(group_liberties == 0))
-    if(length(removable_groups) > 0){
-      game_moves$group_id[update_rows][which(game_moves$group_id[update_rows] %in% removable_groups)] <- "removed"
-    }
-
-    # 4. recount liberties again
-    active_rows <- which(game_moves$number <= i & game_moves$group_id != "removed")
-    game_moves$n_liberties[active_rows] <- count_liberties(game_moves[active_rows,])
-
-    # 5. suicide check
-    update_rows <- which(game_moves$color == current_color & game_moves$number <= i & game_moves$group_id != "removed")
-    group_liberties <- tapply(game_moves$n_liberties[update_rows], game_moves$group_id[update_rows], sum)
-    removable_groups <- names(which(group_liberties == 0))
-    if(length(removable_groups) > 0){
-      stop(paste("suicide detected at move ", i))
-    }
-
-  }
-  return(game_moves$group_id)
+extract_sgf_tag <- function(sgf_tag){
+  if(length(sgf_tag) != 1) stop("sgf tag improper")
+  sgf_tag <- strsplit(sgf_tag, "\\[|\\]\\[|\\]")[[1]]
+  sgf_tag <- stringi::stri_trans_general(sgf_tag, "latin-ascii") # convert non-ASCII to closest ascii
+  sgf_tag <- gsub("[\x01-\x1F]", "", sgf_tag) # takes care of non-printing ASCII
+  # sgf_tag <- iconv(sgf_tag, "latin1", "ASCII", sub="") # strip out non-ASCII entirely
+  sgf_tag <- gsub(" *$|^ *", "", sgf_tag)
+  output <- list()
+  output[[1]] <- sgf_tag[2:length(sgf_tag)]
+  names(output) <- sgf_tag[1] # might have trouble here
+  return(output)
 }
 
 
@@ -60,32 +32,27 @@ count_liberties <- function(moves, board_size = 19){
   return(n_liberties)
 }
 
-
-
 id_maker <- function(n, reserved='', seed=NA, nchars=NA){
-    my_let <- letters 
-    my_num <- 0:9 
-    if(is.na(seed) | !is.numeric(seed)) set.seed(as.numeric(as.POSIXlt(Sys.time())))
-    if(!is.na(seed) & is.numeric(seed)) set.seed(seed)
-    output <- replicate(n, paste(sample(c(my_let, my_num), nchars, replace=TRUE), 
-        collapse=''))
-    rejected <- duplicated(output) | output %in% reserved | substr(output, 1, 1) %in% my_num
-    while(any(rejected)){
-        output <- output[-which(rejected)]
-        remaining <- n-length(output)
-        output <- c(output, replicate(remaining, paste(sample(c(my_let, my_num), nchars, 
-            replace=TRUE), collapse='')))
-        rejected <- duplicated(output) | output %in% reserved | substr(output, 1, 1) %in% my_num
-    }
-    output
+  my_let <- letters 
+  my_num <- 0:9 
+  if(is.na(seed) | !is.numeric(seed)) set.seed(as.numeric(as.POSIXlt(Sys.time())))
+  if(!is.na(seed) & is.numeric(seed)) set.seed(seed)
+  output <- replicate(n, paste(sample(c(my_let, my_num), nchars, replace=TRUE), 
+      collapse=''))
+  rejected <- duplicated(output) | output %in% reserved | substr(output, 1, 1) %in% my_num
+  while(any(rejected)){
+      output <- output[-which(rejected)]
+      remaining <- n-length(output)
+      output <- c(output, replicate(remaining, paste(sample(c(my_let, my_num), nchars, 
+          replace=TRUE), collapse='')))
+      rejected <- duplicated(output) | output %in% reserved | substr(output, 1, 1) %in% my_num
+  }
+  output
 }
 
 id_groups <- function(moves){
-
   direct_mat <- id_direct_connections(moves)
-
   group_IDs <- moves$group_id
-
   for(i in 1:length(group_IDs)){
     tie_cols <- which(direct_mat[i,])
     leftmost <- group_IDs[tie_cols][1]
@@ -109,14 +76,8 @@ id_groups <- function(moves){
     ingroup <- sort(unique(ingroup))
     group_IDs[ingroup] <- leftmost
   }
-
   return(group_IDs)
-
 }
-
-
-
-
 
 id_direct_connections <- function(moves){
   direct_mat <- matrix(FALSE, nrow = nrow(moves), ncol = nrow(moves))
@@ -136,42 +97,6 @@ id_direct_connections <- function(moves){
   return(direct_mat)
 }
 
-
-
-write_gif <- function(game_object, file, number=FALSE, delay=50, n_loops=0, start = NA, stop = NA){
-
-  if(is.na(start)) start <- 1
-  if(is.na(stop)) stop <- game_object$n_moves
-  for(i in start:stop){
-    pane_filename <- paste("animated_pane_", sprintf("%04d", i), ".png", sep="")
-    png(pane_filename, height=5.25, width=5, units="in", res=300)
-    plot_game(game_object, stop = i)
-    dev.off()
-  }
-  my_filename <- file
-  convert_call <- paste0("convert -loop ", n_loops, " -delay ", delay, " animated_pane* " , my_filename)
-  print("compiling gif")
-  system(convert_call)
-  pane_temp <- list.files(".", pattern="animated_pane*")
-  file.remove(pane_temp)
-}
-
-
-
-plot_game <- function(game_object, number = FALSE, stop = NA, ...){
-  if(is.na(stop)) stop <- game_object$n_moves
-  moves <- game_object$moves[game_object$moves$number <= stop,]
-  # evaluate
-  moves$group_id <- id_maker(nrow(moves), nchar=3)
-  moves$group_id <- update_status(moves)
-  moves$rev_color <- ifelse(moves$color=="black", "white", "black" )
-  tar <- which(moves$number <= stop & moves$group_id != "removed")
-  plot_board(...)
-  goban.side <- par("pin")[1]
-  stone.size <- goban.side/(19.44*0.076)  # the 5 here represents 5 inches, as specified in the plot_board as the fixed size of the board
-  points(moves$column[tar], moves$row[tar], cex=stone.size, pch=21, bg=moves$color[tar])
-  if(number==TRUE) text(moves$column[tar], moves$row[tar], labels=moves$number[tar], col = moves$rev_color[tar])
-}
 
 validate_game <- function(game_data){
   coords <- as.character(game_data$moves$coord_sgf)
@@ -209,22 +134,6 @@ write_sgf <- function(game_list, path){
   writeLines(output, path)
 }
 
-
-
-read_sgf <- function(sgf_file, ...){
-  if(length(sgf_file)!=1) stop("only one path allowed")
-  raw <- readLines(sgf_file)
-  output <- parse_sgf(raw, ...)
-  if(length(output)>0){
-    if(is.null(names(output))){  # condition true if output is an unnamed list
-      for(i in 1:length(output)) output[[i]]$filename <- sgf_file
-    } else {
-      output$filename <- sgf_file
-    }
-  }
-  return(output)
-}
-
 sapply_pb <- function(X, FUN, ...){
   env <- environment()
   pb_Total <- length(X)
@@ -257,18 +166,4 @@ lapply_pb <- function(X, FUN, ...){
   res <- lapply(X, wrapper, ...)
   close(pb)
   res
-}
-
-
-extract_sgf_tag <- function(sgf_tag){
-  if(length(sgf_tag) != 1) stop("sgf tag improper")
-  sgf_tag <- strsplit(sgf_tag, "\\[|\\]\\[|\\]")[[1]]
-  sgf_tag <- stringi::stri_trans_general(sgf_tag, "latin-ascii") # convert non-ASCII to closest ascii
-  sgf_tag <- gsub("[\x01-\x1F]", "", sgf_tag) # takes care of non-printing ASCII
-  # sgf_tag <- iconv(sgf_tag, "latin1", "ASCII", sub="") # strip out non-ASCII entirely
-  sgf_tag <- gsub(" *$|^ *", "", sgf_tag)
-  output <- list()
-  output[[1]] <- sgf_tag[2:length(sgf_tag)]
-  names(output) <- sgf_tag[1] # might have trouble here
-  return(output)
 }
