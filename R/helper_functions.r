@@ -138,84 +138,14 @@ id_direct_connections <- function(moves){
 
 
 
-write_kifu_old <- function(game_object, file, max){
-
-  goban.side <- par("pin")[1]
-  stone.size <- goban.side/(19.44*0.076)  # the 5 here represents 5 inches, as specified in the plot_board as the fixed size of the board
-  if(is.na(max)) max <- nrow(game_object$moves)
-  x.coord <- game_object$moves$column[1:max]
-  y.coord <- game_object$moves$row[1:max]
-  colors <- game_object$moves$color[1:max]
-  rev_colors <- ifelse( colors=="black", "white", "black" )
-
-  pdf(file)
-  plot_board(goban.color=gray(0.8))
-  points(x.coord, y.coord, cex=stone.size, pch=21, bg=colors)
-  text(x.coord, y.coord, labels=1:max, col=rev_colors)
-  dev.off()
-
-} 
-
-
-
-write_kifu <- function(game_object, file){
-
-  pdf(file)
-  plot_game(game_object, number=TRUE, goban.color = gray(0.8))
-  dev.off()
-
-}  # does this really need to be its own function?
-
-
-
-write_gif_old <- function(game_object, file, max=NA, number=FALSE, delay=50, n_loops=0){
-
-  goban.side <- par("pin")[1]
-  stone.size <- goban.side/(19.44*0.076)  # the 5 here represents 5 inches, as specified in the plot_board as the fixed size of the board
-
-  if(is.na(max)) max <- game_object$n_moves
-
-  moves <- game_object$moves
-  moves$rev_color <- ifelse(moves$color=="black", "white", "black" )
-  moves$group_id <- id_maker(nrow(moves), nchar=3)
-
-  print("producing animation panes")
-  for(i in 1:max){
-    update_rows <- which(moves$number <= i & moves$group_id != "removed")
-    moves$group_id[update_rows] <- update_status(moves[update_rows,])
-    pane_filename <- paste("animated_pane_", sprintf("%04d", i), ".png", sep="")
-    png(pane_filename)
-    plot_board()
-    tar <- which(moves$number <= i & moves$group_id != "removed")
-    points(moves$column[tar], moves$row[tar], cex=stone.size, pch=21, bg=moves$color[tar])
-    if(number==TRUE) text(moves$column[tar], moves$row[tar], labels=moves$number[tar], col = moves$rev_color[tar])
-    dev.off()
-  }
-
-  my_filename <- file
-
-  convert_call <- paste0("convert -loop ", n_loops, " -delay ", delay, " animated_pane* " , my_filename)
-
-  print("compiling gif")
-  system(convert_call)
-
-  pane_temp <- list.files(".", pattern="animated_pane*")
-
-  file.remove(pane_temp)
-
-}
-
-
-
-
 write_gif <- function(game_object, file, number=FALSE, delay=50, n_loops=0, start = NA, stop = NA){
 
   if(is.na(start)) start <- 1
   if(is.na(stop)) stop <- game_object$n_moves
   for(i in start:stop){
     pane_filename <- paste("animated_pane_", sprintf("%04d", i), ".png", sep="")
-    png(pane_filename)
-    plot_game(game_object, max=i)
+    png(pane_filename, height=5.25, width=5, units="in", res=300)
+    plot_game(game_object, stop = i)
     dev.off()
   }
   my_filename <- file
@@ -228,14 +158,14 @@ write_gif <- function(game_object, file, number=FALSE, delay=50, n_loops=0, star
 
 
 
-plot_game <- function(game_object, number = FALSE, max = NA, ...){
-  if(is.na(max)) max <- game_object$n_moves
-  moves <- game_object$moves[game_object$moves$number <= max,]
+plot_game <- function(game_object, number = FALSE, stop = NA, ...){
+  if(is.na(stop)) stop <- game_object$n_moves
+  moves <- game_object$moves[game_object$moves$number <= stop,]
   # evaluate
   moves$group_id <- id_maker(nrow(moves), nchar=3)
   moves$group_id <- update_status(moves)
   moves$rev_color <- ifelse(moves$color=="black", "white", "black" )
-  tar <- which(moves$number <= max & moves$group_id != "removed")
+  tar <- which(moves$number <= stop & moves$group_id != "removed")
   plot_board(...)
   goban.side <- par("pin")[1]
   stone.size <- goban.side/(19.44*0.076)  # the 5 here represents 5 inches, as specified in the plot_board as the fixed size of the board

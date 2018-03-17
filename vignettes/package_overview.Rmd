@@ -1,10 +1,10 @@
 ---
-title: package kaya
+title: package `kaya`
 author: Bret Beheim
 date: \today
 ---
 
-Package kaya is a set of R tools for managing large collections of Go games stored in the Smart Game Format (SGF) plaintext markup language. The name comes from kayawood, which in Japan is considerd one of the best materials to make Go boards from.
+Package `kaya` is a set of R tools for managing large collections of Go games stored in the Smart Game Format (SGF) plaintext markup language. The name comes from kayawood, which in Japan is considerd one of the best materials to make Go boards from.
 
 # loading SFG game records
 
@@ -35,35 +35,32 @@ AB[pd][dp]
 
 ```
 
-The markup syntax pairs tags by two-character capital letters with values in square brakets immediately following the tag. Semicolons are basically like line breaks, and the whole game is represented by the rounded brackets.
+The markup represents keys as two-character capital letters, with matched values in square brakets immediately following the key. Semicolons are basically like line breaks, and the whole game record is represented by the rounded brackets at the start and finish. 
 
-The `read_sgf` function takes this format and transforms it into a named list.
+Game moves appear at the bottom and are stored by the one-letter stone color (B for black and W for white), followed by "sgf coordinates", which show the row, then column, of the board as letters from coordinate `aa` in the top left corner.
+
+The `read_sgf` function takes this format and transforms it into a named list on R.
 
 ```{r}
 
-library(kaya)
 my_game <- read_sgf("./inputs/2009-09-01-1.sgf")
 
 str(my_game)
 
 ```
 
-Now it stores each tag as a list of named strings, e.g. `my_game$DT` prints the date, `r my_game$DT`. We have added a few variables as well.
+Now it stores each tag as a list of named strings, e.g. `my_game$DT` prints the date, `r my_game$DT`. Personally I am not committed to maintaining the SGF key codes in the R object, which I find unhelpfully cryptic, and I will probably phase them out in the next version, in favor of more explicit names. We have added a few variables to this list as well, after loading it:
 
-`filename` indicates where the sgf is located
+- `filename` indicates where the sgf is located, relative to the working directory
+- `kaya_notes` will indicate if any processing was done by the kaya package, e.g. the board was rotated into *standard orientation*
+- the `hash_id` is a unique identifier for the game based entirely on the *move sequence* translated into standard orientation. If two games are identical by move, even with different metadata, the hash_id will be the same. This is true even if arbitrary rotations applied thanks to kaya's use of *standard orientation*
+- `n_moves` stores the number of played moves (ignoring setup stones, like in a handicap).
 
-`kaya_notes` will indicate if any processing was done by the kaya package.
-
-the `hash_id` is a unique identifier for the game based entirely on the *move sequence*. Two games with different metadata may have the same moves, so have the same hash_id.
-
-In addition, we've added a subtable called `moves` which includes all the information about hte move string itself. The color, the board column and board row. Also comments embedded in the sgf are stored there. We do not explicitly store the move number because (1) it is not in the SGF, and (2) it's implied by the location in the move string, just redudant. No strong feelings either way, but seemed simpler to stay simple.
-
-Go games are stored by kaya as a list object in R.
+In addition, we've added a subtable called `moves` which includes all the information about the move string itself. The color, explicit move number, the board column and board row. Also comments embedded in the sgf are stored there. Setup stones, e.g. from a handicap, are stored at the beginning of this table all labelled as "move 0". They are also found by the tags `AB` and `AW` for black and white setup stones, respectively.
 
 # absorbing many games
 
-we can do with with an lapply
-
+Each Go game is stored inside R as a named list. We can load many such with with an lapply call on `read_sgf`:
 
 ```{r}
 
@@ -74,8 +71,9 @@ game_data <- lapply_pb(my_games, read_sgf)
 contents <- unlist(lapply(game_data, length))
 
 ```
+We can then turn this into a set of relational tables like so
 
-We can then turn this into a set of relational tables with another functoin that acts on a read_sgf list! write this as a function...
+<!-- I should function-ize this! -->
 
 ```{r}
 
@@ -122,31 +120,67 @@ write.csv(d, chunk_csv, row.names=FALSE)
 
 print(chunk_csv)
 
-
-
 ```
 
-This will read in game_data as an unnamed list, each element being the output of `read_sgf` for that file.
+This will read in `game_data` as an unnamed list, each element being the output of `read_sgf` for that file.
 
 # standard orientation
 
+Unlike Chess, the Go board at the start of the game is completely symmetrical; you can apply any arbitrary rotation and it is the "same" game. In other words, it doesn't matter which side of the board you consider the "bottom".[^note] This introduces a problem in storing collections of games, because the games might contain the same moves but be transformed in some way, e.g. rotated 90 degrees clockwise, or reflected about a diagonal or central line.
 
+To avoid these problems in the databasing, I introduce the concept of *standard orientation* in storing Go games, which holds that the first non-diagonal, non-axis move must occur in sector 1 in the following diagram. If it does not, apply the needed transformations to all the moves to make it appear in sector 1, and that is "standard orientation" for this set of moves.
+
+```{r, echo=FALSE, fig.height=5.25*1.6, fig.width=5*1.6}
+
+library(kaya)
+
+plot_board(goban.color="white", line.color=gray(0.4))
+
+abline(0,1, lwd=2)
+abline(20,-1, lwd=2)
+abline(v=10, lwd=2)
+abline(h=10, lwd=2)
+
+text(16, 12, "sector 1", cex=3)
+text(13, 17, "sector 2", cex=3)
+text(7, 17, "sector 3", cex=3)
+text(4, 12, "sector 4", cex=3)
+text(4, 8, "sector 5", cex=3)
+text(7, 3, "sector 6", cex=3)
+text(13, 3, "sector 7", cex=3)
+text(16, 8, "sector 8", cex=3)
+
+```
+
+Moves on the diagonals are not counted as within these sectors (technically they are all in "sector 0"). 
+
+[^note]: at least, I don't think it matters. It is not standard to record where each player was sitting in a real board, but convention holds that the player start in the top right corner relative to their point of view. At any rate, this is not stored in the SGF file.
 
 # plotting and animating Go games
 
 We can plot a game like so:
 
-```{r}
+```{r, fig.height=5.25*1.6, fig.width=5*1.6}
 
 plot_game(game_data[[1]])
 
 ```
 
-This also allows dynamic animations with a speed argument included
+There are a number of options in the `plot_game` function that allow for more kifu-like figures.
 
-```{r}
+```{r, fig.height=5.25*1.6, fig.width=5*1.6}
 
-plot_game(game_data[[1]], speed = 1)
+plot_game(game_data[[1]], number=TRUE, stop=50, goban.color = gray(0.9))
 
 ```
 
+Here the handicap stones are "move 0", which is weird I should really remove that.
+
+
+```{r}
+
+write_gif(game_data[[1]], "./test.gif", stop=50)
+
+```
+
+![](./gif/test.gif)

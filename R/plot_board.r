@@ -1,5 +1,5 @@
 
-plot_board <- function(size=19, clear.goban=TRUE, goban.color="darkgoldenrod1"){
+plot_board <- function(size=19, clear.goban=TRUE, goban.color="darkgoldenrod1", line.color="black"){
     
   lb <- 1:size
   
@@ -42,13 +42,13 @@ plot_board <- function(size=19, clear.goban=TRUE, goban.color="darkgoldenrod1"){
   plot(lb, lb, type = "n",xaxt="n",yaxt="n",xlab="",ylab="")
   
   for(i in lb){
-    lines(c(i,i), c(1,size)) 
-    lines(c(1,size), c(i,i))
+    lines(c(i,i), c(1,size), col=line.color) 
+    lines(c(1,size), c(i,i), col=line.color)
   }
   
   for(i in starpoints){
     for(j in starpoints){
-      points(i,j,pch=20,cex=1)
+      points(i,j,pch=20,cex=1, col=line.color)
     }
   }
   
