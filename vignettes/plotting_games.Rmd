@@ -66,26 +66,6 @@ id_direct_connections_refactor <- function(moves){
 
 ```{r}
 
-library(testthat)
-
-for(i in 1:1000){
-
-  x <- sample(1:19, 150, replace = TRUE)
-  y <- sample(1:19, 150, replace = TRUE)
-
-  moves <- data.frame(column = x, row = y)
-  drop <- which(duplicated(moves))
-  if(length(drop)>0) moves <- moves[-drop,]
-  dat <- id_direct_connections(moves)
-  dat <- dat | t(dat)
-  plot(x,y)
-  expect_false( any(colSums(dat) < 1) )
-  expect_false( any(colSums(dat) > 5) )
-
-  if(i %% 10 == 0) print(i)
-
-}
-
 # ha! the refactor is super slow! 
 # its because original needs only check 4 places, vs refactor which has to check all stones! 
 
@@ -196,13 +176,6 @@ So defined, now lets test out these functions for identifying groups
 
 ```{r}
 
-x <- sample(1:19, 100, replace = TRUE)
-y <- sample(1:19, 100, replace = TRUE)
-
-moves <- data.frame(column = x, row = y)
-drop <- which(duplicated(moves))
-if(length(drop)>0) moves <- moves[-drop,]
-
 moves$group_id <- id_groups(moves)
 
 group_list <- sort(unique(moves$group_id))
@@ -229,7 +202,6 @@ for each move in that group
 count how many adjacent spots do NOT appear in the game moves object's present stones
 
 ```{r}
-
 
 x <- sample(1:19, 100, replace = TRUE)
 y <- sample(1:19, 100, replace = TRUE)
@@ -267,11 +239,7 @@ counting liberties and poentially removing gtoups happens to opposite color ston
 
 ```{r}
 
-# important check: sotnes of diff colors in same group!
-
-# to debug the position evaluator, we need to have some examples of captures...
-
-# a bug in the code...it doesnt flip the rows from 20 - entry...
+# important check: stones of diff colors in same group!
 
 library(kaya)
 
@@ -326,13 +294,6 @@ for(i in 1:n_moves){
 
 }
 
-# seems working..need to incorportae handicap stones or this is all worthless
-
-# and design unit tests! 
-
-# then...plot_sgf simply assumes there iwll be a status coulumn and only plots active moves! easy! 
-
-
 ```
 
 ```{r}
@@ -384,8 +345,4 @@ tar <- which(game_moves$number <= i & game_moves$group_id == "removed")
 points(game_moves$column[tar], game_moves$row[tar], pch=20, cex=0.5, col="red")
 
 ```
-
-Diagnostic checks:
-- illegal moves are way to debug status: flag any that are in a position same as an existing active move
-- also flag suicidal moves! build those diagnostics into the function
 

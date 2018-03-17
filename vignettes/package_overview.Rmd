@@ -183,4 +183,4 @@ write_gif(game_data[[1]], "./test.gif", stop=50)
 
 ```
 
-![](./gif/test.gif)
+![](./test.gif)
