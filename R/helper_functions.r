@@ -1,6 +1,144 @@
 
 
-write_kifu <- function(game_object, file, max){
+
+
+update_status <- function(game_moves){
+  n_moves <- max(game_moves$number)
+  game_moves$n_liberties <- NA
+  for(i in 1:n_moves){
+    current_color <- game_moves$color[game_moves$number == i]
+    other_color <- ifelse(current_color == "black", "white", "black")
+
+    # 1. update group identity of stones of same color for all moves up to this move
+    update_rows <- which(game_moves$color == current_color & game_moves$number <= i & game_moves$group_id != "removed")
+    if(length(update_rows) > 0) game_moves$group_id[update_rows] <- id_groups(game_moves[update_rows, c("column", "row", "group_id")])
+
+    bad <- any(game_moves$group_id[which(game_moves$group_id != "removed" & game_moves$color=="black")] %in%  game_moves$group_id[which(game_moves$group_id != "removed" & game_moves$color=="white")])
+    if(bad) stop("mixup groups!")
+
+    # 2. recount liberties for all stones
+    active_rows <- which(game_moves$number <= i & game_moves$group_id != "removed")
+    game_moves$n_liberties[active_rows] <- count_liberties(game_moves[active_rows,])
+
+    # 3. remove enemy groups with 0 liberties! 
+    update_rows <- which(game_moves$color == other_color & game_moves$number < i & game_moves$group_id != "removed")
+    group_liberties <- tapply(game_moves$n_liberties[update_rows], game_moves$group_id[update_rows], sum)
+    removable_groups <- names(which(group_liberties == 0))
+    if(length(removable_groups) > 0){
+      game_moves$group_id[update_rows][which(game_moves$group_id[update_rows] %in% removable_groups)] <- "removed"
+    }
+
+    # 4. recount liberties again
+    active_rows <- which(game_moves$number <= i & game_moves$group_id != "removed")
+    game_moves$n_liberties[active_rows] <- count_liberties(game_moves[active_rows,])
+
+    # 5. suicide check
+    update_rows <- which(game_moves$color == current_color & game_moves$number <= i & game_moves$group_id != "removed")
+    group_liberties <- tapply(game_moves$n_liberties[update_rows], game_moves$group_id[update_rows], sum)
+    removable_groups <- names(which(group_liberties == 0))
+    if(length(removable_groups) > 0){
+      stop(paste("suicide detected at move ", i))
+    }
+
+  }
+  return(game_moves$group_id)
+}
+
+
+count_liberties <- function(moves, board_size = 19){
+  # assumes all are active
+  n_liberties <- rep(NA, nrow(moves))
+  for (i in 1:nrow(moves)){
+    i_x <- moves$column[i]
+    i_y <- moves$row[i]
+    south_free <- !any(moves$row == (i_y - 1) & moves$column == i_x) & i_y != 1
+    north_free <- !any(moves$row == (i_y + 1) & moves$column == i_x) & i_y != board_size
+    west_free <- !any(moves$row == (i_y) & moves$column == (i_x - 1)) & i_x != 1
+    east_free <- !any(moves$row == (i_y) & moves$column == (i_x + 1)) & i_x != board_size
+    n_liberties[i] <- sum(south_free, north_free, west_free, east_free)
+  }
+  return(n_liberties)
+}
+
+
+
+id_maker <- function(n, reserved='', seed=NA, nchars=NA){
+    my_let <- letters 
+    my_num <- 0:9 
+    if(is.na(seed) | !is.numeric(seed)) set.seed(as.numeric(as.POSIXlt(Sys.time())))
+    if(!is.na(seed) & is.numeric(seed)) set.seed(seed)
+    output <- replicate(n, paste(sample(c(my_let, my_num), nchars, replace=TRUE), 
+        collapse=''))
+    rejected <- duplicated(output) | output %in% reserved | substr(output, 1, 1) %in% my_num
+    while(any(rejected)){
+        output <- output[-which(rejected)]
+        remaining <- n-length(output)
+        output <- c(output, replicate(remaining, paste(sample(c(my_let, my_num), nchars, 
+            replace=TRUE), collapse='')))
+        rejected <- duplicated(output) | output %in% reserved | substr(output, 1, 1) %in% my_num
+    }
+    output
+}
+
+id_groups <- function(moves){
+
+  direct_mat <- id_direct_connections(moves)
+
+  group_IDs <- moves$group_id
+
+  for(i in 1:length(group_IDs)){
+    tie_cols <- which(direct_mat[i,])
+    leftmost <- group_IDs[tie_cols][1]
+    ingroup <- tie_cols
+    for(j in 1:length(tie_cols)){
+      tie_rows <- which(direct_mat[,tie_cols[j]])
+      ingroup <- c(ingroup, tie_rows)
+      for(k in 1:length(tie_rows)){
+        tie_cols_2 <- which(direct_mat[tie_rows[k],])
+        ingroup <- c(ingroup, tie_cols_2)
+        for(l in 1:length(tie_cols_2)){
+          tie_rows_2 <- which(direct_mat[,tie_cols_2[l]])
+          ingroup <- c(ingroup, tie_rows_2)
+          for(m in 1:length(tie_rows_2)){
+            tie_cols_3 <- which(direct_mat[tie_rows_2[m],])
+            ingroup <- c(ingroup, tie_cols_3)
+          }
+        }
+      }
+    }
+    ingroup <- sort(unique(ingroup))
+    group_IDs[ingroup] <- leftmost
+  }
+
+  return(group_IDs)
+
+}
+
+
+
+
+
+id_direct_connections <- function(moves){
+  direct_mat <- matrix(FALSE, nrow = nrow(moves), ncol = nrow(moves))
+  diag(direct_mat) <- TRUE
+  for(i in 1:nrow(moves)){
+    i_y <- moves$row[i]
+    i_x <- moves$column[i]
+    south <- which(moves$row == (i_y - 1) & moves$column == i_x)
+    north <- which(moves$row == (i_y + 1) & moves$column == i_x)
+    west <- which(moves$row == (i_y) & moves$column == (i_x - 1))
+    east <- which(moves$row == (i_y) & moves$column == (i_x + 1))
+    if(length(south) > 0) direct_mat[i, south] <- TRUE
+    if(length(north) > 0) direct_mat[i, north] <- TRUE
+    if(length(west) > 0) direct_mat[i, west] <- TRUE
+    if(length(east) > 0) direct_mat[i, east] <- TRUE
+  }
+  return(direct_mat)
+}
+
+
+
+write_kifu_old <- function(game_object, file, max){
 
   goban.side <- par("pin")[1]
   stone.size <- goban.side/(19.44*0.076)  # the 5 here represents 5 inches, as specified in the plot_board as the fixed size of the board
@@ -20,23 +158,37 @@ write_kifu <- function(game_object, file, max){
 
 
 
-write_gif <- function(game_object, file, max=NA, number=FALSE, delay=50, n_loops=0){
+write_kifu <- function(game_object, file){
+
+  pdf(file)
+  plot_game(game_object, number=TRUE, goban.color = gray(0.8))
+  dev.off()
+
+}  # does this really need to be its own function?
+
+
+
+write_gif_old <- function(game_object, file, max=NA, number=FALSE, delay=50, n_loops=0){
 
   goban.side <- par("pin")[1]
   stone.size <- goban.side/(19.44*0.076)  # the 5 here represents 5 inches, as specified in the plot_board as the fixed size of the board
-  if(is.na(max)) max <- nrow(game_object$moves)
-  x.coord <- game_object$moves$column[1:max]
-  y.coord <- game_object$moves$row[1:max]
-  colors <- game_object$moves$color[1:max]
-  rev_colors <- ifelse( colors=="black", "white", "black" )
+
+  if(is.na(max)) max <- game_object$n_moves
+
+  moves <- game_object$moves
+  moves$rev_color <- ifelse(moves$color=="black", "white", "black" )
+  moves$group_id <- id_maker(nrow(moves), nchar=3)
 
   print("producing animation panes")
-  for(i in 1:length(x.coord)){
+  for(i in 1:max){
+    update_rows <- which(moves$number <= i & moves$group_id != "removed")
+    moves$group_id[update_rows] <- update_status(moves[update_rows,])
     pane_filename <- paste("animated_pane_", sprintf("%04d", i), ".png", sep="")
     png(pane_filename)
     plot_board()
-    points(x.coord[1:i], y.coord[1:i], cex=stone.size, pch=21, bg=colors[1:i])
-    if(number==TRUE) text(x.coord[1:i], y.coord[1:i], labels=1:i, col=rev_colors[1:i])
+    tar <- which(moves$number <= i & moves$group_id != "removed")
+    points(moves$column[tar], moves$row[tar], cex=stone.size, pch=21, bg=moves$color[tar])
+    if(number==TRUE) text(moves$column[tar], moves$row[tar], labels=moves$number[tar], col = moves$rev_color[tar])
     dev.off()
   }
 
@@ -56,24 +208,40 @@ write_gif <- function(game_object, file, max=NA, number=FALSE, delay=50, n_loops
 
 
 
-plot_game <- function(game_object, speed=NA, number=FALSE, max=NA){
+write_gif <- function(game_object, file, number=FALSE, delay=50, n_loops=0, start = NA, stop = NA){
+
+  if(is.na(start)) start <- 1
+  if(is.na(stop)) stop <- game_object$n_moves
+  for(i in start:stop){
+    pane_filename <- paste("animated_pane_", sprintf("%04d", i), ".png", sep="")
+    png(pane_filename)
+    plot_game(game_object, max=i)
+    dev.off()
+  }
+  my_filename <- file
+  convert_call <- paste0("convert -loop ", n_loops, " -delay ", delay, " animated_pane* " , my_filename)
+  print("compiling gif")
+  system(convert_call)
+  pane_temp <- list.files(".", pattern="animated_pane*")
+  file.remove(pane_temp)
+}
+
+
+
+plot_game <- function(game_object, number = FALSE, max = NA, ...){
+  if(is.na(max)) max <- game_object$n_moves
+  moves <- game_object$moves[game_object$moves$number <= max,]
+  # evaluate
+  moves$group_id <- id_maker(nrow(moves), nchar=3)
+  moves$group_id <- update_status(moves)
+  moves$rev_color <- ifelse(moves$color=="black", "white", "black" )
+  tar <- which(moves$number <= max & moves$group_id != "removed")
+  plot_board(...)
   goban.side <- par("pin")[1]
   stone.size <- goban.side/(19.44*0.076)  # the 5 here represents 5 inches, as specified in the plot_board as the fixed size of the board
-  if(is.na(max)) max <- nrow(game_object$moves)
-  x.coord <- game_object$moves$column[1:max]
-  y.coord <- game_object$moves$row[1:max]
-  colors <- game_object$moves$color[1:max]
-  rev_colors <- ifelse( colors=="black", "white", "black" )
-  plot_board()
-  for(i in 1:length(x.coord)){
-    if(!is.na(speed)) Sys.sleep(speed)
-    points(x.coord[i], y.coord[i], cex=stone.size, pch=21, bg=colors[i])
-    if(number==TRUE) text(x.coord[i], y.coord[i], labels=i, col=rev_colors[i])
-  }
+  points(moves$column[tar], moves$row[tar], cex=stone.size, pch=21, bg=moves$color[tar])
+  if(number==TRUE) text(moves$column[tar], moves$row[tar], labels=moves$number[tar], col = moves$rev_color[tar])
 }
-  
-
-
 
 validate_game <- function(game_data){
   coords <- as.character(game_data$moves$coord_sgf)

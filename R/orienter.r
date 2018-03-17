@@ -29,11 +29,11 @@ orient_sgf <- function(sgf_moves){
   liberty <- 1:361
   lookup <- data.frame(rows, cols, liberty, sector)
 
-  coord_row_letter <- substr(coord_sgf, 2, 2)
   coord_col_letter <- substr(coord_sgf, 1, 1)
+  coord_row_letter <- substr(coord_sgf, 2, 2)
 
-  coord_rows <- match(coord_row_letter, letters[1:19])
   coord_cols <- match(coord_col_letter, letters[1:19])
+  coord_rows <- match(coord_row_letter, letters[1:19]) # minus 20?
 
   coord_rows[coord_rows>19] <- NA
   coord_cols[coord_cols>19] <- NA

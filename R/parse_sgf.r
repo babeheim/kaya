@@ -1,7 +1,7 @@
 
 
 
-parse_sgf <- function(sgf_lines, rotate=TRUE){
+parse_sgf <- function(sgf_lines, rotate = TRUE){
 
   sgf_lines <- paste(sgf_lines, collapse="\n")
   sgf_lines <- gsub("\n", "", sgf_lines)
@@ -29,22 +29,22 @@ parse_sgf <- function(sgf_lines, rotate=TRUE){
     metadata <- gsub("\\]~tb~\\[","\\]\\[", metadata)
     metadata <- strsplit(metadata, "~tb~")[[1]]
 
-    moves <- data.frame(
-      color=character(), column=character(), 
-      row=character())
     hash_id <- NA
     n_moves <- 0
 
-    if( length(sgf_lines) > 1 ){
+    moves <- data.frame(number = integer(), color = character(), 
+      column = integer(), row = integer())
+
+    if(length(sgf_lines) > 1){
 
       move_stuff <- sgf_lines[2:length(sgf_lines)]
 
       comment <- rep("", length(move_stuff))
       comment_moves <- grep("C\\[", move_stuff)
-      if(length(comment_moves)>0){
+      if(length(comment_moves) > 0){
         move_stuff <- stringi::stri_trans_general(move_stuff, "latin-ascii") # convert non-ASCII to closest ascii
         move_stuff <- gsub("[\x01-\x1F]", "", move_stuff) # takes care of non-printing ASCII
-        move_stuff <- iconv(move_stuff, "latin1", "ASCII", sub="") # strip out non-ASCII entirely
+        move_stuff <- iconv(move_stuff, "latin1", "ASCII", sub = "") # strip out non-ASCII entirely
         # slow!
         comment <- substr(move_stuff, 6, nchar(move_stuff))
         comment[comment_moves] <- sapply(comment[comment_moves], function(z) as.character(extract_sgf_tag(z)))
@@ -58,14 +58,14 @@ parse_sgf <- function(sgf_lines, rotate=TRUE){
       coord_sgf <- sapply(moves, function(z) as.character(extract_sgf_tag(z)))
       coord_sgf <- as.character(coord_sgf)
 
-      if(rotate==TRUE) coord_sgf <- orient_sgf(coord_sgf)
+      if(rotate == TRUE) coord_sgf <- orient_sgf(coord_sgf)
 
       move_cols <- match(substr(coord_sgf, 1, 1), letters)
-      move_rows <- match(substr(coord_sgf, 2, 2), letters)
-      moves <- data.frame(color, column=move_cols, row=move_rows, stringsAsFactors=FALSE)
+      move_rows <- match(substr(coord_sgf, 2, 2), letters) # minus 20? assumes board is 19x19
+      number <- 1:length(move_cols)
+      moves <- data.frame(number, color, column=move_cols, row=move_rows, stringsAsFactors=FALSE)
 
       n_moves <- nrow(moves)
-
 
       # hash must be a function of colors and moves only!
       hash_id <- substr(digest::sha1(moves), 1, 19)
@@ -80,8 +80,33 @@ parse_sgf <- function(sgf_lines, rotate=TRUE){
       tag <- extract_sgf_tag(metadata[i])
       meta <- c(meta, tag)
     }
+
+    # extract setup stones and add them to moves as move0
+
+    if("AB" %in% names(meta)){
+      coord_sgf <- meta$AB
+      if(rotate == TRUE) coord_sgf <- orient_sgf(coord_sgf)
+      setup_move_cols <- match(substr(coord_sgf, 1, 1), letters)
+      setup_move_rows <- match(substr(coord_sgf, 2, 2), letters) # minus 20? assumes board is 19x19
+      number <- rep(0, length(setup_move_cols))
+      color <- rep("black", length(setup_move_cols))
+      comments <- rep("", length(setup_move_cols))
+      setup_moves_black <- data.frame(number, color, column=setup_move_cols, row=setup_move_rows, comments, stringsAsFactors=FALSE)
+      moves <- rbind(setup_moves_black, moves)
+    }
+    if("AW" %in% names(meta)){
+      coord_sgf <- meta$AW
+      if(rotate == TRUE) coord_sgf <- orient_sgf(coord_sgf)
+      setup_move_cols <- match(substr(coord_sgf, 1, 1), letters)
+      setup_move_rows <- match(substr(coord_sgf, 2, 2), letters) # minus 20? assumes board is 19x19
+      number <- rep(0, length(setup_move_cols))
+      color <- rep("white", length(setup_move_cols))
+      comments <- rep("", length(setup_move_cols))
+      setup_moves_white <- data.frame(number, color, column=setup_move_cols, row=setup_move_rows, comments, stringsAsFactors=FALSE)
+      moves <- rbind(setup_moves_white, moves)
+    }
     
-    if(rotate==TRUE) meta$kaya_notes <- "rotated game moves to standard position"
+    if(rotate == TRUE) meta$kaya_notes <- "rotated game moves to standard position"
 
     output <- meta
     output$hash_id <- hash_id
