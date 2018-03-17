@@ -1,0 +1,535 @@
+---
+title: plotting Go games
+author: Bret Beheim
+date: \today
+---
+
+Go is a set of coordinates for stones that never move, but it's not as simple as plotting them. Stones are "connected" on the cardinal directions, and if a group of them is completely surrouding on cardinal points, they are removed from the board. So, the same spot might have many stones placed on it throughout the game, and Go programs must take that into acccount. 
+
+To properly figure this out, we need to create a groups table that dynamically runs forwards through the game. 
+
+The basic algorithm is as follows: each stone has a `group_id` which represents all stones that share the same liberties. Stones can only be part of the same group as a result of a move by that player; enemy play cannot join groups together. Conversely, a group can only reach 0 liberties as a result of enemy action (with the exception of suicides which are prohibited under most rulessets). 
+
+1. When a stone is placed, kaya updates the group_id for stones of your color. 
+2. Then kaya updates the liberty count for the (existing) groups of the enemy color.
+3. If any enemy groups have 0 liberties, it flips the group_id to "removed".
+
+Once removed, play no more role in any calculations.
+
+changes to kaya then: 
+- instide the moves table, a `group_id` and a `move_number` which labels all setup stones are move 0
+- also new metadata, `n_moves` which is NOT the nrow(moves) b/c of handicap and other stones which are "move 0"
+
+for each move i in 1:n_moves, do the following:
+  step 1: identify enemy color and (re)assign group_id for all "active" stones of that color, from move 0 to move (i-1)
+  step 2: (re)calculate liberties for all groups of active stones of enemy color, taking into account all active stones on board including move i just played. if any such groups of enemy stones have 0 liberties, reassign the group_id for the stones of that group to "removed"
+  (step 3): optionally repeat step 1 and step 2 for groups of the color that just placed the move. this should never matter but might be useful as a check against illegal moves (suicides)
+
+that should give you the present/absent state for the board at move j, then just plot all the moves classified as "present" and you are good! 
+
+## How to assign a common group_id
+
+We do this step in two parts. First, we detect *direct connections* between dyadic pairs of stones, via a nxn presence-absence matrix which is empty in the lower triangle. This is accomplished by an `id_direct_connections` function. Second, we use this direct connections matrix to infer all clusters of groups, which is done by `id_groups`. The latter function calls the former during its operation.
+
+
+```{r}
+
+# input is just the emove list
+# output is the vector of group id
+
+id_direct_connections <- function(moves){
+  direct_mat <- matrix(FALSE, nrow = nrow(moves), ncol = nrow(moves))
+  diag(direct_mat) <- TRUE
+  for(i in 1:nrow(moves)){
+    i_y <- moves$row[i]
+    i_x <- moves$column[i]
+    south <- which(moves$row == (i_y - 1) & moves$column == i_x)
+    north <- which(moves$row == (i_y + 1) & moves$column == i_x)
+    west <- which(moves$row == (i_y) & moves$column == (i_x - 1))
+    east <- which(moves$row == (i_y) & moves$column == (i_x + 1))
+    if(length(south) > 0) direct_mat[i, south] <- TRUE
+    if(length(north) > 0) direct_mat[i, north] <- TRUE
+    if(length(west) > 0) direct_mat[i, west] <- TRUE
+    if(length(east) > 0) direct_mat[i, east] <- TRUE
+  }
+  return(direct_mat)
+}
+
+
+id_direct_connections_refactor <- function(moves){
+
+  # for n moves there are n*n - n ordered dyads, but that repeates each twice so
+  # n(n-1)/2 unique "groups" (order doesnt matted)
+  # so for each i in 1:(n-1) we look over all j from 1+1 to n
+  # is there a tie between these two coordinates? only if diff(x) == 0 & diff(y) == 1 or vis versa
+
+  direct_mat <- matrix(FALSE, nrow = nrow(moves), ncol = nrow(moves))
+  diag(direct_mat) <- TRUE
+  n <- nrow(moves)
+  for (i in 1:(n - 1)){
+    for (j in (i + 1):n){
+      tied <- abs(diff(moves$column[c(i,j)])) + abs(diff(moves$row[c(i,j)])) == 1
+      if(tied){
+        direct_mat[i,j] <- TRUE
+      }
+    }
+  }
+  return(direct_mat)
+}
+
+# this could maybe be sped up by evaluating each dyad in a directed fashion?
+# right now im checking each space around a stone for an empty one but we know! 
+
+```
+
+```{r}
+
+library(testthat)
+
+for(i in 1:1000){
+
+  x <- sample(1:19, 150, replace = TRUE)
+  y <- sample(1:19, 150, replace = TRUE)
+
+  moves <- data.frame(column = x, row = y)
+  drop <- which(duplicated(moves))
+  if(length(drop)>0) moves <- moves[-drop,]
+  dat <- id_direct_connections(moves)
+  dat <- dat | t(dat)
+  plot(x,y)
+  expect_false( any(colSums(dat) < 1) )
+  expect_false( any(colSums(dat) > 5) )
+
+  if(i %% 10 == 0) print(i)
+
+}
+
+# ha! the refactor is super slow! 
+# its because original needs only check 4 places, vs refactor which has to check all stones! 
+
+library(testthat)
+
+for(i in 1:1000){
+
+  x <- sample(1:19, 150, replace = TRUE)
+  y <- sample(1:19, 150, replace = TRUE)
+
+  moves <- data.frame(column = x, row = y)
+  drop <- which(duplicated(moves))
+  if(length(drop)>0) moves <- moves[-drop,]
+  dat <- id_direct_connections(moves)
+  expect_true(identical(id_direct_connections(moves), id_direct_connections_refactor(moves)))
+
+  if(i %% 10 == 0) print(i)
+
+}
+
+```
+
+At most 4 other stones can be connected to each stone, at least 0, which provides a useful test of the row-column sums of this matrix.
+
+I use the following algorith on the direct connections matrix. 
+
+For each row, identify the columns that have a tie. These are all in the same group as the row. Then, for each column that is included here, identify all the other rows that have ties to that column. This captures all relationships in that group, and we need only assign a common ID at that point. Iterating over all rows gives the solution, though this is inefficient.
+
+Here's a testing area for the algorithm.
+
+```{r}
+
+for(t in 1:10000){
+
+  # make a fake direct connection matrix
+  blah <- sample( c(TRUE, FALSE), size = 8*8, prob = c(1,10), replace = TRUE)
+  test_direct_mat <- matrix(blah, nrow = 8, ncol = 8)
+  diag(test_direct_mat) <- TRUE
+  direct_mat <- test_direct_mat | t(test_direct_mat)
+  test_direct_mat
+
+  # now i just need to provide a direct connection matrix and an ID for all the moves...hmmm...
+
+#  direct_mat[lower.tri(direct_mat)] <- FALSE
+#  direct_mat <- direct_mat | t(direct_mat)
+
+  group_IDs <- LETTERS[1:nrow(direct_mat)] # fails if > 26 groups
+
+  for(i in 1:length(group_IDs)){
+    tie_cols <- which(direct_mat[i,])
+    leftmost <- group_IDs[tie_cols][1]
+    ingroup <- tie_cols
+    for(j in 1:length(tie_cols)){
+      tie_rows <- which(direct_mat[,tie_cols[j]])
+      ingroup <- c(ingroup, tie_rows)
+      for(k in 1:length(tie_rows)){
+        tie_cols_2 <- which(direct_mat[tie_rows[k],])
+        ingroup <- c(ingroup, tie_cols_2)
+        for(l in 1:length(tie_cols_2)){
+          tie_rows_2 <- which(direct_mat[,tie_cols_2[l]])
+          ingroup <- c(ingroup, tie_rows_2)
+        }
+      }
+    }
+    ingroup <- sort(unique(ingroup))
+    group_IDs[ingroup] <- leftmost
+  }
+
+  dat <- direct_mat | t(direct_mat)
+
+  singletons <- group_IDs[which(colSums(dat) == 1)]
+  groupers <- group_IDs[which(colSums(dat) > 1)]
+  multistone_ids <- sort(unique(group_IDs[duplicated(group_IDs)]))
+  expect_true(!any(singletons %in% multistone_ids))
+  expect_true(all(groupers %in% multistone_ids))
+
+  if(t %% 10 == 0) print(t)
+
+}
+
+# ah, htis algorithm is imperfect, I can still find problems this way...
+# look into grouping alogritms for ties...maybe its a quick q for jeremy
+
+# or maybe use the n*(n-1)/2 strat i wa sthinkig of earlier...hmm...
+# just mkae an edge list and go down it one by one?
+
+
+
+```
+
+diagnostics on id_groups:
+- no stone should be directly connected to more than 4 other stones [x]
+- no stone with 0 direct connections should be in a multistone group
+- stone shoud not appaer in more than one group (duh)
+- should not appear in group of another color! (hmmm)
+
+```{r}
+
+id_maker <- function(n, reserved='', seed=NA, nchars=NA){
+    my_let <- letters 
+    my_num <- 0:9 
+    if(is.na(seed) | !is.numeric(seed)) set.seed(as.numeric(as.POSIXlt(Sys.time())))
+    if(!is.na(seed) & is.numeric(seed)) set.seed(seed)
+    output <- replicate(n, paste(sample(c(my_let, my_num), nchars, replace=TRUE), 
+        collapse=''))
+    rejected <- duplicated(output) | output %in% reserved | substr(output, 1, 1) %in% my_num
+    while(any(rejected)){
+        output <- output[-which(rejected)]
+        remaining <- n-length(output)
+        output <- c(output, replicate(remaining, paste(sample(c(my_let, my_num), nchars, 
+            replace=TRUE), collapse='')))
+        rejected <- duplicated(output) | output %in% reserved | substr(output, 1, 1) %in% my_num
+    }
+    output
+}
+
+id_groups <- function(moves){
+
+  direct_mat <- id_direct_connections(moves)
+
+  group_IDs <- moves$group_id
+
+  for(i in 1:length(group_IDs)){
+    tie_cols <- which(direct_mat[i,])
+    leftmost <- group_IDs[tie_cols][1]
+    ingroup <- tie_cols
+    for(j in 1:length(tie_cols)){
+      tie_rows <- which(direct_mat[,tie_cols[j]])
+      ingroup <- c(ingroup, tie_rows)
+      for(k in 1:length(tie_rows)){
+        tie_cols_2 <- which(direct_mat[tie_rows[k],])
+        ingroup <- c(ingroup, tie_cols_2)
+        for(l in 1:length(tie_cols_2)){
+          tie_rows_2 <- which(direct_mat[,tie_cols_2[l]])
+          ingroup <- c(ingroup, tie_rows_2)
+          for(m in 1:length(tie_rows_2)){
+            tie_cols_3 <- which(direct_mat[tie_rows_2[m],])
+            ingroup <- c(ingroup, tie_cols_3)
+          }
+        }
+      }
+    }
+    ingroup <- sort(unique(ingroup))
+    group_IDs[ingroup] <- leftmost
+  }
+
+  return(group_IDs)
+
+}
+
+
+
+
+
+
+```
+
+So defined, now lets test out these functions for identifying groups
+
+```{r}
+
+x <- sample(1:19, 100, replace = TRUE)
+y <- sample(1:19, 100, replace = TRUE)
+
+moves <- data.frame(column = x, row = y)
+drop <- which(duplicated(moves))
+if(length(drop)>0) moves <- moves[-drop,]
+
+moves$group_id <- id_groups(moves)
+
+group_list <- sort(unique(moves$group_id))
+group_colors <- rainbow(length(group_list))
+
+moves$group_colors <- group_colors[match(moves$group_id, group_list)]
+
+plot(moves$column, moves$row, pch=20, col=moves$group_colors)
+
+sort(table(moves$group_id))
+
+```
+
+Ok, seems to be working (not really!). On to step 2!
+
+## counting liberties for groups
+
+The step 2 of this process is to count the liberties of the enemy groups and remove those stones that have 0 liberties.
+
+So we count up all liberties for each stone, and sum them iwhtin groups. Group liberties only matter when they are 0, so we dont have to owrry about the fact multiple stones in a group might overcount the same liberty.
+
+for each group in group_id
+for each move in that group
+count how many adjacent spots do NOT appear in the game moves object's present stones
+
+```{r}
+
+count_liberties <- function(moves, board_size = 19){
+  # assumes all are active
+  n_liberties <- rep(NA, nrow(moves))
+  for (i in 1:nrow(moves)){
+    i_x <- moves$column[i]
+    i_y <- moves$row[i]
+    south_free <- !any(moves$row == (i_y - 1) & moves$column == i_x) & i_y != 1
+    north_free <- !any(moves$row == (i_y + 1) & moves$column == i_x) & i_y != board_size
+    west_free <- !any(moves$row == (i_y) & moves$column == (i_x - 1)) & i_x != 1
+    east_free <- !any(moves$row == (i_y) & moves$column == (i_x + 1)) & i_x != board_size
+    n_liberties[i] <- sum(south_free, north_free, west_free, east_free)
+  }
+  return(n_liberties)
+}
+
+
+x <- sample(1:19, 100, replace = TRUE)
+y <- sample(1:19, 100, replace = TRUE)
+
+moves <- data.frame(column = x, row = y)
+drop <- which(duplicated(moves))
+if(length(drop)>0) moves <- moves[-drop,]
+
+game_moves <- moves
+game_moves$move_number <- 1:nrow(game_moves)
+game_moves$group_id <- id_groups(game_moves)
+
+moves <- game_moves
+
+focal_move <- 10
+
+plot(moves$column, moves$row)
+points(moves$column[focal_move], moves$row[focal_move], col="red", pch=20)
+
+x <- count_liberties(moves)
+x[focal_move]
+
+```
+
+over each group_id it counts up all the liberties
+
+it replays the entire game to a move to assign that state
+
+## putting it all together
+
+The two steps defined above happen after each move is played.
+group updating happens to the same color stones
+counting liberties and poentially removing gtoups happens to opposite color stones
+
+
+```{r}
+
+update_status <- function(game_moves){
+  n_moves <- max(game_moves$move_number)
+  game_moves$n_liberties <- NA
+  for(i in 1:n_moves){
+    current_color <- game_moves$color[i]
+    other_color <- game_moves$color[i-1]
+
+    # 1. update group identity of stones of same color for all moves up to this move
+    update_rows <- which(game_moves$color == game_moves$color[i] & game_moves$move_number <= i & game_moves$group_id != "removed")
+    if(length(update_rows) > 0) game_moves$group_id[update_rows] <- id_groups(game_moves[update_rows, c("column", "row", "group_id")])
+
+    bad <- any(game_moves$group_id[which(game_moves$group_id != "removed" & game_moves$color=="black")] %in%  game_moves$group_id[which(game_moves$group_id != "removed" & game_moves$color=="white")])
+    if(bad) stop("mixup groups!")
+
+    # 2. recount liberties for all stones
+    active_rows <- which(game_moves$move_number <= i & game_moves$group_id != "removed")
+    game_moves$n_liberties[active_rows] <- count_liberties(game_moves[active_rows,])
+
+    # 3. remove enemy groups with 0 liberties! 
+    update_rows <- which(game_moves$color == game_moves$color[i-1] & game_moves$move_number < i & game_moves$group_id != "removed")  
+    group_liberties <- tapply(game_moves$n_liberties[update_rows], game_moves$group_id[update_rows], sum)
+    removable_groups <- names(which(group_liberties == 0))
+    if(length(removable_groups) > 0){
+      game_moves$group_id[update_rows][which(game_moves$group_id[update_rows] %in% removable_groups)] <- "removed"
+    }
+
+    # 4. recount liberties again
+    active_rows <- which(game_moves$move_number <= i & game_moves$group_id != "removed")
+    game_moves$n_liberties[active_rows] <- count_liberties(game_moves[active_rows,])
+
+    # 5. suicide check
+    update_rows <- which(game_moves$color == game_moves$color[i] & game_moves$move_number <= i & game_moves$group_id != "removed")
+    group_liberties <- tapply(game_moves$n_liberties[update_rows], game_moves$group_id[update_rows], sum)
+    removable_groups <- names(which(group_liberties == 0))
+    if(length(removable_groups) > 0){
+      stop(paste("suicide detected at move ", i))
+    }
+
+  }
+
+  return(game_moves$group_id)
+}
+
+my_game <- read_sgf("./inputs/2009-09-01-2.sgf")
+
+game_moves <- my_game$moves
+
+game_moves$move_number <- 1:nrow(game_moves)
+
+n_moves <- max(game_moves$move_number)
+game_moves$group_id <- id_maker(n=nrow(game_moves), nchars=3)
+
+game_moves$group_id <- update_status(game_moves)
+
+groups <- sort(unique(game_moves$group_id))
+groups <- setdiff(groups, "removed")
+group_cols <- rainbow(length(groups))
+
+game_moves$group_cols <- group_cols[match(game_moves$group_id, groups)] 
+
+i <- n_moves
+par(mfrow = c(1,2))
+tar <- which(game_moves$move_number <= i & game_moves$group_id != "removed")
+plot(game_moves$column[tar], game_moves$row[tar], pch=21, bg=game_moves$group_cols[tar], xlim=c(1,19), ylim=c(1,19), main=i, cex=3)
+tar <- which(game_moves$move_number <= i & game_moves$group_id != "removed")
+plot(game_moves$column[tar], game_moves$row[tar], pch=21, bg=game_moves$color[tar], xlim=c(1,19), ylim=c(1,19), main=i, cex=3)
+tar <- which(game_moves$move_number <= i & game_moves$group_id == "removed")
+points(game_moves$column[tar], game_moves$row[tar], pch=20, cex=0.5, col="red")
+
+
+
+# important check: sotnes of diff colors in same group!
+
+# to debug the position evaluator, we need to have some examples of captures...
+
+
+library(kaya)
+
+my_game <- read_sgf("./inputs/2009-09-01-2.sgf")
+
+game_moves <- my_game$moves
+
+game_moves$move_number <- 1:nrow(game_moves)
+
+n_moves <- max(game_moves$move_number)
+game_moves$group_id <- id_maker(n=nrow(game_moves), nchars=3)
+
+game_moves$n_liberties <- count_liberties(game_moves)
+
+for(i in 1:n_moves){
+
+  # 1. update group identity of stones of same color for all moves up to this move
+  update_rows <- which(game_moves$color == game_moves$color[i] & game_moves$move_number <= i & game_moves$group_id != "removed")
+  if(length(update_rows) > 0) game_moves$group_id[update_rows] <- id_groups(game_moves[update_rows, c("column", "row", "group_id")])
+
+  bad <- any(game_moves$group_id[which(game_moves$group_id != "removed" & game_moves$color=="black")] %in%  game_moves$group_id[which(game_moves$group_id != "removed" & game_moves$color=="white")])
+  if(bad) stop("mixup groups!")
+
+  # 2. recount liberties for all stones
+  active_rows <- which(game_moves$move_number <= i & game_moves$group_id != "removed")
+  game_moves$n_liberties[active_rows] <- count_liberties(game_moves[active_rows,])
+
+  # 3. remove enemy groups with 0 liberties! 
+  update_rows <- which(game_moves$color == game_moves$color[i-1] & game_moves$move_number < i & game_moves$group_id != "removed")  
+  group_liberties <- tapply(game_moves$n_liberties[update_rows], game_moves$group_id[update_rows], sum)
+  removable_groups <- names(which(group_liberties == 0))
+  if(length(removable_groups) > 0){
+    game_moves$group_id[update_rows][which(game_moves$group_id[update_rows] %in% removable_groups)] <- "removed"
+  }
+
+  # 4. recount liberties again
+  active_rows <- which(game_moves$move_number <= i & game_moves$group_id != "removed")
+  game_moves$n_liberties[active_rows] <- count_liberties(game_moves[active_rows,])
+
+  # 5. suicide check
+  update_rows <- which(game_moves$color == game_moves$color[i] & game_moves$move_number <= i & game_moves$group_id != "removed")
+  group_liberties <- tapply(game_moves$n_liberties[update_rows], game_moves$group_id[update_rows], sum)
+  removable_groups <- names(which(group_liberties == 0))
+  if(length(removable_groups) > 0){
+    stop(paste("suicide detected at move ", i))
+  }
+
+  tar <- which(game_moves$move_number <= i & game_moves$group_id != "removed")
+  plot(game_moves$column[tar], game_moves$row[tar], pch=21, bg=game_moves$color[tar], xlim=c(1,19), ylim=c(1,19), main=i, cex=3)
+  tar <- which(game_moves$move_number <= i & game_moves$group_id == "removed")
+  points(game_moves$column[tar], game_moves$row[tar], pch=20, cex=0.5, col="red")
+
+  Sys.sleep(0.5)
+
+}
+
+# seems working..need to incorportae handicap stones or this is all worthless
+
+# and design unit tests! 
+
+
+groups <- sort(unique(game_moves$group_id))
+groups <- setdiff(groups, "removed")
+group_cols <- sample(rainbow(length(groups)))
+
+game_moves$group_cols <- group_cols[match(game_moves$group_id, groups)] 
+
+i <- n_moves
+
+
+
+par(mfrow = c(1,2))
+
+tar <- which(game_moves$move_number <= i & game_moves$group_id != "removed" & game_moves$color=="white")
+plot(game_moves$column[tar], game_moves$row[tar], pch=21, bg=game_moves$group_cols[tar], xlim=c(1,19), ylim=c(1,19), main=i, cex=3)
+
+tar <- which(game_moves$move_number <= i & game_moves$group_id != "removed" & game_moves$color=="white")
+plot(game_moves$column[tar], game_moves$row[tar], pch=21, bg=game_moves$color[tar], xlim=c(1,19), ylim=c(1,19), main=i, cex=3)
+
+# id isnt perfect, STILL
+
+par(mfrow = c(1,2))
+
+tar <- which(game_moves$move_number <= i & game_moves$group_id != "removed" & game_moves$color=="black")
+plot(game_moves$column[tar], game_moves$row[tar], pch=21, bg=game_moves$group_cols[tar], xlim=c(1,19), ylim=c(1,19), main=i, cex=3)
+
+tar <- which(game_moves$move_number <= i & game_moves$group_id != "removed" & game_moves$color=="black")
+plot(game_moves$column[tar], game_moves$row[tar], pch=21, bg=game_moves$color[tar], xlim=c(1,19), ylim=c(1,19), main=i, cex=3)
+
+any(game_moves$group_id[which(game_moves$group_id != "removed" & game_moves$color=="black")] %in%  game_moves$group_id[which(game_moves$group_id != "removed" & game_moves$color=="white")])
+any(game_moves$group_id[which(game_moves$group_id != "removed" & game_moves$color=="white")] %in%  game_moves$group_id[which(game_moves$group_id != "removed" & game_moves$color=="black")])
+
+
+
+
+# 18 to 22
+
+
+# then...plot_sgf simply assumes there iwll be a status coulumn and only plots active moves! easy! 
+
+
+```
+
+Diagnostic checks:
+- illegal moves are way to debug status: flag any that are in a position same as an existing active move
+- also flag suicidal moves! build those diagnostics into the function
+

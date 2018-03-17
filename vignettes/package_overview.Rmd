@@ -1,0 +1,152 @@
+---
+title: package kaya
+author: Bret Beheim
+date: \today
+---
+
+Package kaya is a set of R tools for managing large collections of Go games stored in the Smart Game Format (SGF) plaintext markup language. The name comes from kayawood, which in Japan is considerd one of the best materials to make Go boards from.
+
+# loading SFG game records
+
+A standard SGF might take the following form:
+
+```
+(;GM[1]
+FF[4]
+SZ[19]
+PW[supertjc]
+WR[7d]
+PB[High55]
+BR[6d]
+DT[2009-09-01]
+PC[The KGS Go Server at http://www.gokgs.com/]
+KM[0.50]
+RE[B+Resign]
+RU[Japanese]
+OT[5x10 byo-yomi]
+CA[UTF-8]
+ST[2]
+AP[CGoban:3]
+TM[0]
+HA[2]
+AB[pd][dp]
+
+;W[pm];B[df];W[pq];B[kq];W[qf];B[nc];W[ch];B[qe];W[pf];B[pi];W[ne];B[mi];W[mc];B[mb];W[nb];B[ob];W[nd];B[na];W[oc];B[pc];W[nb];B[lc];W[nc];B[qb];W[lb];B[ma];W[kb];B[ld];W[jd];B[lf];W[ri];B[hd];W[ib];B[hb];W[jf];B[mg];W[re];B[of];W[hf];B[fd];W[cd];B[bf];W[ee];B[gf];W[ed];B[hg];W[ig];B[he];W[if];B[gg];W[fc];B[gc];W[fe];B[ge];W[fb];B[eg];W[ic];B[pe];W[cl];B[ii];W[gb];B[cj];W[el];B[di];W[fq];B[fp];W[gp];B[fo];W[dq];B[cq];W[er];B[dr];W[eq];B[cp];W[iq];B[cr];W[mq];B[ko];W[bj];B[bk];W[cn];B[go];W[hp];B[in];W[ck];B[bi];W[dj];B[ci];W[bl];B[aj];W[ej];B[bo];W[hk];B[jr];W[ir];B[gr];W[gq];B[gl];W[kp];B[lp];W[jp];B[lq];W[lo];B[mp];W[nq];B[kn];W[ln];B[op];W[km];B[io];W[jq];B[oq];W[or];B[pr];W[nr];B[lm];W[mm];B[ll];W[mn];B[qq];W[np];B[pp];W[no];B[fk];W[gm];B[hl];W[hm];B[im];W[il];B[gk];W[fm];B[jl];W[ik];B[gi];W[en];B[do];W[dm];B[rm];W[qo];B[ro];W[rp];B[qn];W[rd];B[rj];W[rh];B[qj];W[rb];B[rc];W[sc];B[qc];W[qa];B[oa];W[ph];B[oe];W[oi];B[og];W[oh];B[hc];W[ha];B[mk];W[ji];B[jj];W[ki];B[qi];W[qh];B[pg];W[qg];B[sd];W[se];B[si];W[ok];B[oj];W[nj];B[pj];W[ni];B[nk];W[mj];B[lj];W[mh];B[li];W[lh];B[ng];W[nh];B[kj];W[lg];B[kf];W[kg];B[jh];W[kh];B[ih];W[jg];B[on];W[pn];B[oo];W[om];B[bn];W[bm];B[dn];W[jk];B[kl];W[rl];B[qp];W[qm];B[rn];W[sm];B[po];W[so];B[rq];W[nl];B[pk];W[ol];B[ql];W[pl];B[rk];W[qk];B[bd];W[bc];B[ql];W[mf];B[me];W[qk];B[ce];W[cc];B[ql];W[ke];B[nf];W[qk];B[sb];W[sa];B[ql];W[sl];B[sp];W[qk];B[ia];W[ja];B[ql];W[ho];B[hn];W[qk];B[ga];W[ql];B[ia];W[ad];B[ha];W[la];B[md];W[be];B[fa];W[bg];B[af];W[fg];B[ff];W[fh];B[ef];W[dh];B[eh];W[ei];B[bh];W[db];B[dd])
+
+```
+
+The markup syntax pairs tags by two-character capital letters with values in square brakets immediately following the tag. Semicolons are basically like line breaks, and the whole game is represented by the rounded brackets.
+
+The `read_sgf` function takes this format and transforms it into a named list.
+
+```{r}
+
+library(kaya)
+my_game <- read_sgf("./inputs/2009-09-01-1.sgf")
+
+str(my_game)
+
+```
+
+Now it stores each tag as a list of named strings, e.g. `my_game$DT` prints the date, `r my_game$DT`. We have added a few variables as well.
+
+`filename` indicates where the sgf is located
+
+`kaya_notes` will indicate if any processing was done by the kaya package.
+
+the `hash_id` is a unique identifier for the game based entirely on the *move sequence*. Two games with different metadata may have the same moves, so have the same hash_id.
+
+In addition, we've added a subtable called `moves` which includes all the information about hte move string itself. The color, the board column and board row. Also comments embedded in the sgf are stored there. We do not explicitly store the move number because (1) it is not in the SGF, and (2) it's implied by the location in the move string, just redudant. No strong feelings either way, but seemed simpler to stay simple.
+
+Go games are stored by kaya as a list object in R.
+
+# absorbing many games
+
+we can do with with an lapply
+
+
+```{r}
+
+my_games <- list.files("./inputs", pattern = "*.sgf$", full.names = TRUE)
+
+game_data <- lapply_pb(my_games, read_sgf)
+
+contents <- unlist(lapply(game_data, length))
+
+```
+
+We can then turn this into a set of relational tables with another functoin that acts on a read_sgf list! write this as a function...
+
+```{r}
+
+library(jsonlite)
+
+d_all <- game_data
+
+target_entries <- 1:length(d_all)
+
+d_chunk <- d_all[target_entries]
+
+dj <- toJSON(d_chunk)
+chunk_json <- paste("./json/test.json", sep="")
+writeLines(dj, chunk_json)
+d <- read_json(chunk_json, simplifyVector=TRUE)
+
+moves <- d$moves
+
+m1 <- rep(NA, length(moves))
+m2 <- rep(NA, length(moves))
+m3 <- rep(NA, length(moves))
+
+for(j in 1:length(moves)){
+  if(nrow(moves[[j]])>0 & !is.null(moves[[j]]$column)){
+    m1[j] <- paste0( letters[moves[[j]]$column[1]], letters[moves[[j]]$row[1]] )
+    m2[j] <- paste0( letters[moves[[j]]$column[2]], letters[moves[[j]]$row[2]] )
+    m3[j] <- paste0( letters[moves[[j]]$column[3]], letters[moves[[j]]$row[3]] )
+  }
+}
+
+d <- d[,!colnames(d) %in% c("moves", "AB", "AW")]
+
+# apply(d, 2, function(z) table(unlist(lapply(z, length))))
+
+library(yamltools)
+d <- vectorize(d)
+
+d$m1 <- m1
+d$m2 <- m2
+d$m3 <- m3
+
+chunk_csv <- gsub("json", "csv", chunk_json)
+write.csv(d, chunk_csv, row.names=FALSE)
+
+print(chunk_csv)
+
+
+
+```
+
+This will read in game_data as an unnamed list, each element being the output of `read_sgf` for that file.
+
+# standard orientation
+
+
+
+# plotting and animating Go games
+
+We can plot a game like so:
+
+```{r}
+
+plot_game(game_data[[1]])
+
+```
+
+This also allows dynamic animations with a speed argument included
+
+```{r}
+
+plot_game(game_data[[1]], speed = 1)
+
+```
+

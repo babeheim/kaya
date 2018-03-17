@@ -1,12 +1,7 @@
 
-rm(list=ls())
-
-library(kaya)
-
-library(testthat)
-
 
 test_that("game with passes can be reoriented", {
+
   sgf_lines <- readLines("./normal_sgf/2009-09-01-10.sgf")
 
   expect_silent(parse_sgf(sgf_lines, rotate=TRUE))
@@ -51,14 +46,13 @@ test_that("all orientations work", {
 })
 
 
-# rotate is wrog wong b/c reflection also happens
-# orient is better
-
 test_that("games with no sector moves don't crash", {
+
   d <- read_sgf('./orientation_sgf/no sector.sgf')
   d2 <- read_sgf('./orientation_sgf/no sector.sgf', rotate=FALSE)
 
   expect_equal(d2$moves, d$moves)
+  
 })
 
 
@@ -67,6 +61,5 @@ test_that("games with no sector moves don't crash", {
 
 
 
-# 1,1 to 19,19 all in quadrant 1
 
 

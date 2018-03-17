@@ -1,0 +1,8 @@
+rmarkdown::html_document:
+  theme: united
+  fig_width: 7
+  fig_height: 2.5
+  toc: true
+  toc_float:
+    collapsed: false
+  code_folding: show
