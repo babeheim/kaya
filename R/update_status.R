@@ -1,5 +1,9 @@
 
-update_status <- function(game_moves){
+update_status <- function(game_moves, viz = FALSE){
+
+# d <- read_sgf('./normal_sgf/2009-09-14-5.sgf')
+#  d$moves$group_id <- id_maker(n = nrow(d$moves), nchar = 3)
+#  game_moves <- d$moves
 
   # expects a game_moves wth five columns:
   # number, row, column and color
@@ -31,7 +35,7 @@ update_status <- function(game_moves){
 
       # 1. update group identity of stones of same color for all moves up to this move
       update_rows <- which(game_moves$color == current_color & game_moves$number <= i & game_moves$group_id != "removed")
-      if(length(update_rows) > 0) game_moves$group_id[update_rows] <- id_groups(game_moves[update_rows, c("column", "row", "group_id")])
+      if(length(update_rows) > 0) game_moves$group_id[update_rows] <- paste(current_color, id_groups(game_moves[update_rows, c("column", "row", "group_id")]))
 
       bad <- any(game_moves$group_id[which(game_moves$group_id != "removed" & game_moves$color == "black")] %in%  game_moves$group_id[which(game_moves$group_id != "removed" & game_moves$color=="white")])
       if(bad) stop("groups are mixing up colors!")
@@ -52,16 +56,19 @@ update_status <- function(game_moves){
       active_rows <- which(game_moves$number <= i & game_moves$group_id != "removed" & !is.na(game_moves$row))
       game_moves$n_liberties[active_rows] <- count_liberties(game_moves[active_rows,])
 
-      plot(game_moves$column[active_rows], game_moves$row[active_rows], bg=game_moves$color[active_rows], pch=21)
-      points(game_moves$column[current_row], game_moves$row[current_row], col="red", pch=20, cex=0.5)
+      if(viz){
+        plot(game_moves$column[active_rows], game_moves$row[active_rows], bg=game_moves$color[active_rows], pch=21, ylim=c(0, 20), xlim=c(0, 20), axes=FALSE, xaxt="n", yaxt="n", xlab="", ylab="")
+        polygon(c(0, 0, 20, 20), c(0, 20, 20, 0))
+        points(game_moves$column[current_row], game_moves$row[current_row], col="red", pch=20, cex=0.5)
+      }
 
       # 5. suicide check - ah its just a problem with my algorithm
-      # update_rows <- which(game_moves$color == current_color & game_moves$number <= i & game_moves$group_id != "removed" & !is.na(game_moves$row))
-      # group_liberties <- tapply(game_moves$n_liberties[update_rows], game_moves$group_id[update_rows], sum)
-      # removable_groups <- names(which(group_liberties == 0))
-      # if(length(removable_groups) > 0){
-      #   warning(paste0("suicide detected at move ", i))
-      # }
+      update_rows <- which(game_moves$color == current_color & game_moves$number <= i & game_moves$group_id != "removed" & !is.na(game_moves$row))
+      group_liberties <- tapply(game_moves$n_liberties[update_rows], game_moves$group_id[update_rows], sum)
+      removable_groups <- names(which(group_liberties == 0))
+      if(length(removable_groups) > 0){
+        warning(paste0("suicide detected at move ", i))
+      }
     }
   }
   return(game_moves$group_id)

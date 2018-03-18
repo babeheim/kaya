@@ -56,6 +56,13 @@ id_maker <- function(n, reserved = "", seed = NA, nchars = NA){
 
 id_groups <- function(moves){
   direct_mat <- id_direct_connections(moves)
+  color_network <- graph_from_adjacency_matrix(direct_mat)
+  group_id <- components(color_network)$membership
+  return(group_id)
+}
+
+id_groups_old <- function(moves){
+  direct_mat <- id_direct_connections(moves)
   group_IDs <- moves$group_id
   for (i in 1:length(group_IDs)){
     tie_cols <- which(direct_mat[i, ])
@@ -73,6 +80,14 @@ id_groups <- function(moves){
           for (m in 1:length(tie_rows_2)){
             tie_cols_3 <- which(direct_mat[tie_rows_2[m], ])
             ingroup <- c(ingroup, tie_cols_3)
+            for (n in 1:length(tie_cols_3)){
+              tie_rows_3 <- which(direct_mat[, tie_cols_3[n]])
+              ingroup <- c(ingroup, tie_rows_3)
+              for (o in 1:length(tie_rows_3)){
+                tie_cols_4 <- which(direct_mat[tie_rows_3[o], ])
+                ingroup <- c(ingroup, tie_cols_4)
+              }
+            }
           }
         }
       }
@@ -83,6 +98,7 @@ id_groups <- function(moves){
   return(group_IDs)
 }
 
+# does this handle NA's correctly?
 id_direct_connections <- function(moves){
   direct_mat <- matrix(FALSE, nrow = nrow(moves), ncol = nrow(moves))
   diag(direct_mat) <- TRUE
