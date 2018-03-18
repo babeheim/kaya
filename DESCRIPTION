@@ -4,7 +4,7 @@ Version: 0.0.0.9000
 Authors@R: person("Bret", "Beheim", email = "beheim@gmail.com", role = c("aut", "cre"))
 Description: collection of tools for analyzing Go (Baduk, Wequi) game records in R
 Depends: R (>= 3.3.2),
- stringi
+ stringi,
  igraph
 License: GPL (>= 3)
 Encoding: UTF-8
