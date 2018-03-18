@@ -9,12 +9,12 @@ test_that("id_direct_connections only connects stones to at most 4 others in ran
     if(length(drop)>0) moves <- moves[-drop,]
     dat <- id_direct_connections(moves)
     dat <- dat | t(dat)
-    plot(x,y)
+#    plot(x,y)
     expect_false( any(colSums(dat) < 1) )
     expect_false( any(colSums(dat) > 5) )
-    if(i %% 10 == 0) print(i)
+#    if(i %% 10 == 0) print(i)
   }
-}
+})
 
 test_that("id_groups doesn't have any weird inconsistencies on random games", {
   for(i in 1:1000){
@@ -38,19 +38,18 @@ test_that("id_groups doesn't have any weird inconsistencies on random games", {
 # 
 
 
-test_that("read_sgf should never result in illegal moves! ",{
-  my_games <- list.files("normal_sgf", full.names = TRUE)
-  for(i in 2:length(my_games)){
-    d <- read_sgf(my_games[i])
-    expect_false(any(is.na(d$moves$column)))
-    expect_false(any(is.na(d$moves$row)))
-    expect_true(all(d$moves$column %in% 1:d$SZ))
-    expect_true(all(d$moves$row %in% 1:d$SZ))
-  }
-})
+# test_that("read_sgf should never result in illegal moves! ",{
+#   my_games <- list.files("normal_sgf", full.names = TRUE)
+#   for(i in 2:length(my_games)){
+#     d <- read_sgf(my_games[i])
+#     expect_false(any(is.na(d$moves$column)))
+#     expect_false(any(is.na(d$moves$row))) # doh what about passes??
+#     expect_true(all(d$moves$column %in% 1:d$SZ))
+#     expect_true(all(d$moves$row %in% 1:d$SZ))
+#   }
+# })
 
-# update status works on all legal games
-
+# this fails! 
 test_that("update_status works fine on valid games",{
   my_games <- list.files("normal_sgf", full.names = TRUE)
   for(i in 2:length(my_games)){
@@ -66,8 +65,6 @@ test_that("update_status detects illegal move at occupied spot",{
   d$moves$group_id <- id_maker(n = nrow(d$moves), nchar = 3)
   expect_error(update_status(d$moves), regexpr = "illegal collision detected")
 })
-
-# update status FAILS on games with suicides
 
 test_that("update_status detects suicide move",{
   d <- read_sgf('./invalid_sgf/suicide.sgf')
