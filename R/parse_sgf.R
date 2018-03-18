@@ -15,19 +15,51 @@ parse_sgf <- function(sgf_lines, rotate = TRUE){
     sgf_lines <- substr(sgf_lines, game_start + 2, game_stop - 1)
     sgf_lines <- gsub("\\];", "\\]~tb~;", sgf_lines)
     sgf_lines <- strsplit(sgf_lines, "~tb~;")[[1]]
+
+    # seperate and process metadata
     metadata <- sgf_lines[1]
     metadata <- gsub("\\]", "\\]~tb~", metadata)
     metadata <- gsub("\\]~tb~\\[", "\\]\\[", metadata)
     metadata <- strsplit(metadata, "~tb~")[[1]]
-    hash_id <- NA
-    n_moves <- 0
+    meta <- list()
+    for (i in 1:length(metadata)){
+      # if is tag
+      tag <- extract_sgf_tag(metadata[i])
+      meta <- c(meta, tag)
+    }
+
     moves <- data.frame(number = integer(), color = character(),
-      column = integer(), row = integer())
+      coord_sgf = character(), comment = character())
+    
+    # organize setup stones, if any 
+    if ("AB" %in% names(meta)){
+      ab_coord_sgf <- meta$AB
+       # minus 20? assumes board is 19x19
+      ab_number <- rep(0, length(ab_coord_sgf))
+      ab_color <- rep("black", length(ab_coord_sgf))
+      ab_comment <- rep("", length(ab_coord_sgf))
+      ab_setup_moves <- data.frame(number = ab_number, color = ab_color,
+        coord_sgf = ab_coord_sgf, comment = ab_comment, 
+        stringsAsFactors = FALSE)
+      moves <- rbind(ab_setup_moves, moves)
+    }
+    if ("AW" %in% names(meta)){
+      aw_coord_sgf <- meta$AW
+       # minus 20? assumes board is 19x19
+      aw_number <- rep(0, length(aw_coord_sgf))
+      aw_color <- rep("white", length(aw_coord_sgf))
+      aw_comment <- rep("", length(aw_coord_sgf))
+      aw_setup_moves <- data.frame(number = aw_number, color = aw_color,
+        coord_sgf = aw_coord_sgf, comment = aw_comment, 
+        stringsAsFactors = FALSE)
+      moves <- rbind(aw_setup_moves, moves)
+    }
+    # seperate and process game moves, if present
     if (length(sgf_lines) > 1){
       move_stuff <- sgf_lines[2:length(sgf_lines)]
       comment <- rep("", length(move_stuff))
-      comment_moves <- grep("C\\[", move_stuff)
-      if (length(comment_moves) > 0){
+      moves_with_comment <- grep("C\\[", move_stuff)
+      if (length(moves_with_comment) > 0){
         move_stuff <- stringi::stri_trans_general(move_stuff, "latin-ascii")
         # convert non-ASCII to closest ascii
         move_stuff <- gsub("[\x01-\x1F]", "", move_stuff)
@@ -36,65 +68,43 @@ parse_sgf <- function(sgf_lines, rotate = TRUE){
         # strip out non-ASCII entirely
         # slow!
         comment <- substr(move_stuff, 6, nchar(move_stuff))
-        comment[comment_moves] <- sapply(comment[comment_moves],
+        comment[moves_with_comment] <- sapply(comment[moves_with_comment],
           function(z) as.character(extract_sgf_tag(z)))
         comment <- as.character(comment)
       }
-      moves <- substr(move_stuff, 1, 5) # strip out comments, if any
-      color <- substr(moves, 1, 1)
+      coord_sgf <- substr(move_stuff, 1, 5) # strip out comment, if any
+      color <- substr(coord_sgf, 1, 1)
       color[color == "B"] <- "black"
       color[color == "W"] <- "white"
-      coord_sgf <- sapply(moves, function(z)
+      coord_sgf <- sapply(coord_sgf, function(z)
        as.character(extract_sgf_tag(z)))
+
       coord_sgf <- as.character(coord_sgf)
-      if (rotate == TRUE) coord_sgf <- orient_sgf(coord_sgf)
-      move_cols <- match(substr(coord_sgf, 1, 1), letters)
-      move_rows <- match(substr(coord_sgf, 2, 2), letters)
       # minus 20? assumes board is 19x19
-      number <- 1:length(move_cols)
-      moves <- data.frame(number, color, column = move_cols,
-       row = move_rows, stringsAsFactors = FALSE)
-      n_moves <- nrow(moves)
+      move_number <- 1:length(coord_sgf)
+      game_moves <- data.frame(number = move_number, color, coord_sgf,
+       comment, stringsAsFactors = FALSE)
       # hash must be a function of colors and moves only!
-      hash_id <- substr(digest::sha1(moves), 1, 19)
-      moves$comments <- comment
+      moves <- rbind(moves, game_moves)
     }
-    meta <- list()
-    for (i in 1:length(metadata)){
-      # if is tag
-      tag <- extract_sgf_tag(metadata[i])
-      meta <- c(meta, tag)
+
+    hash_id <- NA
+    n_moves <- 0
+
+    if(nrow(moves) > 0){
+      if (rotate == TRUE) moves$coord_sgf <- orient_sgf(moves$coord_sgf)
+      moves$column <- match(substr(moves$coord_sgf, 1, 1), letters)
+      moves$row <- match(substr(moves$coord_sgf, 2, 2), letters)
+      moves <- moves[, c("number", "column", "row", "comment")]
+      hash_id <- substr(digest::sha1(
+        moves[, c("number", "column", "row")]), 1, 19)
+      n_moves <- max(moves$number)
     }
-    # extract setup stones and add them to moves as "move 0"
-    if ("AB" %in% names(meta)){
-      coord_sgf <- meta$AB
-      if (rotate == TRUE) coord_sgf <- orient_sgf(coord_sgf)
-      setup_move_cols <- match(substr(coord_sgf, 1, 1), letters)
-      setup_move_rows <- match(substr(coord_sgf, 2, 2), letters)
-       # minus 20? assumes board is 19x19
-      number <- rep(0, length(setup_move_cols))
-      color <- rep("black", length(setup_move_cols))
-      comments <- rep("", length(setup_move_cols))
-      setup_moves_black <- data.frame(number, color, column = setup_move_cols,
-       row = setup_move_rows, comments, stringsAsFactors = FALSE)
-      moves <- rbind(setup_moves_black, moves)
-    }
-    if ("AW" %in% names(meta)){
-      coord_sgf <- meta$AW
-      if (rotate == TRUE) coord_sgf <- orient_sgf(coord_sgf)
-      setup_move_cols <- match(substr(coord_sgf, 1, 1), letters)
-      setup_move_rows <- match(substr(coord_sgf, 2, 2), letters)
-       # minus 20? assumes board is 19x19
-      number <- rep(0, length(setup_move_cols))
-      color <- rep("white", length(setup_move_cols))
-      comments <- rep("", length(setup_move_cols))
-      setup_moves_white <- data.frame(number, color, column = setup_move_cols,
-       row = setup_move_rows, comments, stringsAsFactors = FALSE)
-      moves <- rbind(setup_moves_white, moves)
-    }
+
     if (rotate == TRUE){
       meta$kaya_notes <- "rotated game moves to standard orientation"
     }
+
     output <- meta
     output$hash_id <- hash_id
     output$n_moves <- n_moves
