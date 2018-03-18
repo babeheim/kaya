@@ -95,7 +95,7 @@ parse_sgf <- function(sgf_lines, rotate = TRUE){
       if (rotate == TRUE) moves$coord_sgf <- orient_sgf(moves$coord_sgf)
       moves$column <- match(substr(moves$coord_sgf, 1, 1), letters)
       moves$row <- match(substr(moves$coord_sgf, 2, 2), letters)
-      moves <- moves[, c("number", "column", "row", "comment")]
+      moves <- moves[, c("number", "color", "column", "row", "comment")]
       hash_id <- substr(digest::sha1(
         moves[, c("number", "column", "row")]), 1, 19)
       n_moves <- max(moves$number)
