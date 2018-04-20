@@ -1,7 +1,7 @@
 
 
 
-parse_sgf <- function(sgf_lines, rotate = TRUE){
+parse_sgf_old <- function(sgf_lines, rotate = TRUE){
   sgf_lines <- paste(sgf_lines, collapse = "\n")
   sgf_lines <- gsub("\n", "", sgf_lines)
   # if multiple games, and nothing in-between them

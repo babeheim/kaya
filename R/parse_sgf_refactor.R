@@ -96,7 +96,7 @@ simplify_move_nodes <- function(branch) {
   return(moves)
 }
 
-simplify_game <- function(game_list, rotate) {
+simplify_game <- function(game_list) {
   meta <- game_list$nodes[[1]] # assuming there's a metadata node....
   moves <- data.frame(number = integer(), color = character(),
       coord_sgf = character())
@@ -149,6 +149,6 @@ read_sgf <- function(sgf_file, simplify = TRUE, to.json = FALSE, ...) {
   raw <- paste0(readLines(sgf_file), collapse = "")
   output <- parse_sgf(raw, to.json = to.json)
   if(to.json) simplify <- FALSE
-  if(simplify) output <- simplify_game(output, ...)
+  if(simplify) output <- simplify_game(output)
   return(output)
 }

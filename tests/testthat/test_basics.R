@@ -2,24 +2,23 @@
 
 test_that("one file parses", {
   my_files <- "./normal_sgf/2009-09-01-1.sgf"
-  sgf_lines <- readLines(my_files)
-  x <- parse_sgf(sgf_lines, rotate=FALSE)
-  expect_true(length(x)==22)
+  sgf_lines <- paste0(readLines(my_files), collapse = "")
+  x <- parse_sgf(sgf_lines)
   expect_true(!is.null(names(x)))
 })
 
 
 test_that("loads lines with no errors", {
-  my_files <- list.files("./normal_sgf", pattern="*.sgf", full.names=TRUE)
+  my_files <- list.files("./normal_sgf", pattern="*.sgf", full.names = TRUE)
   for(i in 1:length(my_files)){
-    sgf_lines <- readLines(my_files[i])
+    sgf_lines <- paste0(readLines(my_files[i]), collapse = "")
     expect_silent(x <- parse_sgf(sgf_lines))
   }
 })
 
 test_that("one file reads", {
-  my_files <- list.files("./normal_sgf", pattern="*.sgf", full.names=TRUE)
-  x <- read_sgf(my_files[1], rotate=FALSE)
+  my_files <- list.files("./normal_sgf", pattern="*.sgf", full.names = TRUE)
+  x <- read_sgf(my_files[1], rotate = FALSE)
   expect_true(length(x)==23)
   expect_true(!is.null(names(x)))
 })
