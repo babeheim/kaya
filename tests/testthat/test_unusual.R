@@ -18,18 +18,21 @@ test_that("kanji names okay", {
 })
 
 
+# the problem is parentheses inside the text strings...kaya
+# will separate those out then huh!
+
 
 
 my_game <- './unusual_sgf/hourglass_parentheses_problem.sgf'
 
-sgf_lines <- readLines(my_game)
+sgf_lines <- paste0(readLines(my_game), collapse = "")
 
-d <- read_sgf(my_game)
+d <- read_sgf(my_game, simplify = FALSE, to.json = TRUE)
 
 test_that("strings with )( okay", {
 
   expect_true(grep("\\)\\(", d$moves$comment) > 1)
-  expect_true(length(d)>0)
+  expect_true(length(d) > 0)
   expect_true(validate_game(d))
 
 })

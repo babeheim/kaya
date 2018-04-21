@@ -1,5 +1,31 @@
 
 
+
+strip_comments <- function(move_nodes) {
+  out <- lapply(move_nodes, function(z) {
+    keep <- which(names(z) %in% c("W", "B"))
+    z[keep]
+  })
+  return(out)
+}
+
+simplify_move_nodes <- function(branch) {
+  move_nodes <- branch$nodes
+  move_nodes <- strip_comments(move_nodes)
+  coord_sgf <- unlist(move_nodes)
+  color <- names(coord_sgf)
+  color[color == "B"] <- "black"
+  color[color == "W"] <- "white"
+  moves <- data.frame(color, coord_sgf, stringsAsFactors = FALSE)
+  if ("branches" %in% names(branch)) {
+    first_branch <- branch$branches[[1]]
+    branch_moves <- simplify_move_nodes(first_branch)
+    moves <- rbind(moves, branch_moves)
+    # attach branches in the same way!
+  }
+  return(moves)
+}
+
 extract_sgf_tag <- function(sgf_tag){
   if (length(sgf_tag) != 1) stop("sgf tag improper")
   sgf_tag <- strsplit(sgf_tag, "\\[|\\]\\[|\\]")[[1]]
@@ -182,3 +208,53 @@ lapply_pb <- function(X, FUN, ...){
   close(pb)
   res
 }
+
+
+parse_tags <- function(tag_data) {
+  if(length(tag_data) == 1){
+    sgf_tag <- tag_data
+    sgf_tag <- strsplit(sgf_tag, "\\[|\\]\\[|\\]")[[1]]
+    sgf_tag <- stringi::stri_trans_general(sgf_tag, "latin-ascii")
+    sgf_tag <- gsub("[\x01-\x1F]", "", sgf_tag)
+    # takes care of non-printing ASCII
+    sgf_tag <- gsub(" *$|^ *", "", sgf_tag)
+    output <- list()
+    output[[1]] <- sgf_tag[2:length(sgf_tag)]
+    names(output) <- sgf_tag[1] # might have trouble here
+  } else {
+    output <- list()
+    for(i in 1:length(tag_data)) output <- c(output, parse_tags(tag_data[i]))
+  }
+  return(output)
+}
+
+split_nodes <- function(branch_string) {
+  output <- strsplit(branch_string, ";")[[1]]
+  if(output[1] == "") output <- output[-1]
+  return(output)
+}
+
+parse_nodes <- function(node_data) {
+  if(length(node_data) != 1) stop("node data must be a single string")
+  node_vec <- split_nodes(node_data)
+  if (length(node_vec) == 1){
+    node_string <- node_vec
+    node_string <- gsub(" *$|^ *", "", node_string)
+    node_string <- gsub("\\] *\\[", "\\]\\[", node_string)
+    node_string <- gsub("\\]", "\\]~tb~", node_string)
+    node_string <- gsub("\\]~tb~\\[", "\\]\\[", node_string)
+    tag_data <- strsplit(node_string, "~tb~")[[1]]
+    output <- parse_tags(tag_data)
+  } else {
+    output <- list()
+    for(i in 1:length(node_vec)) output[[i]] <- parse_nodes(node_vec[i])
+  }
+  return(output)
+}
+
+bracket_matcher <- function(string){
+  matched <- gregexpr("\\((?>[^()]|(?R))*\\)", string, perl = TRUE)[[1]]
+  return(matched)
+}
+
+bracket_matcher("test\\(test2\\)\\(test3\\)")

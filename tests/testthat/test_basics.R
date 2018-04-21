@@ -19,7 +19,7 @@ test_that("loads lines with no errors", {
 test_that("one file reads", {
   my_files <- list.files("./normal_sgf", pattern="*.sgf", full.names = TRUE)
   x <- read_sgf(my_files[1], rotate = FALSE)
-  expect_true(length(x)==23)
+  expect_true(length(x)==22)
   expect_true(!is.null(names(x)))
 })
 

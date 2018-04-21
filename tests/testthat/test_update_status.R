@@ -55,7 +55,7 @@ test_that("test igraph refactor of id_groups against my original version", {
   }
 })
 
-test_that("id_groups_refactor doesn't have any weird inconsistencies on random games", {
+test_that("id_groups doesn't have any weird inconsistencies on random games", {
   for(i in 1:400){
     x <- sample(1:19, 100, replace = TRUE)
     y <- sample(1:19, 100, replace = TRUE)
@@ -65,7 +65,7 @@ test_that("id_groups_refactor doesn't have any weird inconsistencies on random g
     moves$group_id <- id_maker(n=nrow(moves), nchar=3)
     dat <- id_direct_connections(moves)
     dat <- dat | t(dat)
-    moves$group_id <- id_groups_refactor(moves)
+    moves$group_id <- id_groups(moves)
     singletons <- moves$group_id[which(colSums(dat) == 1)]
     groupers <- moves$group_id[which(colSums(dat) > 1)]
     multistone_ids <- sort(unique(moves$group_id[duplicated(moves$group_id)]))
