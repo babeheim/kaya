@@ -2,7 +2,8 @@
 read_sgf <- function(sgf_file, simplify = TRUE, to.json = FALSE, ...) {
   if (length(sgf_file) != 1) stop("only one path allowed")
   raw <- paste0(readLines(sgf_file), collapse = "")
-  output <- parse_sgf(raw, to.json = to.json)
+  scrubbed <- check_comment_escapes(raw)
+  output <- parse_sgf(scrubbed, to.json = to.json)
   if(to.json) simplify <- FALSE
   if(simplify) output <- simplify_game(output, ...)
   return(output)
