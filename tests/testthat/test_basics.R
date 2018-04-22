@@ -15,6 +15,15 @@ test_that("one file parses and simplifies", {
   expect_true(!is.null(names(x)))
 })
 
+test_that("blah", {
+  my_game <- './normal_sgf/2009-09-01-10.sgf'
+  sgf_lines <- paste0(readLines(my_game), collapse = "")
+  d <- parse_sgf(sgf_lines)
+  d <- simplify_game(d)
+  expect_true(length(d) > 0)
+  expect_true(validate_game(d))
+})
+
 test_that("loads lines with no errors", {
   my_files <- list.files("./normal_sgf", pattern="*.sgf", full.names = TRUE)
   for(i in 1:length(my_files)){
@@ -31,7 +40,7 @@ test_that("one file reads", {
 test_that("reads several files with no errors", {
   my_files <- list.files("./normal_sgf", pattern="*.sgf", full.names=TRUE)
   for(i in 1:length(my_files)){
-    expect_silent(x <- read_sgf(my_files[i], to.json = TRUE))
+    expect_silent(x <- read_sgf(my_files[i], to.json = FALSE))
   }
 })
 

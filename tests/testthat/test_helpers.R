@@ -191,36 +191,44 @@ test_that("check_comment_escapes works", {
   expect_true(grep("test\\\\;test2", x)==1)
   expect_true(nchar(x) == nchar(string) + 1)
 
+  string <- "(;PB[bret];PW[paul];C[te;t2](;PB[bret];PW[paul];C[te;t2])(;PB[bret];PW[paul];C[te;t2]))"
+  x <- check_comment_escapes(string)
+  expect_true(grep("te\\\\;t2", x) == 1)
+  expect_true(nchar(x) == nchar(string) + 3)
+
   string <- ";PB[bret];PW[paul];C[te(stte)st2]"
   x <- check_comment_escapes(string)
   expect_true(grep("te\\\\\\{stte\\\\\\}st2", x)==1)
   expect_true(nchar(x) == nchar(string) + 2)
 
+  string <- ";PB[bret];PW[paul];C[te[stte]st2]"
+  x <- check_comment_escapes(string)
+  expect_true(grep("te\\\\\\[stte\\\\\\]st2", x) == 1)
+  expect_true(nchar(x) == nchar(string) + 2)
+
+  string <- ";PB[bret];PW[paul];C[)]"
+  x <- check_comment_escapes(string)
+  expect_true(grep("\\}", x) == 1)
+  expect_true(nchar(x) == nchar(string) + 1)
+
+  string <- ";PB[bret];PW[paul];C[(]"
+  x <- check_comment_escapes(string)
+  expect_true(grep("\\{", x) == 1)
+  expect_true(nchar(x) == nchar(string) + 1)
+
+  string <- ";PB[bret];PW[paul];C[;]"
+  x <- check_comment_escapes(string)
+  expect_true(grep("\\;", x) == 1)
+  expect_true(nchar(x) == nchar(string) + 1)
+
+
+  string <- "(;PB[bret];PW[paul];C[te[sttest2])"
+  expect_error(check_comment_escapes(string))
+
 })
 
 
 
-string0 <- "(;PB[bret];PW[paul];C[test])"
-string1 <- ";PB[bret];PW[paul];C[te(stte)st2]"
-string2 <- ";PB[bret];PW[paul];C[te[stte]st2]"
-string3 <- ";PB[bret];PW[paul];C[te;t2]"
-string4 <- "(;PB[bret];PW[paul];C[te;t2](;PB[bret];PW[paul];C[te;t2])(;PB[bret];PW[paul];C[te;t2]))"
-string5 <- ";PB[bret];PW[paul];C[;]"
-string6 <- ";PB[bret];PW[paul];C[(]"
-string7 <- ";PB[bret];PW[paul];C[)]"
 
+# sgf validator ???
 
-
-
-my_game <- './redbean_sgf/redbean_no_variation.sgf'
-sgf_lines <- paste0(readLines(my_game), collapse = "")
-x <- bracket_matcher(sgf_lines)
-if(length(x) == 1 & x[1] == 1){
-  sgf_lines <- substr(sgf_lines, 2, nchar(sgf_lines) - 1)
-  x <- bracket_matcher(sgf_lines)
-}
-d <- parse_branch(sgf_lines)
-
-
-
-# sgf validator??

@@ -28,6 +28,8 @@ bracket_matcher <- function(string){
 }
 
 check_comment_escapes <- function(string) {
+  balanced_square <- length(gregexpr("\\]", string)[[1]]) == length(gregexpr("\\[", string)[[1]])
+  if(!balanced_square) stop("sgf seems invalid; square brackets don't balance, must fix first")
   comment_pattern <- "\\[(?>[^\\[\\]]|(?R))*\\]"
   check <- gregexpr(comment_pattern, string, perl = TRUE)
   if (check[[1]][1]!="-1") {

@@ -1,3 +1,4 @@
+
 simplify_game <- function(game_list, rotate = TRUE) {
 
   meta <- list()
@@ -43,8 +44,8 @@ simplify_game <- function(game_list, rotate = TRUE) {
     hash_id <- NA
     n_moves <- 0
     if (nrow(moves) > 0) {
+      moves$coord_sgf[is.na(moves$coord_sgf)] <- "tt"
       trans_coord_sgf <- moves$coord_sgf
-      trans_coord_sgf[is.na(trans_coord_sgf)] <- ""
       if (rotate == TRUE) trans_coord_sgf <- orient_sgf(moves$coord_sgf)
       # do i need to subtract from 20?
       moves$column <- match(substr(trans_coord_sgf, 1, 1), letters)
@@ -63,6 +64,7 @@ simplify_game <- function(game_list, rotate = TRUE) {
 
   output <- meta
   if(nrow(moves) != 0) output$moves <- moves
+  if(nrow(moves) == 0) output$n_moves <- 0
 
   return(output)
 

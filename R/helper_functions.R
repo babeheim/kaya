@@ -143,7 +143,6 @@ id_direct_connections <- function(moves){
   return(direct_mat)
 }
 
-
 validate_game <- function(game_data){
   coords <- as.character(game_data$moves$coord_sgf)
   coords_invalid <- !all(unlist(strsplit(coords, "")) %in% letters[1:20])
