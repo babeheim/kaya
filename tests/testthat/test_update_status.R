@@ -1,7 +1,7 @@
 
 
 test_that("id_direct_connections only connects stones to at most 4 others in random games", {
-  for(i in 1:1000){
+  for(i in 1:100){
     x <- sample(1:19, 150, replace = TRUE)
     y <- sample(1:19, 150, replace = TRUE)
     moves <- data.frame(column = x, row = y)
@@ -9,15 +9,13 @@ test_that("id_direct_connections only connects stones to at most 4 others in ran
     if(length(drop)>0) moves <- moves[-drop,]
     dat <- id_direct_connections(moves)
     dat <- dat | t(dat)
-#    plot(x,y)
     expect_false( any(colSums(dat) < 1) )
     expect_false( any(colSums(dat) > 5) )
-#    if(i %% 10 == 0) print(i)
   }
 })
 
 test_that("id_groups doesn't have any weird inconsistencies on random games", {
-  for(i in 1:400){
+  for(i in 1:40){
     x <- sample(1:19, 100, replace = TRUE)
     y <- sample(1:19, 100, replace = TRUE)
     moves <- data.frame(column = x, row = y)
@@ -32,15 +30,11 @@ test_that("id_groups doesn't have any weird inconsistencies on random games", {
     multistone_ids <- sort(unique(moves$group_id[duplicated(moves$group_id)]))
     expect_true(!any(singletons %in% multistone_ids))
     expect_true(all(groupers %in% multistone_ids))
-    # groups <- sort(unique(moves$group_id))
-    # group_colors <- rainbow(length(groups))
-    # moves$group_colors <- group_colors[match(moves$group_id, groups)]
-    # plot(moves$column, moves$row, col=moves$group_colors, pch=20)
   }
 })
 
 test_that("test igraph refactor of id_groups against my original version", {
-  for(i in 1:500){
+  for(i in 1:50){
     x <- sample(1:19, 100, replace = TRUE)
     y <- sample(1:19, 100, replace = TRUE)
     moves <- data.frame(column = x, row = y)
@@ -56,7 +50,7 @@ test_that("test igraph refactor of id_groups against my original version", {
 })
 
 test_that("id_groups doesn't have any weird inconsistencies on random games", {
-  for(i in 1:400){
+  for(i in 1:40){
     x <- sample(1:19, 100, replace = TRUE)
     y <- sample(1:19, 100, replace = TRUE)
     moves <- data.frame(column = x, row = y)
@@ -71,11 +65,16 @@ test_that("id_groups doesn't have any weird inconsistencies on random games", {
     multistone_ids <- sort(unique(moves$group_id[duplicated(moves$group_id)]))
     expect_true(!any(singletons %in% multistone_ids))
     expect_true(all(groupers %in% multistone_ids))
-    # groups <- sort(unique(moves$group_id))
-    # group_colors <- rainbow(length(groups))
-    # moves$group_colors <- group_colors[match(moves$group_id, groups)]
-    # plot(moves$column, moves$row, col=moves$group_colors, pch=20)
   }
+})
+
+test_that("update_status is okay with games with passes", {
+  d <- read_sgf('./normal_sgf/has_pass.sgf')
+  d$moves$group_id <- id_maker(n = nrow(d$moves), nchar = 3)
+  expect_silent(update_status(d$moves, viz = FALSE))
+  d <- read_sgf('./normal_sgf/has_passes.sgf')
+  d$moves$group_id <- id_maker(n = nrow(d$moves), nchar = 3)
+  expect_silent(update_status(d$moves, viz = FALSE))
 })
 
 
@@ -85,7 +84,6 @@ test_that("update_status works fine on a few valid games",{
     d <- read_sgf(my_games[i])
     d$moves$group_id <- id_maker(n = nrow(d$moves), nchar = 3)
     expect_silent(update_status(d$moves, viz = FALSE))
-    print(my_games[i])
   }
 })
 

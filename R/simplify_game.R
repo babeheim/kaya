@@ -5,14 +5,9 @@ simplify_game <- function(game_list, rotate = TRUE) {
   moves <- data.frame(number = integer(), color = character(),
       coord_sgf = character())
 
-  # is there metadata?
-
   has_meta <- !all(names(game_list$nodes[[1]]) %in% c("B", "W"))
-
   if (has_meta) {
     meta <- game_list$nodes[[1]]
-    # assuming there's a metadata node....
-    ## does the metadata have any setup stones?
     if ("AB" %in% names(meta)){
       ab_coord_sgf <- meta$AB
       ab_number <- rep(0, length(ab_coord_sgf))
@@ -32,11 +27,7 @@ simplify_game <- function(game_list, rotate = TRUE) {
     }
   }
 
-  # does the game have moves?
-  # add moves on from the current nodes and also from nodes on each first branch all the way down
-
   has_moves <- any(unlist(lapply(game_list$nodes, function(z) any(names(z) %in% c("B", "W")))))
-
   if (has_moves) {
     game_moves <- simplify_move_nodes(game_list)
     game_moves$number <- 1:nrow(game_moves)
@@ -48,8 +39,8 @@ simplify_game <- function(game_list, rotate = TRUE) {
       trans_coord_sgf <- moves$coord_sgf
       if (rotate == TRUE) trans_coord_sgf <- orient_sgf(moves$coord_sgf)
       # do i need to subtract from 20?
-      moves$column <- match(substr(trans_coord_sgf, 1, 1), letters)
-      moves$row <- match(substr(trans_coord_sgf, 2, 2), letters)
+      moves$column <- match(substr(trans_coord_sgf, 1, 1), letters[1:19])
+      moves$row <- match(substr(trans_coord_sgf, 2, 2), letters[1:19])
       moves <- moves[, c("color", "coord_sgf", "number", "column", "row")]
       meta$hash_id <- substr(digest::sha1(moves[, c("column", "row")]), 1, 19)
       meta$n_moves <- nrow(moves)

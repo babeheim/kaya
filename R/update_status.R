@@ -1,10 +1,6 @@
 
 update_status <- function(game_moves, viz = FALSE){
 
-# d <- read_sgf('./normal_sgf/2009-09-14-5.sgf')
-#  d$moves$group_id <- id_maker(n = nrow(d$moves), nchar = 3)
-#  game_moves <- d$moves
-
   # expects a game_moves wth five columns:
   # number, row, column and color
   check1 <- class(game_moves) == "data.frame"
