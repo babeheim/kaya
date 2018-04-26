@@ -143,16 +143,42 @@ id_direct_connections <- function(moves){
   return(direct_mat)
 }
 
-validate_game <- function(game_data){
-  coords <- as.character(game_data$moves$coord_sgf)
-  coords_invalid <- !all(unlist(strsplit(coords, "")) %in% letters[1:20])
-  coords_wronglength <- !all(nchar(coords) %in% c(0, 2))
-  duplicate_key <- any(duplicated(names(game_data)))
-  long_keys <- unlist(lapply(game_data, length) > 1)
-  long_keys <- names(long_keys[long_keys])
-  long_key_error <- !all(long_keys %in% c("moves", "AB", "AW"))
-  output <- !(long_key_error | duplicate_key | coords_wronglength |
-    coords_invalid)
+create_database <- function(sgf_paths) {
+  my_files <- sgf_paths
+  jsons <- list()
+  for(i in 1:length(my_files)){
+    game_data <- read_sgf(my_files[i])
+    game_data$m1 <- game_data$moves$coord_sgf[1]
+    game_data$m2 <- game_data$moves$coord_sgf[2]
+    jsons[[i]] <- toJSON(game_data[-which(names(game_data) %in% c("AB", "AW", "moves"))])
+  }
+  # read jsons into a single list of lists
+  output <- lapply(jsons, function(z) fromJSON(z, simplifyVector=TRUE))
+  # toJSON(output, pretty=TRUE)
+  # combine lists of lists into one big dataframe of lists, by using jsonlite cleverly
+  output <- fromJSON(as.character(toJSON(output)), simplifyVector=TRUE)
+  output <- vectorize(output)
+  return(output)
+}
+
+validate_games <- function(path) {
+  if(length(path) == 1){
+    res <- try(game_data <- read_sgf(path), silent = TRUE)
+    failed <- class(res) == "try-error"
+    if(failed) stop(paste(path, "is not a valid sgf"))
+    coords <- as.character(game_data$moves$coord_sgf)
+    coords_invalid <- !all(unlist(strsplit(coords, "")) %in% letters[1:20])
+    coords_wronglength <- !all(nchar(coords) %in% c(0, 2))
+    duplicate_key <- any(duplicated(names(game_data)))
+    long_keys <- unlist(lapply(game_data, length) > 1)
+    long_keys <- names(long_keys[long_keys])
+    long_key_error <- !all(long_keys %in% c("moves", "AB", "AW"))
+    output <- !(long_key_error | duplicate_key | coords_wronglength |
+      coords_invalid)
+  } else {
+    output <- rep(NA, length(path))
+    for(i in 1:length(path)) output[i] <- validate_games(path[i])
+  }
   return(output)
 }
 

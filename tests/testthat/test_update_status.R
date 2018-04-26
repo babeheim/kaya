@@ -69,17 +69,17 @@ test_that("id_groups doesn't have any weird inconsistencies on random games", {
 })
 
 test_that("update_status is okay with games with passes", {
-  d <- read_sgf('./normal_sgf/has_pass.sgf')
+  d <- read_sgf('./real_sgf/has_pass.sgf')
   d$moves$group_id <- id_maker(n = nrow(d$moves), nchar = 3)
   expect_silent(update_status(d$moves, viz = FALSE))
-  d <- read_sgf('./normal_sgf/has_passes.sgf')
+  d <- read_sgf('./real_sgf/has_passes.sgf')
   d$moves$group_id <- id_maker(n = nrow(d$moves), nchar = 3)
   expect_silent(update_status(d$moves, viz = FALSE))
 })
 
 
 test_that("update_status works fine on a few valid games",{
-  my_games <- list.files("normal_sgf", full.names = TRUE)[1:10]
+  my_games <- list.files("real_sgf", full.names = TRUE)[1:10]
   for(i in 1:length(my_games)){
     d <- read_sgf(my_games[i])
     d$moves$group_id <- id_maker(n = nrow(d$moves), nchar = 3)

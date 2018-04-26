@@ -6,6 +6,12 @@ test_that("games with characters outside sgf tree fail", {
 })
 
 
+test_that("multigame files read right", {
+  my_game <- './invalid_sgf/contains_three_games.sgf'
+  expect_error(d <- read_sgf(my_game))
+})
+
+
 test_that("extra brackets caught",{
   my_game <- './invalid_sgf/illegal_square_brackets.sgf'
   expect_error(d <- read_sgf(my_game))
@@ -23,18 +29,18 @@ test_that("missing brackets caught",{
 test_that("duplicated tags caught",{
   my_game <- './invalid_sgf/duplicate_tag.sgf'
   d <- read_sgf(my_game)
-  expect_false(validate_game(d))
+  expect_false(validate_games(my_game))
 })
 
 test_that("invalid sgf coordinates caught",{
   my_game <- './invalid_sgf/invalid_moves.sgf'
   d <- read_sgf(my_game)
-  expect_false(validate_game(d))
+  expect_false(validate_games(my_game))
   my_game <- './invalid_sgf/more_invalid_moves.sgf'
   d <- read_sgf(my_game)
-  expect_false(validate_game(d))
+  expect_false(validate_games(my_game))
   my_game <- './invalid_sgf/yet_more_invalid_moves.sgf'
   d <- read_sgf(my_game)
-  expect_false(validate_game(d))
+  expect_false(validate_games(my_game))
 })
 

@@ -6,7 +6,7 @@ test_that("kanji names okay", {
   d <- read_sgf(my_game)
   expect_true(d$PB == "ヒカル")
   expect_true(d$PW == "お顔")
-  expect_true(validate_game(d))
+  expect_true(validate_games(my_game))
 })
 
 test_that("strings with ( ) okay", {
@@ -14,27 +14,31 @@ test_that("strings with ( ) okay", {
   sgf_lines <- paste0(readLines(my_game, warn = FALSE), collapse = "")
   d <- read_sgf(my_game, simplify = TRUE)
   expect_true(length(d) > 0)
-  expect_true(validate_game(d))
+  expect_true(validate_games(my_game))
 })
 
 test_that("comments with semicolons okay", {
   my_game <- './unusual_sgf/comments_have_semicolons.sgf'
   sgf_lines <- readLines(my_game, warn = FALSE)
   d <- read_sgf(my_game)
-  expect_true(validate_game(d))
+  expect_true(validate_games(my_game))
 })
 
 test_that("comments work", {
   my_game <- './unusual_sgf/comments_with_parentheses.sgf'
   sgf_lines <- readLines(my_game, warn = FALSE)
   d <- read_sgf(my_game, rotate = FALSE)
-  expect_true(validate_game(d))
+  expect_true(validate_games(my_game))
 })
 
-test_that("multigame files read right", {
-  my_game <- './unusual_sgf/contains_three_games.sgf'
-  expect_error(d <- read_sgf(my_game))
+
+test_that("square bracket problem", {
+  my_game <- './unusual_sgf/metadata_with_square_bracket.sgf'
+  sgf_lines <- readLines(my_game, warn = FALSE)
+  d <- read_sgf(my_game, rotate = FALSE)
+  expect_true(validate_games(my_game))
 })
+
 
 test_that("no-move game reads correctly", {
   my_game <- './unusual_sgf/only_metadata.sgf'
@@ -44,7 +48,7 @@ test_that("no-move game reads correctly", {
   expect_true(d$GM == "1")
   expect_true(d$n_moves == 0)
   expect_true(all(nchar(names(d)) > 1))
-  expect_true(validate_game(d))
+  expect_true(validate_games(my_game))
 })
 
 

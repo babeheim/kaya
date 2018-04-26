@@ -4,9 +4,9 @@ split_tags <- function(tag_string) {
   if(length(tag_string) != 1) stop("split_tags can only accept individual strings")
   node_string <- tag_string
   node_string <- gsub(" *$|^ *", "", node_string)
-  node_string <- gsub("\\] *\\[", "\\]\\[", node_string)
-  node_string <- gsub("\\]", "\\]~tb~", node_string)
-  node_string <- gsub("\\]~tb~\\[", "\\]\\[", node_string)
+  node_string <- gsub("(?<!\\\\)\\] *\\[", "\\]\\[", node_string, perl = TRUE)
+  node_string <- gsub("(?<!\\\\)\\]", "\\]~tb~", node_string, perl = TRUE)
+  node_string <- gsub("(?<!\\\\)\\]~tb~\\[", "\\]\\[", node_string, perl = TRUE)
   output <- strsplit(node_string, "~tb~")[[1]]
   return(output)
 }
@@ -30,7 +30,8 @@ bracket_matcher <- function(string){
 check_comment_escapes <- function(string) {
   balanced_square <- length(gregexpr("\\]", string)[[1]]) == length(gregexpr("\\[", string)[[1]])
   if(!balanced_square) stop("sgf seems invalid; square brackets don't balance, must fix first")
-  comment_pattern <- "\\[(?>[^\\[\\]]|(?R))*\\]"
+#  comment_pattern <- "\\[(?>[^\\[\\]]|(?R))*\\]"
+  comment_pattern <- "\\[((?>[^\\[\\]]+)|(?R))*\\]"
   check <- gregexpr(comment_pattern, string, perl = TRUE)
   if (check[[1]][1]!="-1") {
     corrected <- regmatches(string, check)
@@ -48,8 +49,9 @@ parse_tag <- function(tag_data) {
   output <- list()
   if(length(tag_data) == 1){
     sgf_tag <- tag_data
-    if(grep("\\[(.*)\\]", tag_data) != 1) stop("input tag is improper; no matching square brackets")
-    sgf_tag <- strsplit(sgf_tag, "\\[|\\]\\[|\\]")[[1]]
+  #  if(grep("\\[(.*)\\]", tag_data) != 1) stop("input tag is improper; no matching square brackets")
+#    sgf_tag <- strsplit(sgf_tag, "(?<!\\\\)\\[|(?<!\\\\)\\](?<!\\\\)\\[|(?<!\\\\)\\]")[[1]]
+    sgf_tag <- strsplit(sgf_tag, "(?<!\\\\)\\[|(?<!\\\\)\\](?<!\\\\)\\[|(?<!\\\\)\\]", perl = TRUE)[[1]]
     sgf_tag <- stringi::stri_trans_general(sgf_tag, "latin-ascii")
     sgf_tag <- gsub("[\x01-\x1F]", "", sgf_tag)
     # takes care of non-printing ASCII

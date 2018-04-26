@@ -35,11 +35,6 @@ node_string <- ";PB[bret\\;paul]PW[alphago]"
 nodes <- split_nodes(node_string)
 nodes
 
-# non-escaped semicolons produce invalid tags
-node_string <- ";PB[bret;paul]PW[alphago]"
-nodes <- split_nodes(node_string)
-expect_error(parse_tag(nodes[1]))
-
 node_string <- ";PB[bret]PW[blah]"
 nodes <- split_nodes(node_string)
 nodes
@@ -55,32 +50,39 @@ nodes
 
 # output is named list of length 1, where names are object keys
 
-x <- "PB[bret]"
-parse_tag(x)
+test_that("parse tags works", {
+  
+  x <- "PB[b\\[ret]"
+  parse_tag(x)
 
-x <- c("PB[bret]", "PW[paul]")
-kaya::parse_tag(x)
+  x <- "PB[bret]"
+  parse_tag(x)
 
-x <- c("B[]")
-parse_tag(x)
+  x <- c("PB[bret]", "PW[paul]")
+  kaya::parse_tag(x)
 
-x <- c("gar[bage")
-expect_error(kaya::parse_tag(x))
+  x <- c("B[]")
+  parse_tag(x)
 
-x <- c("ga]r[bage")
-expect_error(kaya::parse_tag(x))
+  x <- c("gar[bage")
+  expect_error(parse_tag(x))
 
-x <- c("[bage]")
-expect_error(kaya::parse_tag(x))
+  x <- c("ga]r[bage")
+  parse_tag(x)
 
-x <- c("garbage")
-expect_error(parse_tag(x))
+  x <- c("[bage]")
+  expect_error(kaya::parse_tag(x))
 
-x <- c("PBA[bret]")
-expect_error(parse_tag(x))
+  x <- c("garbage")
+  expect_error(parse_tag(x))
 
-x <- c("PB[bret]", "PW[paul]", "PB[mel]")
-expect_error(parse_tag(x))
+  x <- c("PBA[bret]")
+  expect_error(parse_tag(x))
+
+  x <- c("PB[bret]", "PW[paul]", "PB[mel]")
+  expect_error(parse_tag(x))
+
+})
 
 # parse_node
 
@@ -128,7 +130,7 @@ parse_sgf(sgf_string)
 # also needs to be able to discard all stuff OUTSIDE
 # the ( ) ( )
 
-game_list <- read_sgf("./normal_sgf/2009-09-01-1.sgf", simplify = FALSE) 
+game_list <- read_sgf("./real_sgf/2009-09-01-1.sgf", simplify = FALSE) 
 
 game_list <- read_sgf("./branching_sgf/single_bifurcation.sgf", simplify = FALSE) 
 
@@ -221,14 +223,10 @@ test_that("check_comment_escapes works", {
   expect_true(grep("\\;", x) == 1)
   expect_true(nchar(x) == nchar(string) + 1)
 
-
-  string <- "(;PB[bret];PW[paul];C[te[sttest2])"
-  expect_error(check_comment_escapes(string))
+  string <- "(;PB[bret];PW[paul];C[te[sttest2]])"
+  expect_silent(x <- check_comment_escapes(string))
+  expect_true(grep("\\\\\\[", x) == 1)
+  expect_true(grep("\\\\\\]", x) == 1)
 
 })
-
-
-
-
-# sgf validator ???
 
