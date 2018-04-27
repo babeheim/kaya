@@ -1,4 +1,32 @@
 
+
+strip_comments <- function(move_nodes) {
+  out <- lapply(move_nodes, function(z) {
+    keep <- which(names(z) %in% c("W", "B"))
+    z[keep]
+  })
+  return(out)
+}
+
+
+simplify_move_nodes <- function(branch) {
+  move_nodes <- branch$nodes
+  move_nodes <- strip_comments(move_nodes)
+  coord_sgf <- unlist(move_nodes)
+  color <- names(coord_sgf)
+  color[color == "B"] <- "black"
+  color[color == "W"] <- "white"
+  moves <- data.frame(color, coord_sgf, stringsAsFactors = FALSE)
+  if ("branches" %in% names(branch)) {
+    first_branch <- branch$branches[[1]]
+    branch_moves <- simplify_move_nodes(first_branch)
+    moves <- rbind(moves, branch_moves)
+    # attach branches in the same way!
+  }
+  return(moves)
+}
+
+
 simplify_game <- function(game_list, rotate = TRUE) {
 
   meta <- list()

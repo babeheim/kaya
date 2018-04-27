@@ -1,4 +1,7 @@
 
+# we absolutely must escape everything in the comments...
+# but we cannot process a game that has an unmatched [ in the comments! 
+# even a \[ will fail, I believe!
 
 check_comment_escapes <- function(string) {
   balanced_square <- length(gregexpr("(?<!\\\\)\\]", string, perl = TRUE)[[1]]) == length(gregexpr("(?<!\\\\)\\[", string, perl = TRUE)[[1]])
@@ -21,9 +24,21 @@ check_comment_escapes <- function(string) {
 
 
 
-split_tags <- function(tag_string) {
-  if(length(tag_string) != 1) stop("split_tags can only accept individual strings")
-  node_string <- tag_string
+split_tag <- function(tag_string) {
+  if(length(tag_string) != 1) stop("split_tag can only accept individual strings")
+  output <- list()
+  tag_string <- strsplit(tag_string, "(?<!\\\\)\\[|(?<!\\\\)\\](?<!\\\\)\\[|(?<!\\\\)\\]", perl = TRUE)[[1]]
+  tag_string <- stringi::stri_trans_general(tag_string, "latin-ascii")
+  tag_string <- gsub("[\x01-\x1F]", "", tag_string)
+  # takes care of non-printing ASCII
+  tag_string <- gsub(" *$|^ *", "", tag_string)
+  if(tag_string[1] == "") stop("input tag is improper, cannot locate key/value pair")
+  tag_string[tag_string == ""] <- NA
+  return(tag_string)
+}
+
+split_node <- function(node_string) {
+  if(length(node_string) != 1) stop("split_node can only accept individual strings")
   node_string <- gsub(" *$|^ *", "", node_string)
   node_string <- gsub("(?<!\\\\)\\] *\\[", "\\]\\[", node_string, perl = TRUE)
   node_string <- gsub("(?<!\\\\)\\]", "\\]~tb~", node_string, perl = TRUE)
@@ -32,7 +47,7 @@ split_tags <- function(tag_string) {
   return(output)
 }
 
-split_nodes <- function(branch_string) {
+split_branch <- function(branch_string) {
   output <- strsplit(branch_string, "(?<!\\\\);", perl = TRUE)[[1]]
   if(length(output) == 0) stop("branch contains no valid nodes")
   if(output[1] == "") output <- output[-1]
@@ -40,32 +55,28 @@ split_nodes <- function(branch_string) {
 }
 
 
-# split_branches? 
-
 # I can probably make a better version of this where the parenthesis don't need
 # to be turned into curly races
 
-# parse, which takes one string of text and breaks it up into the logical pieces
-
-
 # split, which breaks one string of text into multiple pieces; 
-# split_nodes takes a branch string and returns vector of nodes,
-# split_tags takes a node string and breaks it up into a list of key-value pairs
+# split_sgf takes an sgf_string and returns an object with $nodes and $branches, each of which is also the same kind of object
+# split_branch takes a branch string and returns vector of nodes,
+# split_node takes a node string and breaks it up into a list of tag strings
+# split_tag takes the tag string and breaks it up into a key and value
 
+# from these workhorse functions, we have the parse functions:
+# parse_tag takes a vector of tag strings (from split_node), applies split_tag, and turns it into a named list
+# parse_node takes a branch (from split_sgf), applies split_node, and then runs parse_tag on each node, creating an unnamed lits of nodes
+# parse_sgf takes an sgf_file, applies split_sgf, and then runs parse_node on each output
+
+# (?<!\\)\[|(?<!\\)\](?<!\\)\[|(?<!\\)\]
+# this identifies the locations of three patterns, [, ] and [], with a lookbehind to ignore escapes
+# we simply split the string at each location and we're good!
 
 parse_tag <- function(tag_data) {
   output <- list()
   if(length(tag_data) == 1){
-    sgf_tag <- tag_data
-  #  if(grep("\\[(.*)\\]", tag_data) != 1) stop("input tag is improper; no matching square brackets")
-#    sgf_tag <- strsplit(sgf_tag, "(?<!\\\\)\\[|(?<!\\\\)\\](?<!\\\\)\\[|(?<!\\\\)\\]")[[1]]
-    sgf_tag <- strsplit(sgf_tag, "(?<!\\\\)\\[|(?<!\\\\)\\](?<!\\\\)\\[|(?<!\\\\)\\]", perl = TRUE)[[1]]
-    sgf_tag <- stringi::stri_trans_general(sgf_tag, "latin-ascii")
-    sgf_tag <- gsub("[\x01-\x1F]", "", sgf_tag)
-    # takes care of non-printing ASCII
-    sgf_tag <- gsub(" *$|^ *", "", sgf_tag)
-    if(sgf_tag[1] == "") stop("input tag is improper, cannot locate key/value pair")
-    sgf_tag[sgf_tag == ""] <- NA
+    sgf_tag <- split_tag(tag_data)
     output[[1]] <- sgf_tag[2:length(sgf_tag)]
     names(output) <- sgf_tag[1] # might have trouble here
   } else {
@@ -78,7 +89,7 @@ parse_tag <- function(tag_data) {
 
 parse_node <- function(node_string) {
   if(length(node_string) > 1) stop("parse_node accepts only single strings")
-  tag_vec <- split_tags(node_string)
+  tag_vec <- split_node(node_string)
   output <- list()
   for(i in 1:length(tag_vec)) output <- c(output, parse_tag(tag_vec[i]))
   return(output)
@@ -86,7 +97,7 @@ parse_node <- function(node_string) {
 
 parse_branch <- function(branch_string) {
   if(length(branch_string) != 1) stop("parse_branch accepts only single strings")
-  node_vec <- split_nodes(branch_string)
+  node_vec <- split_branch(branch_string)
   output <- list()
   for(i in 1:length(node_vec)) output[[i]] <- parse_node(node_vec[i])
   return(output)
@@ -94,25 +105,15 @@ parse_branch <- function(branch_string) {
 
 
 
-split_branches <- function(sgf_string){
-  nesting_brackets <- "(?<!\\\\)\\((?>[^()]|(?R))*(?<!\\\\)\\)"
-  matched <- gregexpr(nesting_brackets, sgf_string, perl = TRUE)
-  regmatches(sgf_string, matched)
-  return(matched)
-}
-
-sgf_string <- "(root(branch1)(branch2))"
-
-sgf_string <- "root(branch1)(branch2)"
-
-sgf_string <- "root(branch1(branch11)(branch12))(branch2)"
-
-sgf_string <- "(branch1)(branch2)"
-
 
 
 # incorporate the ability to skip escaped parentheses
 
+split_sgf <- function(sgf_string) {
+
+# ...
+
+}
 
 
 

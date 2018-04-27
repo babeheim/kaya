@@ -53,50 +53,120 @@ test_that("basic bracket parsing works", {
 
 })
 
-# split_tags
+# split_node
 
-node_string <- "PB[bret]PW[paul]"
-tags <- split_tags(node_string)
+# in other words, splits do the operation of one to many strings
+# parse does the operation of creating the new logical structure on individual string
 
-node_string <- "PB[bret]asdfPW[paul]"
-tags <- split_tags(node_string)
+# the split operation removes whatever the seperator was, if any
+# split_node removes nothing, 
+# split_branch removes ;
+# split_sgf removes the ( )
 
-node_string <- "PB[bret]PW[paul]DT[2018-04-22]"
-tags <- split_tags(node_string)
+test_that("split_node produces the correct number of output strings", {
+
+  node_string <- "PB[bret]PW[paul]"
+  tags <- split_node(node_string)
+  expect_true(length(tags) == 2)
+  expect_true(tags[1] == "PB[bret]")
+
+  node_string <- "PB[bret]asdfPW[paul]"
+  tags <- split_node(node_string)
+  expect_true(length(tags) == 2)
+  expect_true(tags[2] == "asdfPW[paul]")
+
+  node_string <- "PB[bret]PW[paul]DT[2018-04-22]"
+  tags <- split_node(node_string)
+  expect_true(length(tags) == 3)
+  expect_true(tags[3] == "DT[2018-04-22]")
+
+  node_string <- ""
+  tags <- split_node(node_string)
+  expect_true(length(tags) == 0)
+
+})
 
 test_that("you cannot pass in more than one node string",{
   node_string <- c("x", "PB[bret]PW[paul]DT[2018-04-22]")
-  expect_error(tags <- split_tags(node_string))
+  expect_error(tags <- split_node(node_string))
 })
 
-node_string <- ""
-tags <- split_tags(node_string)
 # returns character(0) not ""
 
 
-# split_nodes
+# split_branch
 
-node_string <- ";PB[bret];PW[blah];DT[2009-01-01]"
-nodes <- split_nodes(node_string)
+test_that("split_branch produces the correct number of output strings", {
 
-node_string <- ";PB[bret]PW[blah];DT[2009-01-01]"
-nodes <- split_nodes(node_string)
-nodes
+  branch_string <- ";PB[bret];PW[blah];DT[2009-01-01]"
+  nodes <- split_branch(branch_string)
+  expect_true(length(nodes) == 3)
+  expect_true(nodes[1] == "PB[bret]")
 
-# escaped semicolons properly ignored by splitting
-node_string <- ";PB[bret\\;paul]PW[alphago]"
-nodes <- split_nodes(node_string)
-nodes
+  branch_string <- ";PB[bret]PW[blah];DT[2009-01-01]"
+  nodes <- split_branch(branch_string)
+  expect_true(length(nodes) == 2)
+  expect_true(nodes[1] == "PB[bret]PW[blah]")
 
-node_string <- ";PB[bret]PW[blah]"
-nodes <- split_nodes(node_string)
-nodes
+  # escaped semicolons properly ignored by splitting
+  branch_string <- ";PB[bret\\;paul]PW[alphago]"
+  nodes <- split_branch(branch_string)
+  expect_true(length(nodes) == 1)
+  expect_true(nchar(nodes[1]) == nchar(branch_string) - 1)
 
-node_string <- "PB[bret]PW[blah]"
-nodes <- split_nodes(node_string)
-nodes
+  branch_string <- ";PB[bret]PW[blah]"
+  nodes <- split_branch(branch_string)
+  expect_true(length(nodes) == 1)
+  expect_true(nchar(nodes[1]) == nchar(branch_string) - 1)
 
-# split_branches??
+  branch_string <- "PB[bret]PW[blah]"
+  nodes <- split_branch(branch_string)
+  expect_true(length(nodes) == 1)
+  expect_true(nchar(nodes[1]) == nchar(branch_string))
+
+})
+
+
+split_sgf <- function(sgf_string) {
+
+  output <- list()
+  node_pattern <- "\\[([^]]+)\\]"
+  m <- gregexpr(node_pattern, sgf_string, perl = TRUE)
+  regmatches(sgf_string, m)[[1]]
+
+
+  node_pattern <- "(^.*?(?<!\\\\))(\\(|$)" # everything from start of line to first unescaped (, or end of line
+  m <- gregexpr(node_pattern, sgf_string, perl = TRUE)
+  output$nodes <- regmatches(sgf_string, m)[[1]]
+
+  sgf_string <- ";FF[4]GM[1]SZ[19];B[aa];W[bb](;B[cc];W[dd];B[ad];W[bd])(;B[hh];W[hg])"
+
+  parenthesis_pattern <- "\\(((?>=\\\\\\(|\\\\\\)|[^\\(\\)])|(?R))*\\)"
+  m <- gregexpr(parenthesis_pattern, sgf_string, perl = TRUE)
+  output$branches <- as.list(regmatches(sgf_string, m)[[1]])
+
+  return(output)
+
+}
+
+
+test_that("split_sgf produces the correct number of output strings", {
+
+  sgf_string <- ";FF[4]GM[1]SZ[19];B[aa];W[bb](;B[cc];W[dd];B[ad];W[bd])(;B[hh];W[hg])"
+  sgf_string <- "(;PB[bret];PW[blah];DT[2009-01-01])"
+
+  # first, detect everything before the first unescaped (
+
+  # to extract branches...
+
+  game <- split_sgf(sgf_string)
+  expect_true(length(game) == 1)
+  expect_true(names(game)[1] == "nodes")
+  expect_true(game$nodes[1] == ";PB[bret];PW[blah];DT[2009-01-01]")
+
+})
+
+
 
 
 # parse tags
@@ -115,6 +185,59 @@ nodes
 # it is smart enough to ignore escaped 
 
 # output is named list of length 1, where names are object keys
+
+
+test_that("split tag works", {
+  
+  x <- "PB[bret beheim]"
+  expect_true(length(split_tag(x)) == 2)
+
+  x <- "AB[aa][bb][cc]"
+  expect_true(length(split_tag(x)) == 4)
+
+  x <- "C[bret \\[15k\\]: hello]"
+  expect_true(length(split_tag(x)) == 2)
+
+  x <- "C[bret [15k]: hello]"
+  expect_false(length(split_tag(x)) == 2)
+  y <- check_comment_escapes(x)
+  expect_true(length(split_tag(y)) == 2)
+
+  x <- "C[bret \\[15k\\]: hello]"
+  expect_true(length(split_tag(x)) == 2)
+
+  x <- "PB[b\\[ret]"
+  expect_true(length(split_tag(x)) == 2)
+
+  x <- "PB[br\\[e\\]t]"
+  expect_true(length(split_tag(x)) == 2)
+
+  x <- c("PB[bret]", "PW[paul]")
+  split_tag(x)
+
+  x <- c("B[]")
+  split_tag(x)
+
+  x <- c("gar[bage")
+  expect_error(split_tag(x))
+
+  x <- c("ga]r[bage")
+  split_tag(x)
+
+  x <- c("[bage]")
+  expect_error(split_tag(x))
+
+  x <- c("garbage")
+  expect_error(split_tag(x))
+
+  x <- c("PBA[bret]")
+  expect_error(split_tag(x))
+
+  x <- c("PB[bret]", "PW[paul]", "PB[mel]")
+  expect_error(split_tag(x))
+
+})
+
 
 test_that("parse tags works", {
   
@@ -176,7 +299,7 @@ test_that("parse tags works", {
 # takes a node and returns a named list
 
 # parse branch
-# combines split_nodes, split_tags and parse_tag
+# combines split_branch, split_node and parse_tag
 
 # output should be an unnamed list
 # each element of list is a node on the branch, a named list
