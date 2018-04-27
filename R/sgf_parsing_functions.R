@@ -34,7 +34,8 @@ check_comment_escapes <- function(string) {
   balanced_square <- length(gregexpr("(?<!\\\\)\\]", string, perl = TRUE)[[1]]) == length(gregexpr("(?<!\\\\)\\[", string, perl = TRUE)[[1]])
   if(!balanced_square) stop("sgf seems invalid; square brackets don't balance, must fix first")
 #  comment_pattern <- "\\[(?>[^\\[\\]]|(?R))*\\]"
-  comment_pattern <- "\\[((?>[^\\[\\]]+)|(?R))*\\]"
+#  comment_pattern <- "\\[((?>[^\\[\\]]+)|(?R))*\\]"
+  comment_pattern <- "\\[((?>\\\\\\[|\\\\\\]|[^\\[\\]])|(?R))*\\]"
   check <- gregexpr(comment_pattern, string, perl = TRUE)
   if (check[[1]][1]!="-1") {
     corrected <- regmatches(string, check)
@@ -87,6 +88,7 @@ parse_branch <- function(branch_string) {
   return(output)
 }
 
+# i suspect I can use regmatches here to clean up this code...
 parse_sgf <- function(sgf_string, to.json = FALSE) {
   if(length(sgf_string) > 1) stop("parse_sgf accepts only single strings")
   x <- bracket_matcher(sgf_string)

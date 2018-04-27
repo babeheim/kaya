@@ -1,5 +1,58 @@
 
 
+
+# check_comment_escapes relies on this:
+
+test_that("basic bracket parsing works", {
+
+#  comment_pattern <- "\\[((?>[^\\[\\]]+)|(?R))*\\]"
+  comment_pattern <- "\\[((?>\\\\\\[|\\\\\\]|[^\\[\\]])|(?R))*\\]"
+
+  string <- "PB[bret]PW[paul]"
+  check <- gregexpr(comment_pattern, string, perl = TRUE)
+  y <- regmatches(string, check)[[1]]
+  expect_true(length(y) == 2)
+
+  string <- "PB[bret]PW[paul]DT[2018-04-22]"
+  check <- gregexpr(comment_pattern, string, perl = TRUE)
+  y <- regmatches(string, check)[[1]]
+  expect_true(length(y) == 3)
+
+  string <- "PB[bret]PW[paul]DT[2018-04-22];B[aa];W[ba]"
+  check <- gregexpr(comment_pattern, string, perl = TRUE)
+  y <- regmatches(string, check)[[1]]
+  expect_true(length(y) == 5)
+
+  string <- "PB[br[et]asdf]PW[paul]"
+  check <- gregexpr(comment_pattern, string, perl = TRUE)
+  y <- regmatches(string, check)[[1]]
+  expect_true(length(y) == 2)
+  expect_true(y[1] == "[br[et]asdf]")
+
+  # ignore escaped
+  string <- "PB[bret\\]asdf]PW[paul]"
+  check <- gregexpr(comment_pattern, string, perl = TRUE)
+  y <- regmatches(string, check)[[1]]
+  expect_true(length(y) == 2)
+  expect_true(y[1] == "[bret\\]asdf]")
+
+  # ignore escaped
+  string <- "PB[bret\\]asdf]PW[paul]"
+  check <- gregexpr(comment_pattern, string, perl = TRUE)
+  y <- regmatches(string, check)[[1]]
+  expect_true(length(y) == 2)
+  expect_true(y[1] == "[bret\\]asdf]")
+
+  # this is the remaining problem, I dunno how you can parse this
+  # correctly...
+  string <- "PB[br[et\\]asdf]PW[paul]"
+  check <- gregexpr(comment_pattern, string, perl = TRUE)
+  y <- regmatches(string, check)[[1]]
+  expect_true(y[1] == "[br[et\\]asdf]")
+
+
+})
+
 # split_tags
 
 node_string <- "PB[bret]PW[paul]"
@@ -175,17 +228,51 @@ game_list <- read_sgf("./unusual_sgf/one_move_node.sgf", simplify = FALSE)
 
 # bracket_matcher
 
+
+nesting_brackets <- "(?<!\\\\)\\((?>[^()]|(?R))*\\)(?!\\\\)"
+
 x <- "(root(branch1)(branch2))"
-bracket_matcher(x)
+joints <- gregexpr(nesting_brackets, x, perl = TRUE)
+y <- regmatches(x, joints)[[1]]
+expect_true(x == y)
 
 x <- "root(branch1)(branch2)"
-bracket_matcher(x)
+joints <- gregexpr(nesting_brackets, x, perl = TRUE)
+y <- regmatches(x, joints)[[1]]
+expect_true(length(y) == 2)
 
 x <- "root(branch1(branch11)(branch12))(branch2)"
-bracket_matcher(x)
+joints <- gregexpr(nesting_brackets, x, perl = TRUE)
+y <- regmatches(x, joints)[[1]]
+expect_true(length(y) == 2)
 
 x <- "(branch1)(branch2)"
-bracket_matcher(x)
+joints <- gregexpr(nesting_brackets, x, perl = TRUE)
+y <- regmatches(x, joints)[[1]]
+expect_true(length(y) == 2)
+
+
+
+test_that("bracket matching is good", {
+
+  x <- "(root(branch1)(branch2))"
+  joints <- bracket_matcher(x)
+  y <- regmatches(x, joints)
+  expect_true(x == y)
+
+  x <- "root(branch1)(branch2)"
+  joints <- bracket_matcher(x)
+  y <- regmatches(x, joints)[[1]]
+
+  x <- "root(branch1(branch11)(branch12))(branch2)"
+  joints <- bracket_matcher(x)
+  y <- regmatches(x, joints)
+
+  x <- "(branch1)(branch2)"
+  joints <- bracket_matcher(x)
+  y <- regmatches(x, joints)
+
+})
 
 
 # strip comments

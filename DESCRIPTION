@@ -5,7 +5,8 @@ Authors@R: person("Bret", "Beheim", email = "beheim@gmail.com", role = c("aut", 
 Description: collection of tools for analyzing Go (Baduk, Wequi) game records in R
 Depends: R (>= 3.3.2),
  stringi,
- igraph
+ igraph,
+ jsonlite
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
