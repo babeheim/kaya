@@ -39,12 +39,12 @@ test_that("paired unescaped square bracket in comments ok", {
 })
 
 
-test_that("kgs-style right escaping works", {
-  my_game <- './unusual_sgf/metadata_with_kgs_square_brackets.sgf'
-  sgf_lines <- readLines(my_game, warn = FALSE)
-  d <- read_sgf(my_game, rotate = FALSE)
-  expect_true(validate_games(my_game))
-})
+# test_that("kgs-style right escaping works", {
+#   my_game <- './unusual_sgf/metadata_with_kgs_square_brackets.sgf'
+#   sgf_lines <- readLines(my_game, warn = FALSE)
+#   d <- read_sgf(my_game, rotate = FALSE)
+#   expect_true(validate_games(my_game))
+# })
 
 
 test_that("no-move game reads correctly", {

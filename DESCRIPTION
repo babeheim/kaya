@@ -6,7 +6,8 @@ Description: collection of tools for analyzing Go (Baduk, Wequi) game records in
 Depends: R (>= 3.3.2),
  stringi,
  igraph,
- jsonlite
+ jsonlite,
+ yamltools
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
