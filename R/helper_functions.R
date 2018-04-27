@@ -87,43 +87,6 @@ id_groups <- function(moves){
   return(group_id)
 }
 
-id_groups_old <- function(moves){
-  direct_mat <- id_direct_connections(moves)
-  group_IDs <- moves$group_id
-  for (i in 1:length(group_IDs)){
-    tie_cols <- which(direct_mat[i, ])
-    leftmost <- group_IDs[tie_cols][1]
-    ingroup <- tie_cols
-    for (j in 1:length(tie_cols)){
-      tie_rows <- which(direct_mat[, tie_cols[j]])
-      ingroup <- c(ingroup, tie_rows)
-      for (k in 1:length(tie_rows)){
-        tie_cols_2 <- which(direct_mat[tie_rows[k], ])
-        ingroup <- c(ingroup, tie_cols_2)
-        for (l in 1:length(tie_cols_2)){
-          tie_rows_2 <- which(direct_mat[, tie_cols_2[l]])
-          ingroup <- c(ingroup, tie_rows_2)
-          for (m in 1:length(tie_rows_2)){
-            tie_cols_3 <- which(direct_mat[tie_rows_2[m], ])
-            ingroup <- c(ingroup, tie_cols_3)
-            for (n in 1:length(tie_cols_3)){
-              tie_rows_3 <- which(direct_mat[, tie_cols_3[n]])
-              ingroup <- c(ingroup, tie_rows_3)
-              for (o in 1:length(tie_rows_3)){
-                tie_cols_4 <- which(direct_mat[tie_rows_3[o], ])
-                ingroup <- c(ingroup, tie_cols_4)
-              }
-            }
-          }
-        }
-      }
-    }
-    ingroup <- sort(unique(ingroup))
-    group_IDs[ingroup] <- leftmost
-  }
-  return(group_IDs)
-}
-
 # does this handle NA's correctly?
 id_direct_connections <- function(moves){
   direct_mat <- matrix(FALSE, nrow = nrow(moves), ncol = nrow(moves))
