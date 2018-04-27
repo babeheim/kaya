@@ -20,6 +20,9 @@ split_nodes <- function(branch_string) {
 
 # split_branches? 
 
+# I can probably make a better version of this where the parenthesis don't need
+# to be turned into curly races
+
 bracket_matcher <- function(string){
 #  nesting_brackets <- "\\((?>[^()]|(?R))*\\)"
   nesting_brackets <- "(?<!\\\\)\\((?>[^()]|(?R))*\\)(?!\\\\)"
@@ -28,7 +31,7 @@ bracket_matcher <- function(string){
 }
 
 check_comment_escapes <- function(string) {
-  balanced_square <- length(gregexpr("\\]", string)[[1]]) == length(gregexpr("\\[", string)[[1]])
+  balanced_square <- length(gregexpr("(?<!\\\\)\\]", string, perl = TRUE)[[1]]) == length(gregexpr("(?<!\\\\)\\[", string, perl = TRUE)[[1]])
   if(!balanced_square) stop("sgf seems invalid; square brackets don't balance, must fix first")
 #  comment_pattern <- "\\[(?>[^\\[\\]]|(?R))*\\]"
   comment_pattern <- "\\[((?>[^\\[\\]]+)|(?R))*\\]"
@@ -37,8 +40,8 @@ check_comment_escapes <- function(string) {
     corrected <- regmatches(string, check)
     corrected <- lapply(corrected, function(z) gsub("\\(", "\\\\{", z))
     corrected <- lapply(corrected, function(z) gsub("\\)", "\\\\}", z))
-    corrected <- lapply(corrected, function(z) gsub("\\](?!$)", "\\\\]", z, perl = TRUE))
-    corrected <- lapply(corrected, function(z) gsub("(?<!^)\\[", "\\\\[", z, perl = TRUE))
+    corrected <- lapply(corrected, function(z) gsub("(?<!\\\\)\\](?!$)", "\\\\]", z, perl = TRUE))
+    corrected <- lapply(corrected, function(z) gsub("(?<!\\\\|^)\\[", "\\\\[", z, perl = TRUE))
     corrected <- lapply(corrected, function(z) gsub("\\;", "\\\\;", z))
     regmatches(string, check) <- corrected
   }
