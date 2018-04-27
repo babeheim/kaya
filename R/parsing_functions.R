@@ -106,62 +106,6 @@ parse_branch <- function(branch_string) {
 
 
 
-
-# incorporate the ability to skip escaped parentheses
-
-split_sgf <- function(sgf_string) {
-
-# ...
-
-}
-
-
-
-# i suspect I can use regmatches here to clean up this code...
-parse_sgf_redo <- function(sgf_string, to.json = FALSE) {
-
-  # string cleaning should really be here since it always needs to happen first
-
-  if (length(sgf_string) > 1) stop("parse_sgf accepts only single strings")
-
-  # identify location of brackets
-  x <- split_branches(sgf_string)
-
-  # check for more than one game
-  if (length(x) > 1) stop("string contains more than one game! Kaya is not designed for this, so please separate these first.")
-
-  # check that sgf_string is surrounded by parentheses
-  if (!(x[1] == 1 & attr(x, "match.length")[1] == nchar(sgf_string))) stop("sgf_string is not surrounded by parentheses; this isn't a valid SGF")
-  
-  # if the string is surrounded, take away outer parentheses and re-split
-  if (length(x) == 1 & x[1] == 12) {
-    sgf_string <- substr(sgf_string, 2, nchar(sgf_string) - 1)
-    x <- bracket_matcher_redo(sgf_string)
-  }
-
-  # valid sgf, ok time to process
-  output <- list()
-  
-  # if the string is actually just one branch, parse it
-  if (x[1] == (-1)) output$nodes <- parse_branch(sgf_string)
-
-  # if the string has sub-branches, identify their locations and execute parse_sgf on each one recursively
-  if (x[1] != (-1)) {
-    right_pars <- c(as.numeric(x))
-    left_pars <- c(as.numeric(x + attr(x, "match.length") - 1))
-    if(right_pars[1] != 1) output$nodes <- parse_branch(substr(sgf_string, 1, right_pars[1] - 1))
-    output$branches <- list()
-    for(i in 1:(length(right_pars))){
-      output$branches[[i]] <- parse_sgf(substr(sgf_string, right_pars[i], left_pars[i])) # wow!
-    }
-  }
-
-  if (to.json) output <- jsonlite::toJSON(output, pretty = TRUE)
-  return(output)
-}
-
-
-
 bracket_matcher <- function(string){
 #  nesting_brackets <- "\\((?>[^()]|(?R))*\\)"
   nesting_brackets <- "(?<!\\\\)\\((?>[^()]|(?R))*\\)(?!\\\\)"

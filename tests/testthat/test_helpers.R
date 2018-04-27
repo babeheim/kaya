@@ -128,41 +128,70 @@ test_that("split_branch produces the correct number of output strings", {
 
 
 split_sgf <- function(sgf_string) {
-
-  output <- list()
-  node_pattern <- "\\[([^]]+)\\]"
-  m <- gregexpr(node_pattern, sgf_string, perl = TRUE)
-  regmatches(sgf_string, m)[[1]]
-
-
+  output <- list(nodes = character(), branches = list())
   node_pattern <- "(^.*?(?<!\\\\))(\\(|$)" # everything from start of line to first unescaped (, or end of line
   m <- gregexpr(node_pattern, sgf_string, perl = TRUE)
   output$nodes <- regmatches(sgf_string, m)[[1]]
-
-  sgf_string <- ";FF[4]GM[1]SZ[19];B[aa];W[bb](;B[cc];W[dd];B[ad];W[bd])(;B[hh];W[hg])"
-
   parenthesis_pattern <- "\\(((?>=\\\\\\(|\\\\\\)|[^\\(\\)])|(?R))*\\)"
   m <- gregexpr(parenthesis_pattern, sgf_string, perl = TRUE)
-  output$branches <- as.list(regmatches(sgf_string, m)[[1]])
-
+  if(m[[1]][1] != (-1)) output$branches <- as.list(regmatches(sgf_string, m)[[1]])
   return(output)
-
 }
+
+
+# i suspect I can use regmatches here to clean up this code...
+parse_sgf_redo <- function(sgf_string, to.json = FALSE) {
+
+  # string cleaning should really be here since it always needs to happen first
+
+  if (length(sgf_string) > 1) stop("parse_sgf accepts only single strings")
+
+  output <- split_sgf(sgf_string)
+
+  # check for more than one game
+#  if (length(x) > 1) stop("string contains more than one game! Kaya is not designed for this, so please separate these first.")
+
+  # check that it's a valid sgf surrounded by ( )
+  if (!(x[1] == 1 & attr(x, "match.length")[1] == nchar(sgf_string))) stop("sgf_string is not surrounded by parentheses; this isn't a valid SGF")
+  
+  # if the string is surrounded, take away outer parentheses and re-split
+  # if (length(x) == 1 & x[1] == 12) {
+  #   sgf_string <- substr(sgf_string, 2, nchar(sgf_string) - 1)
+  #   x <- bracket_matcher_redo(sgf_string)
+  # }
+
+  # if the string is actually just one branch, parse it
+  output$nodes <- parse_branch(output$nodes)
+  # if the string has sub-branches, identify their locations and execute parse_sgf on each one recursively
+  if (x[1] != (-1)) {
+    for(i in 1:(length(output$branches))){
+      output$branches[[i]] <- parse_sgf(output$branches[[i]]) # wow!
+    }
+  }
+
+  if (to.json) output <- jsonlite::toJSON(output, pretty = TRUE)
+  return(output)
+}
+
 
 
 test_that("split_sgf produces the correct number of output strings", {
 
-  sgf_string <- ";FF[4]GM[1]SZ[19];B[aa];W[bb](;B[cc];W[dd];B[ad];W[bd])(;B[hh];W[hg])"
-  sgf_string <- "(;PB[bret];PW[blah];DT[2009-01-01])"
+  sgf_string <- ";PB[bret];PW[blah];DT[2009-01-01]"
+  game <- split_sgf(sgf_string)
+  expect_true(length(game) == 2)
+  expect_true(names(game)[1] == "nodes")
+  expect_true(game$nodes[1] == ";FF[4]GM[1]SZ[19];B[aa];W[bb](")
+  expect_true(length(game$branches) == 2)
 
   # first, detect everything before the first unescaped (
-
   # to extract branches...
-
+  sgf_string <- ";FF[4]GM[1]SZ[19];B[aa];W[bb](;B[cc];W[dd];B[ad];W[bd])(;B[hh];W[hg])"
   game <- split_sgf(sgf_string)
-  expect_true(length(game) == 1)
+  expect_true(length(game) == 2)
   expect_true(names(game)[1] == "nodes")
-  expect_true(game$nodes[1] == ";PB[bret];PW[blah];DT[2009-01-01]")
+  expect_true(game$nodes[1] == ";FF[4]GM[1]SZ[19];B[aa];W[bb](")
+  expect_true(length(game$branches) == 2)
 
 })
 
