@@ -1,11 +1,8 @@
 
 
 
-# check_comment_escapes relies on this:
-
 test_that("basic bracket parsing works", {
 
-#  comment_pattern <- "\\[((?>[^\\[\\]]+)|(?R))*\\]"
   comment_pattern <- "\\[((?>\\\\\\[|\\\\\\]|[^\\[\\]])|(?R))*\\]"
 
   string <- "PB[bret]PW[paul]"
@@ -53,15 +50,8 @@ test_that("basic bracket parsing works", {
 
 })
 
-# split_node
 
-# in other words, splits do the operation of one to many strings
-# parse does the operation of creating the new logical structure on individual string
 
-# the split operation removes whatever the seperator was, if any
-# split_node removes nothing, 
-# split_branch removes ;
-# split_sgf removes the ( )
 
 test_that("split_node produces the correct number of output strings", {
 
@@ -91,10 +81,8 @@ test_that("you cannot pass in more than one node string",{
   expect_error(tags <- split_node(node_string))
 })
 
-# returns character(0) not ""
 
 # split_tag
-
 
 test_that("split tag works", {
   
@@ -122,25 +110,26 @@ test_that("split tag works", {
   expect_true(length(split_tag(x)) == 2)
 
   x <- c("PB[bret]", "PW[paul]")
-  split_tag(x)
-
-  x <- c("B[]")
-  split_tag(x)
-
-  x <- c("gar[bage")
   expect_error(split_tag(x))
 
+  x <- c("B[]")
+  y <- split_tag(x)
+  expect_true(is.na(y[2]))
+
+  x <- c("gar[bage")
+  expect_true(length(split_tag(x)) == 2)
+
   x <- c("ga]r[bage")
-  split_tag(x)
+  expect_true(length(split_tag(x)) == 3)
 
   x <- c("[bage]")
   expect_error(split_tag(x))
 
   x <- c("garbage")
-  expect_error(split_tag(x))
+  expect_true(length(split_tag(x)) == 1)
 
   x <- c("PBA[bret]")
-  expect_error(split_tag(x))
+  expect_true(length(split_tag(x)) == 2)
 
   x <- c("PB[bret]", "PW[paul]", "PB[mel]")
   expect_error(split_tag(x))
@@ -187,13 +176,11 @@ test_that("split_sgf produces the correct number of output strings", {
 
   sgf_string <- ";PB[bret];PW[blah];DT[2009-01-01]"
   game <- split_sgf(sgf_string)
-  expect_true(length(game) == 2)
+  expect_true(length(game) == 1)
   expect_true(names(game)[1] == "nodes")
   expect_true(game$nodes[1] == ";PB[bret];PW[blah];DT[2009-01-01]")
   expect_true(length(game$branches) == 0)
 
-  # first, detect everything before the first unescaped (
-  # to extract branches...
   sgf_string <- ";FF[4]GM[1]SZ[19];B[aa];W[bb](;B[cc];W[dd];B[ad];W[bd])(;B[hh];W[hg])"
   game <- split_sgf(sgf_string)
   expect_true(length(game) == 2)
@@ -203,30 +190,6 @@ test_that("split_sgf produces the correct number of output strings", {
 
 })
 
-
-### parsing
-
-
-
-
-
-
-# parse tags
-
-# parse tags expects individua tag strings,
-# e.g. "PB[bret]" and returns a named list
-# it will also work for setup stone tags, e.g.
-# "AB[aa][bb]"
-
-# so, it's looking for square brackets to break up
-
-# it will ignore escaped square brackets, but 
-# without escaping it will
-# will improperly break up nested square brackets
-
-# it is smart enough to ignore escaped 
-
-# output is named list of length 1, where names are object keys
 
 
 test_that("parse tags works", {
@@ -286,14 +249,6 @@ test_that("parse tags works", {
 
 # parse_node
 
-# takes a node and returns a named list
-
-# parse branch
-# combines split_branch, split_node and parse_tag
-
-# output should be an unnamed list
-# each element of list is a node on the branch, a named list
-
 node_string <- ";PB[bret]PW[blah]DT[2009-01-01]"
 nodes <- parse_branch(node_string)
 
@@ -303,42 +258,21 @@ nodes <- parse_branch(node_string)
 node_string <- c(";PB[bret]", ";PW[blah]")
 expect_error(nodes <- parse_branch(node_string))
 
-# check that it's a valid node: must start with semicolon! 
-
 
 # parse sgf
 
-
-
-sgf_string <- "(;PB[bret]PW[blah]DT[2009-01-01];B[aa];W[ab];B[ac])"
-d <- parse_sgf(sgf_string)
-expect_true(length(d) == 1)
-expect_true(names(d) == "nodes")
-expect_true(length(d$nodes) == 4)
-expect_true(length(d$nodes[[1]] ) == 3)
-
-
-sgf_string <- "(;PB[bret]PW[blah]DT[2009-01-01];B[aa];W[ab];B[ac](;B[aa];W[ab];B[ac])(;B[aa];W[ab];B[ac]))"
-d <- parse_sgf(sgf_string)
-expect_true(length(d) == 2)
-expect_true(names(d)[2] == "branches")
-expect_true(length(d$nodes) == 4)
-expect_true(length(d$branches) == 2)
-expect_true(names(d$branches[[1]]) == "nodes")
-expect_true(names(d$branches[[2]]) == "nodes")
-
-
-test_that("parse_sgf_old completely parses the game", {
+test_that("parse_sgf works correctly", {
 
   sgf_string <- "(;PB[bret]PW[blah]DT[2009-01-01];B[aa];W[ab];B[ac])"
-  d <- parse_sgf_old(sgf_string)
+  d <- parse_sgf(sgf_string)
   expect_true(length(d) == 1)
   expect_true(names(d) == "nodes")
   expect_true(length(d$nodes) == 4)
   expect_true(length(d$nodes[[1]] ) == 3)
 
+
   sgf_string <- "(;PB[bret]PW[blah]DT[2009-01-01];B[aa];W[ab];B[ac](;B[aa];W[ab];B[ac])(;B[aa];W[ab];B[ac]))"
-  d <- parse_sgf_old(sgf_string)
+  d <- parse_sgf(sgf_string)
   expect_true(length(d) == 2)
   expect_true(names(d)[2] == "branches")
   expect_true(length(d$nodes) == 4)
@@ -346,21 +280,8 @@ test_that("parse_sgf_old completely parses the game", {
   expect_true(names(d$branches[[1]]) == "nodes")
   expect_true(names(d$branches[[2]]) == "nodes")
 
-  sgf_string <- ";PB[bret]PW[blah]DT[2009-01-01];B[aa];W[ab];B[ac]"
-  expect_error(d <- parse_sgf_old(sgf_string))
-
-  sgf_string <- "(;GM[1]FF[4]SZ[19]PW[okao]WR[7d]PB[ss501]BR[2d]DT[2009-09-01]PC[The KGS Go Server at http://www.gokgs.com/]KM[0.50]RE[B+2.50]RU[Japanese]OT[3x10 byo-yomi]CA[UTF-8]ST[2]AP[CGoban:3]TM[0]HA[5]AB[dd][pd][jj][dp][pp];W[nq];B[oq];W[np];B[pn])"
-  d <- parse_sgf_old(sgf_string)
-  expect_true(length(d$nodes) == 5)
-
 })
 
-# parse sgf is awkward in how it passes around the sgf_string
-# and it needs to be able to handle MULTIPLE GAMES
-# seperated at the top level by () ()
-
-# also needs to be able to discard all stuff OUTSIDE
-# the ( ) ( )
 
 game_list <- read_sgf("./real_sgf/2009-09-01-1.sgf", simplify = FALSE) 
 
@@ -463,7 +384,7 @@ test_that("check_comment_escapes works", {
   # pair of parentheses in comment
   string <- ";PB[bret];PW[paul];C[te(stte)st2]"
   x <- check_comment_escapes(string)
-  expect_true(grep("te\\\\\\{stte\\\\\\}st2", x)==1)
+  expect_true(grep("te\\\\\\(stte\\\\\\)st2", x)==1)
   expect_true(nchar(x) == nchar(string) + 2)
 
   # pair of unescaped square brackets in comment
@@ -507,13 +428,13 @@ test_that("check_comment_escapes works", {
   # extreme cases
   string <- ";PB[bret];PW[paul];C[)]"
   x <- check_comment_escapes(string)
-  expect_true(grep("\\}", x) == 1)
+  expect_true(grep("\\)", x) == 1)
   expect_true(nchar(x) == nchar(string) + 1)
 
   # extreme cases
   string <- ";PB[bret];PW[paul];C[(]"
   x <- check_comment_escapes(string)
-  expect_true(grep("\\{", x) == 1)
+  expect_true(grep("\\(", x) == 1)
   expect_true(nchar(x) == nchar(string) + 1)
 
   # extreme cases

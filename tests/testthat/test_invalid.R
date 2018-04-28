@@ -6,12 +6,6 @@ test_that("games with characters outside sgf tree fail", {
 })
 
 
-test_that("multigame files read right", {
-  my_game <- './invalid_sgf/contains_three_games.sgf'
-  expect_error(d <- read_sgf(my_game))
-})
-
-
 test_that("extra brackets caught",{
   my_game <- './invalid_sgf/illegal_square_brackets.sgf'
   expect_error(d <- read_sgf(my_game))

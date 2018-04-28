@@ -33,19 +33,19 @@ test_that("database loads from files", {
 
   my_files <- list.files("./real_sgf", pattern="*.sgf", full.names = TRUE)
   out <- create_database(my_files)
-  expect_true(all(dim(out) == c(32, 23)))
+  expect_true(all(dim(out) == c(length(my_files), 23)))
 
   my_files <- list.files("./redbean_sgf", pattern="*.sgf", full.names = TRUE)
   out <- create_database(my_files)
-  expect_true(all(dim(out) == c(7, 22)))
+  expect_true(all(dim(out) == c(length(my_files), 22)))
 
   my_files <- list.files("./branching_sgf", pattern="*.sgf", full.names = TRUE)
   out <- create_database(my_files)
-  expect_true(all(dim(out) == c(3, 17)))
+  expect_true(all(dim(out) == c(length(my_files), 17)))
 
   my_files <- list.files("./unusual_sgf", pattern="*.sgf", full.names = TRUE)
   out <- create_database(my_files)
-  expect_true(all(dim(out) == c(16, 23)))
+  expect_true(all(dim(out) == c(length(my_files), 23)))
 
 
 })

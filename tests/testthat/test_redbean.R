@@ -1,7 +1,7 @@
 
 
 test_that("one file parses", {
-  my_files <- "./real_sgf/2009-09-01-1.sgf"
+  my_files <- "./redbean_sgf/redbean_no_variation.sgf"
   sgf_lines <- paste0(readLines(my_files, warn = FALSE), collapse = "")
   x <- parse_sgf(sgf_lines)
   expect_true(!is.null(names(x)))

@@ -1,23 +1,20 @@
 
-# we absolutely must escape everything in the comments...
-# but we cannot process a game that has an unmatched [ in the comments! 
-# even a \[ will fail, I believe!
 
 check_comment_escapes <- function(string) {
   n_left_brackets <- length(gregexpr("(?<!\\\\)\\]", string, perl = TRUE)[[1]])
   n_right_brackets <- length(gregexpr("(?<!\\\\)\\[", string, perl = TRUE)[[1]])
-  if(!n_left_brackets != n_right_brackets) stop("sgf seems invalid; square brackets don't balance, must fix first")
+  if(n_left_brackets != n_right_brackets) stop("sgf seems invalid; square brackets don't balance, must fix first")
 #  comment_pattern <- "\\[(?>[^\\[\\]]|(?R))*\\]"
 #  comment_pattern <- "\\[((?>[^\\[\\]]+)|(?R))*\\]"
   bracket_pattern <- "\\[((?>\\\\\\[|\\\\\\]|[^\\[\\]])|(?R))*\\]"
   check <- gregexpr(bracket_pattern, string, perl = TRUE)
   if (check[[1]][1]!="-1") {
     corrected <- regmatches(string, check)
-    corrected <- lapply(corrected, function(z) gsub("(?<!\\\\)\\(", "\\\\(", z))
-    corrected <- lapply(corrected, function(z) gsub("(?<!\\\\)\\)", "\\\\)", z))
+    corrected <- lapply(corrected, function(z) gsub("(?<!\\\\)\\(", "\\\\(", z, perl = TRUE))
+    corrected <- lapply(corrected, function(z) gsub("(?<!\\\\)\\)", "\\\\)", z, perl = TRUE))
     corrected <- lapply(corrected, function(z) gsub("(?<!\\\\)\\](?!$)", "\\\\]", z, perl = TRUE))
     corrected <- lapply(corrected, function(z) gsub("(?<!\\\\|^)\\[", "\\\\[", z, perl = TRUE))
-    corrected <- lapply(corrected, function(z) gsub("\\;", "\\\\;", z))
+    corrected <- lapply(corrected, function(z) gsub("(?<!\\\\)\\;", "\\\\;", z, perl = TRUE))
     regmatches(string, check) <- corrected
   }
   return(string)
