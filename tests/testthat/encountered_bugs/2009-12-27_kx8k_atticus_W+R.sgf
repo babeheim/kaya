@@ -1,0 +1,587 @@
+(;GM[1]FF[4]CA[UTF-8]AP[CGoban:3]ST[2]
+RU[Japanese]SZ[19]HA[3]KM[0.50]TM[1800]OT[5x30 byo-yomi]
+PW[atticus]PB[kx8k]WR[17k]BR[20k]DT[2009-12-27]PC[The KGS Go Server at http://www.gokgs.com/]AB[pd][dp][pp]C[kx8k [20k\]: hi 
+atticus [17k?\]: hello
+atticus [16k?\]: woops wrong button
+]RE[W+Resign]
+;W[cn]WL[1769.214]C[kx8k [20k\]: me too
+]
+;B[fp]BL[1794.563]
+;W[hq]WL[1746.25]C[atticus [16k?\]: can you see the opening again?
+kx8k [20k\]: yes
+atticus [16k?\]: k
+atticus [16k?\]: i played this aggressive joseki b/c i'm at a disadvantage
+]
+;B[hp]BL[1788.993]
+;W[ip]WL[1725.783]
+;B[ho]BL[1776.117]
+;W[nq]WL[1707.78]
+;B[pn]BL[1769.744]
+;W[qq]WL[1689.3]
+;B[pq]BL[1764.641]
+;W[pr]WL[1685.932]
+;B[qp]BL[1762.331]
+;W[rr]WL[1679.574]
+;B[qk]BL[1758.973]C[atticus [16k?\]: i think you did a good job here on the right side
+]
+;W[rp]WL[1674.378]
+;B[ro]BL[1756.837]
+;W[lp]WL[1649.591]C[kx8k [20k\]: I thought insead of abandoning the corner to line the side
+atticus [16k?\]: right
+atticus [16k?\]: now we both have solid bases
+atticus [16k?\]: me on the bottom, you on the right
+]
+;B[no]BL[1755.811]C[atticus [16k?\]: O5 - this move was too slow though
+kx8k [20k\]: try to extend from right
+atticus [16k?\]: there's bigger moves to play
+atticus [16k?\]: the corner is the big fish
+]
+;W[ln]WL[1645.57]C[atticus [16k?\]: i regretted this move actually
+kx8k [20k\]: shoud i put around M8?
+atticus [16k?\]: well, i can always come in in that big empty space in the top right
+atticus [16k?\]: so walling my southern group off isn't useful
+kx8k [20k\]: efficiency of stones are different
+]
+(;B[im]BL[1751.594]C[atticus [16k?\]: your original opening was those three stones on line 4
+atticus [16k?\]: at D4, F4 and H4
+atticus [16k?\]: they are connected to each other, but they don't have a base
+kx8k [20k\]: yes i agree
+atticus [16k?\]: see how my group on the bottom is on several different lines?
+kx8k [20k\]: yes
+atticus [16k?\]: in other words, the move at J7 should have been played low
+atticus [16k?\]: ok main game
+]
+;W[dd]WL[1639.043]C[atticus [16k?\]: the corner is huge - always play the corner if you can
+atticus [16k?\]: my move at M6 was a mistake - i should have played the corner first
+kx8k [20k\]: yes of course
+]
+;B[fd]BL[1743.313]
+;W[cf]WL[1614.855]
+(;B[fc]BL[1717.53]C[atticus [16k?\]: F17 is too defensive
+atticus [16k?\]: anyway, moral of the story: 
+atticus [16k?\]: here's a standard sequence
+]
+;W[ec]WL[1607.931]C[atticus [16k?\]: like this
+atticus [16k?\]: this was great for white - the whole corner is sealed in
+]
+;B[jc]BL[1714.225]C[atticus [16k?\]: you got a good base tho, this was the correct response
+]
+;W[cq]WL[1547.331]
+;B[dq]BL[1709.047]
+;W[cp]WL[1543.232]
+(;B[dr]BL[1700.563]C[atticus [16k?\]: i think D2 was also unnecessary
+atticus [16k?\]: if I played there, you could just hane and I'd have to respond, so its not good for me
+]
+;W[do]WL[1531.496]C[kx8k [20k\]: yes i gave up corner but take up side though
+atticus [16k?\]: true
+]
+;B[eo]BL[1691.118]
+;W[en]WL[1517.04]
+;B[gr]BL[1689.97]C[atticus [16k?\]: This move should have been one higher - I could steal your two eyes because I could push in like this
+]
+;W[gq]WL[1514.856]
+;B[fq]BL[1686.966]
+;W[hr]WL[1511.107]
+;B[fr]BL[1684.906]
+;W[ep]WL[1503.654]C[atticus [16k?\]: this move was a sacrifice move, to steal eyespace
+kx8k [20k\]: yes, i agree
+atticus [16k?\]: you know what false eyes are?
+]
+(;B[eq]BL[1682.851]C[kx8k [20k\]: how do you figure out where to put stone in order kill eyespace?
+kx8k [20k\]: I was not good at discerning them..
+atticus [16k?\]: the only way to know is to do lots of tsumego problems
+atticus [16k?\]: yeah, i got you a couple of times
+atticus [16k?\]: there's a sense you get after enough practice, what exactly a group needs to live, and to be killed
+atticus [16k?\]: check this out
+]
+;W[fo]WL[1502.299]C[kx8k [20k\]: yes d5
+atticus [16k?\]: I was able to make a false eye in this exchange because I occupy at least two of the "corners"  in the square
+atticus [16k?\]: right
+atticus [16k?\]: avoid false eyes!
+]
+(;B[gp]BL[1674.711]C[atticus [16k?\]: good response
+kx8k [20k\]: yes in this case i should put c2 first..
+atticus [16k?\]: right, you can still live down here with that
+]
+;W[gm]WL[1473.433]C[atticus [16k?\]: i set this move up as a knights-move cutter
+atticus [16k?\]: with it, i can cut off your escape to the middle guaranteed
+]
+(;B[cj]BL[1664.142]C[kx8k [20k\]: yes this was good defense
+atticus [16k?\]: actually there's a small flaw in it tho, that i didn't see until i played it
+atticus [16k?\]: the lone stone at J4 could get into trouble
+atticus [16k?\]: but
+atticus [16k?\]: anyway, 
+atticus [16k?\]: C10
+atticus [16k?\]: this move might have been better at C12
+]
+;W[fk]WL[1432.135]
+;B[ch]BL[1648.967]C[atticus [16k?\]: A one-point jump is a pretty sorry base
+]
+;W[dg]WL[1382.22]
+;B[bm]BL[1647.294]C[atticus [16k?\]: this right?
+]
+;W[cl]WL[1364.096]
+;B[bl]BL[1643.593]
+;W[ck]WL[1362.064]
+;B[bk]BL[1641.523]
+;W[bn]WL[1356.124]C[atticus [16k?\]: that was a pretty good idea, actually
+]
+;B[bj]BL[1639.525]C[kx8k [20k\]: but even could not live though
+atticus [16k?\]: that's just raw fighting skill
+atticus [16k?\]: you had the right strategy
+atticus [16k?\]: the skill comes with experience
+atticus [16k?\]: white's group could make life in the bottom corner, but if black plays it right he can seal White in that way, AND rescue black's bottom group
+atticus [16k?\]: or, black could force white to run out to the middle, and it gets really ugly with a bunch of desparate groups
+atticus [16k?\]: duking it out
+atticus [16k?\]: fun
+]
+;W[ag]WL[1333.837]
+;B[ei]BL[1638.368]C[kx8k [20k\]: yes i definetely lack the skill of raw finghting especially in contact fight.
+]
+;W[qi]WL[1297.789]C[atticus [16k?\]: ya, see the comparison between R11 and C10?
+kx8k [20k\]: how do you get them? through experience?
+atticus [16k?\]: pretty much
+kx8k [20k\]: yes i know what you mean
+atticus [16k?\]: losing lots of battles :)
+]
+;B[qf]BL[1631.831]
+;W[nc]WL[1289.476]
+;B[nd]BL[1628.095]C[atticus [16k?\]: actually i think this was a mistake on my prat
+atticus [16k?\]: part
+atticus [16k?\]: i played at O17 instead of jumping out from R11
+]
+;W[qc]WL[1281.798]
+;B[pc]BL[1626.348]
+;W[pb]WL[1279.551]
+;B[ob]BL[1619.861]
+;W[rb]WL[1275.234]
+;B[oc]BL[1617.472]
+;W[nb]WL[1269.823]
+;B[qa]BL[1615.333]C[atticus [16k?\]: that's the critical point...if you already had a stone at R16
+atticus [16k?\]: ;)
+kx8k [20k\]: yes
+atticus [16k?\]: white's got more options tho
+atticus [16k?\]: so its not worth that yet
+]
+;W[oa]WL[1265.843]
+;B[qd]BL[1613.679]
+;W[rd]WL[1262.451]
+(;B[qe]BL[1611.871]
+;W[ra]WL[1238.73]
+;B[sc]BL[1609.196]
+;W[sd]WL[1233.036]
+;B[re]BL[1608.139]
+;W[lc]WL[1221.348]
+;B[se]BL[1605.55]
+;W[rc]WL[1217.445]
+;B[kc]BL[1594.16]C[atticus [16k?\]: this was a really good move
+atticus [16k?\]: i thought
+atticus [16k?\]: white's pretty secure in the corner, but something could still go wrong
+atticus [16k?\]: Black's simultaneously putting pressure on White, and building a base
+]
+;W[lb]WL[1214.012]
+;B[kb]BL[1592.592]
+;W[eb]WL[1207.708]C[kx8k [20k\]: thx i have fragementated knowledge, but it is not integrated yet  in real game though.
+]
+;B[fb]BL[1589.942]
+;W[hd]WL[1204.203]
+;B[ge]BL[1587.916]
+;W[he]WL[1192.762]
+;B[fg]BL[1578.143]
+;W[in]WL[1179.853]
+;B[hn]BL[1573.96]
+;W[hm]WL[1178.565]
+;B[io]BL[1572.065]
+;W[jm]WL[1139.969]
+(;B[jn]BL[1568.825]
+;W[il]WL[1122.254]C[atticus [16k?\]: this is the exchange i was hoping for - Black can't escape anymore
+atticus [16k?\]: biut
+atticus [16k?\]: but
+atticus [16k?\]: i think 
+]
+;B[in]BL[1563.355]
+;W[jp]WL[1117.269]
+;B[iq]BL[1549.424]C[atticus [16k?\]: cut was too late - i have a good ladder now
+kx8k [20k\]: yes 
+atticus [16k?\]: but the better player often makes huge miscalculations too, esp. if they being overconfident
+]
+;W[ir]WL[1114.051]
+;B[jq]BL[1546.442]
+;W[kq]WL[1111.812]
+;B[jr]BL[1538.866]
+;W[kr]WL[1091.866]
+;B[oi]BL[1537.32]
+;W[oj]WL[1078.639]
+;B[ph]BL[1532.38]
+;W[pj]WL[1076.915]
+;B[ok]BL[1528.52]
+;W[rj]WL[1072.79]
+;B[rk]BL[1527.168]
+;W[nj]WL[1066.867]
+;B[ni]BL[1522.091]
+;W[es]WL[1042.845]
+;B[gs]BL[1517.322]
+;W[cr]WL[1038.238]
+;B[cs]BL[1515.947]
+;W[bs]WL[1033.533]
+;B[ds]BL[1514.504]
+;W[br]WL[1028.507]
+;B[ep]BL[1510.196]C[atticus [16k?\]: why the fill?
+kx8k [20k\]: not especially to secure stone.
+atticus [16k?\]: bad bad move
+]
+;W[km]WL[1013.143]C[atticus [16k?\]: except i got a free move to seal in black
+atticus [16k?\]: at L7 
+]
+;B[fn]BL[1508.811]C[atticus [16k?\]: the cuts not going to get much
+]
+;W[gn]WL[1009.529]
+;B[go]BL[1507.226]
+;W[fm]WL[1005.768]C[atticus [16k?\]: back to where we started really
+]
+;B[hs]BL[1500.447]C[atticus [16k?\]: this is also a waste of a good ko threat
+atticus [16k?\]: of course i'm going to respond now
+atticus [16k?\]: but
+atticus [16k?\]: if we end up in a ko later, this is a huge threat
+kx8k [20k\]: yes at this stage, there is little hope to live this group. 
+atticus [16k?\]: don't play hopeless moves that require two plays in a row to win - save em for later as ko threats
+]
+;W[js]WL[1002.326]
+;B[is]BL[1498.884]C[kx8k [20k\]: yes i agree definetly hopeless move.
+]
+;W[fh]WL[984.291]C[atticus [16k?\]: esp. when there's so many big moves on the board
+atticus [16k?\]: like E12
+]
+;B[eh]BL[1495.831]
+;W[eg]WL[981.599]C[atticus [16k?\]: ok, something really important just happeened
+atticus [16k?\]: this is that life or death skill
+atticus [16k?\]: with E13, I've cut Black's line of stones in two
+kx8k [20k\]: Yes 
+atticus [16k?\]: Black's challenge, now, is to get life for both of them
+atticus [16k?\]: independently
+kx8k [20k\]: yes it was hard
+atticus [16k?\]: two eyes for both - its not impossible but that's the immediate priority
+atticus [16k?\]: the key plays here are at H17 and A12, I think
+]
+(;B[dh]BL[1494.179]C[kx8k [20k\]: especiall to make two eyes
+atticus [16k?\]: that's always the first question
+atticus [16k?\]: the pros ask themselves
+atticus [16k?\]: where's my life going to come from?
+atticus [16k?\]: always gotta re-ask too, as the game changes
+]
+;W[gg]WL[972.322]
+;B[ff]BL[1491.835]
+;W[bh]WL[963.61]
+;B[ai]BL[1488.491]
+;W[hb]WL[940.156]C[kx8k [20k\]: i see 
+]
+;B[ib]BL[1482.632]
+;W[hc]WL[927.323]
+(;B[ic]BL[1478.478]C[atticus [16k?\]: the key play here is M18, I think
+atticus [16k?\]: there's no hope for those five Black stones on their own, they need to run to the  group on the right
+]
+;W[le]WL[918.285]
+;B[ha]BL[1477.48]C[atticus [16k?\]: can't connect that far apart
+]
+;W[ga]WL[915.862]
+;B[gb]BL[1474.968]
+;W[ia]WL[911.1]
+;B[fa]BL[1473.765]
+;W[ne]WL[895.79]
+;B[ha]BL[1472.404]
+;W[ja]WL[870.908]
+;B[ga]BL[1459.873]
+;W[ka]WL[867.634]
+;B[ea]BL[1455.231]
+;W[da]WL[864.771]C[atticus [16k?\]: this was a HUGE mistake on my part
+atticus [16k?\]: i'm actually really bad at endgame
+atticus [16k?\]: because i always make big wall weaknesses like this
+atticus [16k?\]: you taught me the error of my ways
+]
+;B[db]BL[1453.411]
+;W[cb]WL[860.218]
+;B[ca]BL[1452.422]
+;W[dc]WL[857.887]
+;B[cc]BL[1445.913]
+;W[bb]WL[826.852]
+(;B[da]BL[1441.418]
+;W[bd]WL[822.416]
+;B[ee]BL[1430.794]
+;W[de]WL[816.925]
+;B[ef]BL[1427.581]C[atticus [16k?\]: at this point, Black's northwestern group has pretty much had it
+atticus [16k?\]: there's no way to get even one eye
+]
+;W[cg]WL[804.283]C[kx8k [20k\]: yes
+]
+(;B[di]BL[1424.66]C[atticus [16k?\]: same for Black's western group - this move doesn't build eyespace volume at all
+]
+;W[dj]WL[798.674]
+;B[am]BL[1422.056]
+;W[ak]WL[795.059]C[kx8k [20k\]: i tend to think to connect stones
+atticus [16k?\]: dead
+]
+;B[bi]BL[1420.548]C[kx8k [20k\]: if d10 is black then live?
+atticus [16k?\]: still dead - its a false eye thanks to my move at D10 (which was intended to do exactly that
+atticus [16k?\]: yep
+atticus [16k?\]: if White controls TWO corners of an eye
+atticus [16k?\]: its a false eye
+atticus [16k?\]: if White only has one corner, its a true eye and black's alive
+]
+;W[ej]WL[791.458]
+(;B[fi]BL[1415.031]
+;W[gh]WL[789.96]C[atticus [16k?\]: thanks
+kx8k [20k\]: thx
+atticus [16k?\]: would you like to review?
+kx8k [20k\]: yes
+atticus [16k?\]: okay, i've never done one before on this system but lets try
+atticus [16k?\]: well, that's the end
+kx8k [20k\]: thanks, BTW how do you learn?
+atticus [16k?\]: i have a few ways
+atticus [16k?\]: i read books
+kx8k [20k\]: I am in the slump. More book I read, I lost the game..
+atticus [16k?\]: i'm playing a lot of tsumego now
+kx8k [20k\]: I was 17k 3month ago..
+atticus [16k?\]: i have an ipod touch, with a huge number of tsumego on it
+kx8k [20k\]: especially i was weak at raw fight.
+atticus [16k?\]: don't sweat the rank
+atticus [16k?\]: that's mostly tsumego
+kx8k [20k\]: yes i try 
+kx8k [20k\]: how is your opinon learning joseki?
+atticus [16k?\]: i don't
+atticus [16k?\]: i know a couple
+atticus [16k?\]: from seeing them over and over
+atticus [16k?\]: i also play against stronger players at my local go club in person
+atticus [16k?\]: they give me good advice, so i try to pass it along
+atticus [16k?\]: :)
+atticus [16k?\]: i also replay pro games
+atticus [16k?\]: i've memorized a couple
+kx8k [20k\]: yes thank for your advice, can i add you friend list?
+atticus [16k?\]: sure
+atticus [16k?\]: we'll play again
+atticus [16k?\]: tho i'll take a bigger handi ;)
+kx8k [20k\]: thanks see you 
+atticus [16k?\]: ya later
+])
+(;B[ji]
+;W[fi]C[kx8k [20k\]: yes i should at least secure one corner 
+atticus [16k?\]: running out should only be an option of last resort
+]
+;B[ij]
+;W[ci]C[atticus [16k?\]: cause i can do that
+atticus [16k?\]: corners are easiest to build a base in
+atticus [16k?\]: sides too
+]))
+(;B[bi])
+(;B[dj]
+;W[ci]
+;B[bi]C[atticus [16k?\]: there we go
+atticus [16k?\]: D10
+atticus [16k?\]: Black's group would live one move away from the one played
+kx8k [20k\]: yes i understand how to think to make eye
+]))
+(;B[cd]C[kx8k [20k\]: at that time try to extend 2nd line to the left
+atticus [16k?\]: yeah
+atticus [16k?\]: that's the right answer
+atticus [16k?\]: not what i played
+]
+;W[ce]
+;B[bc]
+;W[ac])
+(;B[bc]
+;W[ac]
+;B[ba]
+;W[ab]
+;B[ad]
+;W[da]C[atticus [16k?\]: i suspect
+atticus [16k?\]: that if i made that mistake against a 1d
+atticus [16k?\]: they would have either killed my corner
+atticus [16k?\]: OR
+atticus [16k?\]: did something like this - forced the corner's survival into a ko fight
+atticus [16k?\]: and remember the ko threat that could have been down at the bottom
+atticus [16k?\]: that's huge - white basically has to decide which 50-70 pt loss to accept
+kx8k [20k\]: yes now i understand the importance of ko fight.
+kx8k [20k\]: it is useful for this situation.
+atticus [16k?\]: right, there's always hope, thanks to the ko
+atticus [16k?\]: groups can come back to life that were guaranteed dead
+atticus [16k?\]: you can be losing the whole game and then win with a good ko fight or two
+]))
+(;B[ld]
+;W[ic]
+;B[kd]
+;W[md]
+;B[me]
+;W[mc]
+(;B[ne]C[atticus [16k?\]: hmm
+atticus [16k?\]: that can be cut
+])
+(;B[le]
+;W[ne]
+;B[od]
+;W[nf]
+;B[mf]
+;W[ng]
+;B[mg]
+;W[nh]
+;B[mh]
+;W[mi]
+;B[oh]C[atticus [16k?\]: there we go
+atticus [16k?\]: much better for black
+atticus [16k?\]: white would die if they tried to cut on that side, so a good player wouldn't attempt it
+kx8k [20k\]: yes at least to extend toward the center, possiblity of live increased.
+atticus [16k?\]: and a bad player who tried would hand the game to Black, basically
+])))
+(;B[hc]C[atticus [16k?\]: There's a good chance of life in this space
+])
+(;B[ah]C[kx8k [20k\]: i see these are the skill that i am lacking..
+]))
+(;B[iq]
+;W[jp]
+;B[ir]C[atticus [16k?\]: that i was being greedy
+atticus [16k?\]: white is in serious trouble now
+]))
+(;B[re]C[atticus [16k?\]: see the difference between R15 and S15?
+kx8k [20k\]: I thought i could kill the corner but i couldn't
+atticus [16k?\]: practice
+atticus [16k?\]: S15 not only blocks, but it can't be cut b/c its tiger's mouth
+atticus [16k?\]: in other words, having a stone at R14 could have been used better
+atticus [16k?\]: to do stuff you normally couldn't do
+]))
+(;B[ch]C[atticus [16k?\]: what are white's options?
+kx8k [20k\]: c10
+atticus [16k?\]: right
+atticus [16k?\]: and?
+kx8k [20k\]: or e12
+atticus [16k?\]: yep
+atticus [16k?\]: capping play
+atticus [16k?\]: but Black has a response in either eventuality
+atticus [16k?\]: that's the mark of a good move - options
+]
+(;W[eh]C[atticus [16k?\]: actually this is bad either way for white
+atticus [16k?\]: if white caps, black takes a big chunk of that sweet western edge
+]
+;B[ck]C[atticus [16k?\]: base
+atticus [16k?\]: Black has a good chance of living here
+kx8k [20k\]: i see
+])
+(;W[cj]C[atticus [16k?\]: if white pincers, black has to run
+]
+;B[eh]C[atticus [16k?\]: but now black's virtually connected to the northern stones
+atticus [16k?\]: and there's pressure on white's corner
+kx8k [20k\]: yes my intention was to separate corner and side
+])))
+(;B[cr]
+;W[br]
+;B[es]C[kx8k [20k\]: in this case, my intention was to extend upward 
+atticus [16k?\]: i wasn't expecting to kill your group, because you had this option and running to the center
+atticus [16k?\]: but i was harrassing it, and building some thickness on the top of it
+]))
+(;B[fo]
+;W[eq]
+;B[cr]
+(;W[br]
+;B[es]C[atticus [16k?\]: alive
+]
+(;W[cs]C[atticus [16k?\]: right
+atticus [16k?\]: you got it
+kx8k [20k\]: if i asked in the book, i can answer, but i could make myself to make this shape though...
+atticus [16k?\]: yeah, step 2 is knowing how to GET to the tsumego shapes
+kx8k [20k\]: (i could not..)
+]
+;B[gs]C[atticus [16k?\]: there's two eyes if white goes in that way
+kx8k [20k\]: yes c1 or g1 is alternative
+])
+(;W[gs]
+;B[cs]))
+(;W[gs]
+;B[es])))
+(;B[gq]
+;W[dr]
+;B[er]
+;W[cr]
+;B[hr]
+;W[iq]
+;B[io]C[atticus [16k?\]: good for black
+kx8k [20k\]: yes
+atticus [16k?\]: pressure is on White's bottom group not to get invaded and killed
+atticus [16k?\]: all because White tried to overplay at D2
+]))
+(;B[dc]
+(;W[ec]C[atticus [16k?\]: ppl are afraid of attaching, because they  think white will cut
+atticus [16k?\]: but look what happens to white
+]
+;B[ed]
+;W[cc]
+;B[db]C[atticus [16k?\]: the cut fails, and that lone white stone is in serious trouble
+kx8k [20k\]: yes
+atticus [16k?\]: plus
+atticus [16k?\]: if white does'nt repair his weakness
+atticus [16k?\]: at C15
+]
+;W[eb]
+;B[cd]
+;W[de]
+(;B[bc])
+(;B[cb]
+;W[bc]
+;B[bd]
+;W[ad]
+;B[bb]
+;W[ac]
+;B[fb]C[atticus [16k?\]: black can sacrifice these two stones, but kill two more in return, and get some territory
+atticus [16k?\]: plus white's shape sucks
+kx8k [20k\]: yes i see, good moving
+]))
+(;W[cc]
+;B[ec]
+(;W[cb]
+;B[ic]C[atticus [16k?\]: black and white both have good bases
+kx8k [20k\]: you are talking joseki?
+atticus [16k?\]: yes this is a joseki
+kx8k [20k\]: yes i learend but difficult to play in the game..
+atticus [16k?\]: its not about learning a joseki actually
+kx8k [20k\]: cause the opponent moves differently as in the book.
+atticus [16k?\]: there's an expression: "memorize joseki, lose two stones worth of skill"
+atticus [16k?\]: right
+kx8k [20k\]: yes i know 
+atticus [16k?\]: but joseki are good for learning *good shape*
+])
+(;W[ic]C[atticus [16k?\]: lets say I was a greedy bastard and played here
+atticus [16k?\]: instead of playing at C18
+atticus [16k?\]: this is an overplay - I am so aggressive I leave big weaknesses
+atticus [16k?\]: beginners tend to freak out, esp. since they are off-joseki
+kx8k [20k\]: you mean i should ut c18?
+atticus [16k?\]: right!
+]
+;B[cb]C[atticus [16k?\]: this is horrible for White
+atticus [16k?\]: he has to respond
+]
+;W[cd]
+;B[hc]C[kx8k [20k\]: i was dizzled, so i put H17 at that time.
+atticus [16k?\]: keep up the pressure
+atticus [16k?\]: if your opponent senses that you won't meet his moves with some punch
+atticus [16k?\]: he'll push you around
+]))))
+(;B[ll]C[atticus [16k?\]: lets see
+]
+;W[pi]
+;B[ni]
+;W[qf]
+;B[og]
+;W[pf]C[atticus [16k?\]: i'm just 16k, but this seems bad for Black
+kx8k [20k\]: yes i agree
+atticus [16k?\]: Black's stones are too loose to have safe territory
+atticus [16k?\]: back to the main thread
+])
+(;B[gq]
+;W[gr]
+;B[fr]
+;W[hr]
+;B[cp]C[atticus [16k?\]: now you have a pretty big place to make your eyespace
+kx8k [20k\]: I was at a loss how to cope with H3 at that time
+kx8k [20k\]: so my intention was extending upwards
+atticus [16k?\]: that's the right thing to do, if you have no hope of making life on the edge
+atticus [16k?\]: but there was still hope
+kx8k [20k\]: yes i agree
+atticus [16k?\]: you actually came pretty close to life anyway, but I slipped in
+atticus [16k?\]: it was salvageable
+]))

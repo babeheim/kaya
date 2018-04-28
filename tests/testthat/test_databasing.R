@@ -1,6 +1,8 @@
 
 
-
+# validate_games
+# versus
+# validate sgf
 
 
 
@@ -55,5 +57,13 @@ test_that("database isn't fooled by bad games", {
 
   my_files <- list.files("./invalid_sgf", pattern="*.sgf", full.names = TRUE)
   expect_error(out <- create_database(my_files))
+
+})
+
+
+test_that("database helpfully tells you which is the bad game in a set", {
+
+  my_files <- list.files("./real_sgf_one_invalid", pattern="*.sgf", full.names = TRUE)
+  out <- create_database(my_files)
 
 })

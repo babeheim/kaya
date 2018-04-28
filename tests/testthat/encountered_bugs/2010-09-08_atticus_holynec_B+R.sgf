@@ -1,0 +1,655 @@
+(;GM[1]FF[4]CA[UTF-8]AP[CGoban:3]ST[2]RU[Japanese]SZ[19]HA[3]KM[0.50]TM[1800]OT[5x30 byo-yomi]PW[holynec]PB[atticus]BR[7k]DT[2010-09-08]PC[The KGS Go Server at http://www.gokgs.com/]AB[pd][dp][pp]C[holynec [?\]: have a good one
+atticus [7k\]: u 2
+]RE[B+Resign]
+(;W[dc]WL[1792.338];B[de]BL[1796.28];W[qn]WL[1781.917];B[nq]BL[1786.671];W[qf]WL[1760.223];B[qh]BL[1748.945]TR[qf][qn]C[atticus [7k\]: this was to keep you separated
+atticus [7k\]: i feel it was the right choice
+];W[qk]WL[1751.967]C[atticus [7k\]: yes
+]
+(;B[oh]BL[1731.445]LB[qc:A]C[holynec [?\]: ok
+holynec [?\]: this move
+holynec [?\]: is the culprit
+atticus [7k\]: right
+holynec [?\]: if white jumps in A
+holynec [?\]: she will overconcentrate you
+holynec [?\]: big mistake
+holynec [?\]: but yeah
+holynec [?\]: this
+holynec [?\]: and left side
+];W[rp]WL[1745.513]C[holynec [?\]: :\]
+];B[qq]BL[1727.716];W[qc]WL[1743.63]C[atticus [7k\]: i see
+]
+(;B[qd]BL[1678.723]TR[jd]C[atticus [7k\]: i know a joseki that goes the other way
+atticus [7k\]: q17  instead of r16 
+holynec [?\]: ok
+atticus [7k\]: but it's really for when there's stones around here
+atticus [7k\]: (black)
+holynec [?\]: how come
+holynec [?\]: why is it bad if you play it now
+holynec [?\]: now you are truly understanding joseki
+holynec [?\]: :\]
+atticus [7k\]: yay
+];W[pc]WL[1654.193]C[atticus [7k\]: well and the wall-neutralization right?
+holynec [?\]: yeah
+holynec [?\]: sente plays into that
+];B[od]BL[1654.784]C[holynec [?\]: oh what will i do without my GRE books
+holynec [?\]: what will i do
+holynec [?\]: haha
+];W[rd]WL[1648.149]C[holynec [?\]: anyways, continue ^-^
+];B[re]BL[1649.875]C[holynec [?\]: exactly
+];W[rc]WL[1644.586]C[atticus [7k\]: it comes from the sente difference
+];B[qe]BL[1647.308]C[atticus [7k\]: its like missing the first question on the gre
+];W[nc]WL[1643.399]LB[oh:A]TR[hi][ji][lj][nj][pj][rj]C[atticus [7k\]: ok i spent a lot of time thinknig about where to play next
+atticus [7k\]: with my sente and all
+holynec [?\]: or c7
+holynec [?\]: ok, but what is your assessment of the board right now
+atticus [7k\]: white has some territory
+holynec [?\]: are you happy with the exchanges you made
+atticus [7k\]: yes
+atticus [7k\]: at least i don't know how to get more
+holynec [?\]: what about your black group
+holynec [?\]: on the right
+atticus [7k\]: top right?
+holynec [?\]: yes
+atticus [7k\]: hmm
+atticus [7k\]: that white stone could cause trouble
+atticus [7k\]: especially with r9 there
+atticus [7k\]: i wouldn't say this is a base
+holynec [?\]: ok
+holynec [?\]: so
+holynec [?\]: lets compare top right and bottom right
+atticus [7k\]: ok
+holynec [?\]: did someone get more
+holynec [?\]: ?
+atticus [7k\]: white did
+holynec [?\]: really?!
+atticus [7k\]: even in an even game i'd say
+atticus [7k\]: not even including the handi stones
+holynec [?\]: white did get more :p
+holynec [?\]: even in this game white got more
+holynec [?\]: ok
+holynec [?\]: so bottom right
+holynec [?\]: normal joseki yes?
+atticus [7k\]: with the handi stones its criminal how much white got
+atticus [7k\]: ya
+holynec [?\]: top right
+holynec [?\]: normal joseki
+holynec [?\]: ?
+atticus [7k\]: well it depends on the whole-board position
+holynec [?\]: how about this A stone
+atticus [7k\]: it isn't part of the joseki
+atticus [7k\]: its not really doing anything
+atticus [7k\]: right now
+holynec [?\]: it feels a little overconcentrated
+atticus [7k\]: ya
+holynec [?\]: so that makes it like 20 point swing
+holynec [?\]: yeah
+]
+(;B[id]BL[1524.69]C[atticus [7k\]: i decided top
+atticus [7k\]: and sorta just guessed where
+atticus [7k\]: should i be worried about the difference between here and star point?
+atticus [7k\]: at least as a SDK?
+holynec [?\]: ok
+atticus [7k\]: or here and 3rd line?
+holynec [?\]: so 1) are there any urgent moves
+holynec [?\]: or spots
+atticus [7k\]: right
+holynec [?\]: what is urgent
+atticus [7k\]: urgent means groups that will get in trouble if i neglect them
+atticus [7k\]: to me
+atticus [7k\]: i think nothing
+atticus [7k\]: time to play big moves
+holynec [?\]: ok
+holynec [?\]: so are there groups that will get into trouble
+holynec [?\]: ?
+holynec [?\]: if you neglect them
+holynec [?\]: and by trouble which means, attacked severely
+holynec [?\]: or pushed around a lot
+atticus [7k\]: in 1 move? i say no
+holynec [?\]: ok, so no urgent groups
+holynec [?\]: so what the big areas
+atticus [7k\]: the sides
+atticus [7k\]: and the corner i get two moves in
+holynec [?\]: ok so what is more open
+holynec [?\]: ? >:}
+atticus [7k\]: sorry what's open mean?
+holynec [?\]: widest space
+atticus [7k\]: oh
+holynec [?\]: usually means biggest move
+atticus [7k\]: D10
+holynec [?\]: exactly 
+holynec [?\]: that is the side you should play on
+atticus [7k\]: oh!
+holynec [?\]: the widest side
+atticus [7k\]: wow
+holynec [?\]: it is hard to play top
+holynec [?\]: because white is already strong there
+holynec [?\]: cant make territory easily there
+atticus [7k\]: i see
+holynec [?\]: so a move like j16 does not make so muche sense
+holynec [?\]: white is already low
+holynec [?\]: the left side is the "correct direction of play"
+holynec [?\]: :p
+atticus [7k\]: cool
+holynec [?\]: you see how j16 isnt as efficient
+holynec [?\]: as a move on the left
+atticus [7k\]: btw should i think of big like "makes the most influence" or something
+holynec [?\]: 2nd mistake
+atticus [7k\]: uh huh
+];W[cj]WL[1634.16]C[holynec [?\]: you need to feel/understand the difference between j16 and the left side
+holynec [?\]: :D
+atticus [7k\]: well that explains your next move
+holynec [?\]: yep
+];B[cc]BL[1514.644]C[atticus [7k\]: i just attached
+holynec [?\]: hohoho
+holynec [?\]: i leave that stone for later
+holynec [?\]: it holds a lot of aji
+holynec [?\]: i just wanted to destroy the left side
+]
+(;W[cn]WL[1623.09]
+(;B[jp]BL[1495.982]C[atticus [7k\]: and i felt i could handle it
+holynec [?\]: would i play f3?
+atticus [7k\]: ok yeah
+atticus [7k\]: bad idea
+holynec [?\]: dont play against yourself
+holynec [?\]: ;-\]
+holynec [?\]: so 3rd mistake hmm
+]
+(;W[cg]WL[1618.332]
+(;B[bp]BL[1487.385];W[eq]WL[1608.871]C[atticus [7k\]: wasn't thinking on that
+holynec [?\]: ooo
+holynec [?\]: a test
+atticus [7k\]: clearly i can't do that first
+atticus [7k\]: ok this fight was fun
+];B[ep]BL[1456.882];W[fq]WL[1605.625];B[fp]BL[1437.966];W[gp]WL[1593.999];B[go]BL[1389.419];W[hp]WL[1589.111];B[ho]BL[1352.017];W[fo]WL[1533.684];B[fn]BL[1274.932];W[io]WL[1438.036];B[ip]BL[1069.553];W[eo]WL[1419.568];B[do]BL[1065.402];W[en]WL[1416.198];B[dn]BL[1062.885];W[em]WL[1413.558];B[in]BL[1023.384];W[dm]WL[1394.876];B[dr]BL[915.654];W[dq]WL[1316.765]
+(;B[gq]BL[875.022]C[holynec [?\]: you played this
+atticus [7k\]: after that forcing move
+];W[hq]WL[1283.994];B[cq]BL[859.371];W[gr]WL[1274.413]C[atticus [7k\]: i figured white had to respond
+holynec [?\]: but it is a much different picture here
+atticus [7k\]: then play c3 
+holynec [?\]: here white is basically alive
+];B[br]BL[813.64];W[bo]WL[1268.943];B[cp]BL[805.045];W[er]WL[1259.148]C[atticus [7k\]: "it's the same as defending"
+holynec [?\]: are you hane'ing to kill
+atticus [7k\]: was the thought
+holynec [?\]: lol
+holynec [?\]: ok, you need to read too
+holynec [?\]: cant just play COMPLETELY off of proverbs
+holynec [?\]: although it does work
+holynec [?\]: for 99^
+]
+(;B[es]BL[773.505]C[atticus [7k\]: hehe
+];W[fs]WL[1251.675];B[ds]BL[742.153];W[bs]WL[1239.017]C[holynec [?\]: this is one of the exceptions
+atticus [7k\]: i did not see that coming at all
+holynec [?\]: ;\]
+holynec [?\]: that 1-2
+holynec [?\]: nasty
+atticus [7k\]: no kidding
+atticus [7k\]: so at this point
+atticus [7k\]: i see it going into a dead l
+holynec [?\]: it's dead
+atticus [7k\]: but i thought i had a way to live
+];B[bn]BL[524.804];W[bm]WL[1067.369]C[atticus [7k\]: with my outside play
+];B[cr]BL[442.162];W[cd]WL[872.105]C[atticus [7k\]: but it didn't work
+holynec [?\]: you had all the time to live here
+holynec [?\]: ;-\]
+];B[dd]BL[403.45];W[ce]WL[851.926];B[cb]BL[363.655];W[db]WL[831.358];B[ec]BL[293.511];W[eb]WL[824.519];B[fc]BL[291.942];W[fb]WL[816.934];B[gb]BL[258.951]C[holynec [?\]: good move here
+atticus [7k\]: i was reading that out
+];W[gc]WL[814.935];B[gd]BL[235.695];W[hc]WL[808.554];B[hb]BL[233.023];W[fd]WL[801.74];B[ed]BL[229.9];W[hd]WL[794.417]C[atticus [7k\]: did i make the right decision here?
+atticus [7k\]: i was going to kill one or the other
+atticus [7k\]: which would be better for white tho?
+]
+(;B[fe]BL[84.471]C[atticus [7k\]: "he tenuki'd because it worked"
+holynec [?\]: you played this
+atticus [7k\]: ya
+];W[bb]WL[789.175]C[atticus [7k\]: going to kill the 3-group
+];B[he]BL[65.692];W[bc]WL[768.76]C[holynec [?\]: yeah
+holynec [?\]: overconcentrated here
+holynec [?\]: and white got big territory
+];B[lc]BL[53.924];W[mc]WL[759.712];B[lb]BL[28.813];W[me]WL[753.495];B[ne]BL[1.183];W[ld]WL[749.961];B[kd]BL[30]OB[5];W[ke]WL[748.479];B[oc]BL[30]OB[5];W[ob]WL[745.848]C[atticus [7k\]: woops
+atticus [7k\]: that was supposed to be at p18
+];B[kc]BL[570.859];W[rq]WL[720.85];B[ir]BL[786.254];W[hr]WL[692.498];B[iq]BL[768.558];W[aq]WL[674.031];B[ap]BL[554.188];W[ar]WL[668.81];B[an]BL[454.681];W[co]WL[595.455];B[bq]BL[236.491];W[eg]WL[569.216];B[as]BL[195.107];W[ar]WL[550.19];B[aq]BL[183.515];W[as]WL[535.585]C[atticus [7k\]: ah
+atticus [7k\]: touche
+];B[on]BL[95.418]C[holynec [?\]: :p
+];W[mn]WL[518.194];B[mm]BL[41.569];W[lm]WL[489.875];B[kn]BL[605.037]C[holynec [?\]: hehe you see my plan
+];W[nm]WL[466.392];B[ml]BL[596.953];W[nn]WL[464.8]C[atticus [7k\]: mess with me everywhere?
+];B[ln]BL[493.518];W[oo]WL[325.002]C[holynec [?\]: wanna stop here?
+];B[qo]BL[398.716];W[ro]WL[316.785];B[po]BL[367.801];W[pn]WL[313.35]C[atticus [7k\]: sure
+holynec [?\]: ok 
+holynec [?\]: :}
+holynec [?\]: coo
+holynec [?\]: how about you review yourself and ask me Qs
+atticus [7k\]: ok
+holynec [?\]: give that a try
+holynec [?\]: hmm
+])
+(;B[he]C[atticus [7k\]: i figured
+atticus [7k\]: ya squeeze play
+holynec [?\]: so what happens here
+atticus [7k\]: but black has a lib problem
+atticus [7k\]: d14 e15 
+atticus [7k\]: will kill it
+holynec [?\]: you kill the 3-group
+holynec [?\]: like this
+atticus [7k\]: i figured i could either do that or kill the 4-group
+holynec [?\]: ;-\]
+atticus [7k\]: huh?
+holynec [?\]: in fact
+holynec [?\]: you kill everythin
+atticus [7k\]: ok show me
+atticus [7k\]: i was reading that out
+holynec [?\]: i think
+atticus [7k\]: and it wasn't working
+atticus [7k\]: and saw the fight would favor me
+atticus [7k\]: implementation....
+]
+(;W[ic]C[holynec [?\]: this?
+atticus [7k\]: ya
+];B[jc];W[ib];B[ia];W[jb];B[kb];W[ge];B[ja];W[gd]
+;B[gf]C[atticus [7k\]: man
+holynec [?\]: those ladders
+holynec [?\]: always come back
+holynec [?\]: ;-\]
+])
+(;W[ge];B[ic];W[gd]
+;B[gf]C[holynec [?\]: so 1st) simple
+];W[bb];B[bc]
+(;W[bd];B[ca]
+(;W[ac];B[ba];W[ab];B[da];W[ad];B[ea])
+(;W[ba];B[ab]
+(;W[ad];B[da];W[ac];B[aa];W[ba];B[ea])
+(;W[da])))
+(;W[ca]
+(;B[ab];W[ba];B[bd];W[be])
+(;B[bd];W[be];B[ab];W[ba])))
+(;W[bb]C[holynec [?\]: ok how about this
+atticus [7k\]: white will win
+holynec [?\]: now play differently for black
+holynec [?\]: i think you need a lot of L&D
+holynec [?\]: :p
+atticus [7k\]: ya no kidding
+atticus [7k\]: what if
+holynec [?\]: it is like vocab
+holynec [?\]: not so fun
+holynec [?\]: but necessary
+atticus [7k\]: black kills the 4-group
+atticus [7k\]: instead of the squeeze sequence
+]
+(;B[da];W[bc];B[ca]
+;W[ba]C[holynec [?\]: ok
+atticus [7k\]: is the sequence i saw
+])
+(;B[bc]C[atticus [7k\]: hmm
+atticus [7k\]: davies calls b18  the belly tesuji
+];W[ca]C[holynec [?\]: yep
+atticus [7k\]: it is useful against 2-groups
+atticus [7k\]: in capturing races
+holynec [?\]: it definitely i
+holynec [?\]: s
+]
+(;B[ab])
+(;B[ac]
+;W[bd]C[atticus [7k\]: hmm
+atticus [7k\]: still se black's death
+holynec [?\]: yep
+]
+(;B[ab])
+(;B[ba]C[atticus [7k\]: no throw-in then
+]
+(;W[ad]
+;B[ab]C[atticus [7k\]: ta da
+])
+(;W[aa]C[atticus [7k\]: oh
+atticus [7k\]: not so ta da
+holynec [?\]: hehe
+]))))))
+(;B[da]C[atticus [7k\]: ya
+atticus [7k\]: i was thinking either this or what happened in the game
+holynec [?\]: yeah possible
+atticus [7k\]: i thought this would be so i didn't play it
+holynec [?\]: this is better for black
+];W[ge]C[atticus [7k\]: ah nuts
+atticus [7k\]: i see
+atticus [7k\]: the corner
+holynec [?\]: black got territory here
+];B[fa]C[holynec [?\]: you capture 4 stones
+holynec [?\]: and you save 2
+];W[ic]
+;B[ea]C[atticus [7k\]: but now white's up in by business
+holynec [?\]: alright
+holynec [?\]: anotherE?
+atticus [7k\]: another?
+atticus [7k\]: what, game?
+holynec [?\]: yeah
+atticus [7k\]: not tonight
+holynec [?\]: ok
+atticus [7k\]: i gotta do some stuff
+holynec [?\]: and i was wondering
+holynec [?\]: do you prefer for these reviews
+holynec [?\]: to be this extensive
+holynec [?\]: or just brief?
+atticus [7k\]: yes yes
+atticus [7k\]: i'm learning so much
+holynec [?\]: brief might be easier to digest
+atticus [7k\]: nah
+atticus [7k\]: i review the reviews
+atticus [7k\]: usually before the night's games
+holynec [?\]: i actually save the reviews in my games list i think
+holynec [?\]: hmm
+holynec [?\]: the demos
+]))
+(;B[cs]C[atticus [7k\]: "why not hane? what's the harm"
+]))
+(;B[cq]C[holynec [?\]: i gave you a chance
+holynec [?\]: >:D
+atticus [7k\]: didn't i play that?
+holynec [?\]: what about here
+holynec [?\]: what to play for white
+atticus [7k\]: c4 c5 b5 c4 
+];W[bo]
+;B[cp]C[holynec [?\]: ok say maybe like this
+holynec [?\]: what will white play for bottom group
+atticus [7k\]: e2?
+];W[er]C[holynec [?\]: ok
+holynec [?\]: then b
+atticus [7k\]: i'm not sure
+];B[cr]LB[dr:1]C[holynec [?\]: this is one option
+atticus [7k\]: that's a living shape i think
+holynec [?\]: in the L+1
+holynec [?\]: it depends on who has sente
+holynec [?\]: L shape + 1 
+holynec [?\]: :p
+atticus [7k\]: white has sente so ist dead
+atticus [7k\]: unless
+holynec [?\]: but who will die first
+atticus [7k\]: white will die first
+atticus [7k\]: no eyes
+holynec [?\]: yep
+];W[hr]C[holynec [?\]: so white needs to live first
+]
+(;B[gq];W[hq];B[gr];W[gs])
+(;B[ir]C[holynec [?\]: i think black can kill white
+])
+(;B[br]C[holynec [?\]: easy way is just to live
+])
+(;B[ar])))
+(;B[fq]C[atticus [7k\]: ya that first
+holynec [?\]: this would be simpler
+]))
+(;W[gp]C[atticus [7k\]: not since you know i could handle it
+holynec [?\]: i might play here
+holynec [?\]: or anywhere
+atticus [7k\]: f5 
+];B[fo]
+;W[io]C[atticus [7k\]: hmm
+])
+(;W[fp])
+(;W[gq]))
+(;B[fq]LB[cl:A]C[holynec [?\]: always with the star points
+holynec [?\]: hehe
+atticus [7k\]: heh
+holynec [?\]: simple here
+atticus [7k\]: true
+holynec [?\]: corner before sides
+atticus [7k\]: i was anticipating you playing f3 
+holynec [?\]: help your weak stone
+holynec [?\]: helps an invasion at A
+atticus [7k\]: ya
+]))
+(;W[dd]
+;B[cd]C[atticus [7k\]: figured this would happen or semithng
+])
+(;W[cb]
+;B[cd]C[holynec [?\]: yes
+holynec [?\]: that is a normal pattern
+holynec [?\]: then what
+atticus [7k\]: i was suprised you didn't do anything
+]
+(;W[bb]C[atticus [7k\]: mabye here? that seems small
+holynec [?\]: that is an attacking move
+holynec [?\]: e18
+])
+(;W[eb]C[holynec [?\]: make eye shape/base
+atticus [7k\]: pretty
+]
+(;B[cg]C[holynec [?\]: yeah something like that
+holynec [?\]: maybe c12
+atticus [7k\]: this is about what i was expecting
+holynec [?\]: bigger base
+])
+(;B[ch]C[atticus [7k\]: but you didn't respond at all
+holynec [?\]: yep
+atticus [7k\]: why?
+];W[cm]
+;B[gq]C[holynec [?\]: this is also possible
+atticus [7k\]: from white's perspective?
+holynec [?\]: yes
+]
+(;W[bp];B[cq];W[gd])
+(;W[gd]C[holynec [?\]: i can split j16
+atticus [7k\]: i see
+]))))
+(;W[cm]C[holynec [?\]: because
+holynec [?\]: hard to make territory up top
+holynec [?\]: with my top right group already there
+atticus [7k\]: i see
+holynec [?\]: and you need another move
+holynec [?\]: top left too
+]
+(;B[db]C[holynec [?\]: maybe sometihng like tihs
+holynec [?\]: to remove aji
+atticus [7k\]: i was going to ask you
+];W[cg]C[holynec [?\]: and if you hane, maybe i play here
+];B[ec]C[holynec [?\]: i like this result more for white
+])
+(;B[fq];W[cb];B[cd]
+;W[eb]C[atticus [7k\]: that
+holynec [?\]: bcuz i always have this option
+holynec [?\]: in my pocket
+holynec [?\]: ill leave it for later
+atticus [7k\]: interesting
+holynec [?\]: do not need to play it immediately
+])))
+(;B[dj]C[atticus [7k\]: yes
+holynec [?\]: iuno about influence
+holynec [?\]: because sometimes biggest move might be a 3rd line move
+holynec [?\]: for example
+holynec [?\]: c6 is plausible too
+])
+(;B[cn])
+(;B[cm]C[holynec [?\]: it is all ok
+holynec [?\]: d10 is ok too
+atticus [7k\]: the key thing is its the right side of the board
+holynec [?\]: oh, is your right my left?
+holynec [?\]: ^-^
+atticus [7k\]: correct side
+holynec [?\]: yeah
+atticus [7k\]: is the left side here
+holynec [?\]: exactly
+atticus [7k\]: ah hah
+holynec [?\]: left here too
+])
+(;AE[oh]AB[pf]LB[oa:1][pa:2][qa:3][ra:4][sa:5][pb:6][qb:7][rb:8][sb:9][qf:13][rf:12][qg:10][rg:11]C[holynec [?\]: we could put it here for instance
+holynec [?\]: same idea
+atticus [7k\]: right
+holynec [?\]: black lost a lot somewhere
+holynec [?\]: in the exchanges
+holynec [?\]: because he is overconcentrated here
+atticus [7k\]: ya
+holynec [?\]: white got 9-10 points
+holynec [?\]: black didnt even get that many
+atticus [7k\]: right
+holynec [?\]: maybe 5
+holynec [?\]: and white got sente
+]))
+(;B[pc];W[qd];B[pe]
+;W[rf]C[holynec [?\]: that is what i really was asking ;-\]
+holynec [?\]: normal joseki
+holynec [?\]: if you play q14
+atticus [7k\]: but i figured white could build well on top
+]
+(;B[jd]TR[oh]C[atticus [7k\]: i was thinking about this....
+atticus [7k\]: this marked stone isn't in the joseki but is close to what you want
+atticus [7k\]: the original pincer isn't as surrounded
+atticus [7k\]: i dunno, just decided to go with something more familiar tho
+holynec [?\]: well what if you played q14 here instead of k16
+atticus [7k\]: i see
+];W[og])
+(;B[pf]C[atticus [7k\]: hmm
+atticus [7k\]: seems pretty good
+atticus [7k\]: wall with options
+holynec [?\]: i think if i did choose this direction
+holynec [?\]: i would play here hehe
+atticus [7k\]: ok
+holynec [?\]: just because that cut aji is bad
+]
+(;W[jd]C[atticus [7k\]: i don't know any joseki for the top right situation really
+holynec [?\]: ok
+holynec [?\]: here
+])
+(;W[cn];B[cl];W[cq]
+(;B[dq];W[cp];B[do];W[bn]
+(;B[em]LB[jp:A]C[holynec [?\]: so you know bottom left joseki?
+atticus [7k\]: ya that's the one
+atticus [7k\]: exaclty
+holynec [?\]: so what are the conditions on choosing this joseki
+holynec [?\]: ?
+atticus [7k\]: A needs to be under black's control
+atticus [7k\]: or abouts
+holynec [?\]: how come
+atticus [7k\]: if white's there
+atticus [7k\]: then black is a wall between two stable white groups
+atticus [7k\]: not useful
+holynec [?\]: ok
+holynec [?\]: what if white isnt there
+holynec [?\]: ?
+holynec [?\]: like here
+atticus [7k\]: white would play there next i suppose
+holynec [?\]: ok
+atticus [7k\]: or maybe 1 lower
+holynec [?\]: and what would that do to the wall
+atticus [7k\]: well since white can make a 2-space jump etiher way
+atticus [7k\]: i'd say it would neutralize it
+holynec [?\]: yeah, makes it useless
+atticus [7k\]: b/c white''s stabilized
+holynec [?\]: so who's move is it after this joseki
+atticus [7k\]: white's
+holynec [?\]: yes!
+holynec [?\]: that is why you need a stone around A
+holynec [?\]: if you choose this direction
+atticus [7k\]: right
+holynec [?\]: because black ends in gote
+holynec [?\]: and does not have time to play that extension
+atticus [7k\]: ya
+atticus [7k\]: i didn't play it
+holynec [?\]: otherwise white neutralizes
+atticus [7k\]: then i'd play k16 
+];W[jd])
+(;B[dn]C[holynec [?\]: this is also another way
+holynec [?\]: for the joseki
+atticus [7k\]: but i was wondering if the stone at p12 sort of helped me get sente in the joseki
+holynec [?\]: yeah, but it is still very thin
+holynec [?\]: hm
+holynec [?\]: this is a variation on the joseki
+]))
+(;B[cp]C[atticus [7k\]: ya i figured something bad would happened if i went that far off
+holynec [?\]: now what happens by blocking this direction?
+atticus [7k\]: this is better for black
+atticus [7k\]: the wall faces the right way
+holynec [?\]: ok, but who ends with sente
+holynec [?\]: ?
+atticus [7k\]: black does
+holynec [?\]: yes
+atticus [7k\]: so its double-better
+holynec [?\]: key difference between blocking this way
+holynec [?\]: and the other
+holynec [?\]: sente
+atticus [7k\]: oh ok
+]))
+(;W[jc]C[holynec [?\]: but yes, it neutralizes
+]))))
+(;B[pf]C[atticus [7k\]: ah hah
+holynec [?\]: this is the typical move
+atticus [7k\]: yep
+holynec [?\]: ok
+atticus [7k\]: big big big
+atticus [7k\]: sets the tone for the whole game
+holynec [?\]: well gl
+holynec [?\]: oh and
+atticus [7k\]: thanks man
+]
+(;W[qc];B[pc];W[qd];B[pe];W[rf]
+;B[jc]C[atticus [7k\]: hey its that joseki
+holynec [?\]: yes
+holynec [?\]: ;-\]
+holynec [?\]: and black ended with sente
+holynec [?\]: so he can afford to block this way
+atticus [7k\]: much better
+holynec [?\]: yep
+atticus [7k\]: very useful
+holynec [?\]: that p12
+holynec [?\]: :p
+])
+(;W[qg]C[holynec [?\]: and if here?
+atticus [7k\]: q13 q12 s12 
+];B[pg]
+;W[ph]C[holynec [?\]: what about here
+atticus [7k\]: s12 or r15 
+]
+(;B[rh]C[atticus [7k\]: no r15 for sho
+])
+(;B[qe]C[holynec [?\]: yes
+holynec [?\]: ;-\]
+atticus [7k\]: and s12 is a follow-up
+];W[rh];B[qi]))))
+(;W[cn];B[cl];W[cq];B[cp];W[dq];B[eq];W[bp];B[bo]
+;W[bq]C[atticus [7k\]: hehe
+];B[co]
+;W[fq]C[atticus [7k\]: u saw that
+holynec [?\]: ive been seeing this a lot
+holynec [?\]: im sure some joseki said this is bad for black
+atticus [7k\]: i learned this recently
+];B[ep]
+;W[er]C[atticus [7k\]: yes
+];B[dd];W[qn];B[ql];W[qq];B[qp];W[pq];B[oq];W[rq]
+(;B[op]
+;W[rp]LB[eq:A][er:B]C[holynec [?\]: but this is usually even worse for black
+atticus [7k\]: that's the reason
+atticus [7k\]: ah!
+holynec [?\]: the reason why bottom left is bad
+atticus [7k\]: ok so i should consider a different punishment
+holynec [?\]: is literally just 1 liberty
+holynec [?\]: yeah
+holynec [?\]: you can punish better here
+holynec [?\]: this exchange of A for B is bad
+];B[qf];W[fc];B[hc];W[cc];B[dc];W[cd];B[de];W[db];B[eb];W[cb]
+;B[ec]
+;W[cf]LB[ce:1][eq:A][er:B]TR[ch][hq]C[holynec [?\]: because in normal joseki black doesnt do A for B
+holynec [?\]: it is a bad exchange for black
+holynec [?\]: he loses 1 liberty
+atticus [7k\]: right
+atticus [7k\]: so that's why tis good for white right
+holynec [?\]: but bottom right is better punishment
+atticus [7k\]: aji keshi
+holynec [?\]: yeah
+holynec [?\]: aji keshi
+holynec [?\]: + removing own liberty
+atticus [7k\]: ah see
+atticus [7k\]: i see
+holynec [?\]: aji keshi
+holynec [?\]: is the the move at the triangle 
+holynec [?\]: black loses the triangle move too
+atticus [7k\]: ya i know that one
+atticus [7k\]: that was what i was aiming for with that misplay
+holynec [?\]: yep, let me rephrase
+holynec [?\]: 1 liberty + aji keshi
+atticus [7k\]: nice
+atticus [7k\]: ok gotta go
+holynec [?\]: but bottom right is more preferable
+holynec [?\]: yeah
+atticus [7k\]: thanks so much
+holynec [?\]: peac
+holynec [?\]: peace
+holynec [?\]: gl
+])
+(;B[rp]C[holynec [?\]: of course if black does this
+];W[op]C[holynec [?\]: then it is super bad for black
+])))

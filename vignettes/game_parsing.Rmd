@@ -158,6 +158,26 @@ kaya features to add:
 # how the parsing works
 
 
+I can probably make a better version of this where the parenthesis don't need
+to be turned into curly races
+
+split, which breaks one string of text into multiple pieces; 
+split_sgf takes an sgf_string and returns an object with $nodes and $branches, each of which is also the same kind of object
+split_branch takes a branch string and returns vector of nodes,
+split_node takes a node string and breaks it up into a list of tag strings
+split_tag takes the tag string and breaks it up into a key and value
+
+from these workhorse functions, we have the parse functions:
+parse_tag takes a vector of tag strings (from split_node), applies split_tag, and turns it into a named list
+parse_node takes a branch (from split_sgf), applies split_node, and then runs parse_tag on each node, creating an unnamed lits of nodes
+parse_sgf takes an sgf_file, applies split_sgf, and then runs parse_node on each output
+
+(?<!\\)\[|(?<!\\)\](?<!\\)\[|(?<!\\)\]
+this identifies the locations of three patterns, [, ] and [], with a lookbehind to ignore escapes
+we simply split the string at each location and we're good!
+
+
+
 (;FF[4]GM[1]SZ[19];B[aa];W[bb]
   (;B[cc];W[dd];B[ad];W[bd])
   (;B[hh];W[hg])
