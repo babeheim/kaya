@@ -4,16 +4,17 @@
 # even a \[ will fail, I believe!
 
 check_comment_escapes <- function(string) {
-  balanced_square <- length(gregexpr("(?<!\\\\)\\]", string, perl = TRUE)[[1]]) == length(gregexpr("(?<!\\\\)\\[", string, perl = TRUE)[[1]])
-  if(!balanced_square) stop("sgf seems invalid; square brackets don't balance, must fix first")
+  n_left_brackets <- length(gregexpr("(?<!\\\\)\\]", string, perl = TRUE)[[1]])
+  n_right_brackets <- length(gregexpr("(?<!\\\\)\\[", string, perl = TRUE)[[1]])
+  if(!n_left_brackets != n_right_brackets) stop("sgf seems invalid; square brackets don't balance, must fix first")
 #  comment_pattern <- "\\[(?>[^\\[\\]]|(?R))*\\]"
 #  comment_pattern <- "\\[((?>[^\\[\\]]+)|(?R))*\\]"
-  comment_pattern <- "\\[((?>\\\\\\[|\\\\\\]|[^\\[\\]])|(?R))*\\]"
-  check <- gregexpr(comment_pattern, string, perl = TRUE)
+  bracket_pattern <- "\\[((?>\\\\\\[|\\\\\\]|[^\\[\\]])|(?R))*\\]"
+  check <- gregexpr(bracket_pattern, string, perl = TRUE)
   if (check[[1]][1]!="-1") {
     corrected <- regmatches(string, check)
-    corrected <- lapply(corrected, function(z) gsub("\\(", "\\\\{", z))
-    corrected <- lapply(corrected, function(z) gsub("\\)", "\\\\}", z))
+    corrected <- lapply(corrected, function(z) gsub("(?<!\\\\)\\(", "\\\\(", z))
+    corrected <- lapply(corrected, function(z) gsub("(?<!\\\\)\\)", "\\\\)", z))
     corrected <- lapply(corrected, function(z) gsub("(?<!\\\\)\\](?!$)", "\\\\]", z, perl = TRUE))
     corrected <- lapply(corrected, function(z) gsub("(?<!\\\\|^)\\[", "\\\\[", z, perl = TRUE))
     corrected <- lapply(corrected, function(z) gsub("\\;", "\\\\;", z))
@@ -49,9 +50,37 @@ split_node <- function(node_string) {
 
 split_branch <- function(branch_string) {
   output <- strsplit(branch_string, "(?<!\\\\);", perl = TRUE)[[1]]
+  # split using un-escaped semicolons
   if(length(output) == 0) stop("branch contains no valid nodes")
   if(output[1] == "") output <- output[-1]
   return(output)
+}
+
+split_sgf <- function(sgf_string) {
+  output <- list()
+  node_pattern <- "(^.*?(?<!\\\\))(\\(|$)" 
+  # group from start of line to first unescaped (, or end of line
+  m <- gregexpr(node_pattern, sgf_string, perl = TRUE)
+  node_data <- regmatches(sgf_string, m)[[1]]
+  output$nodes <- gsub("\\($", "", node_data)
+  parenthesis_pattern <- "\\(((?>=\\\\\\(|\\\\\\)|[^\\(\\)])|(?R))*\\)"
+  # group by outer parentheses pairs except escaped pairs
+  m <- gregexpr(parenthesis_pattern, sgf_string, perl = TRUE)
+  if (m[[1]][1] != (-1)) {
+    branch_data <- as.list(regmatches(sgf_string, m)[[1]])
+    branch_data <- lapply(branch_data, function(z) gsub("\\)$", "", z))
+    branch_data <- lapply(branch_data, function(z) gsub("^\\(", "", z))
+    output$branches <- branch_data
+  }
+  return(output)
+}
+
+# takes multiple games as inputs and breaks them up!
+split_gametree <- function(gametree) {
+  parenthesis_pattern <- "\\(((?>=\\\\\\(|\\\\\\)|[^\\(\\)])|(?R))*\\)"
+  m <- gregexpr(parenthesis_pattern, sgf_string, perl = TRUE)
+  game_data <- as.list(regmatches(sgf_string, m)[[1]])
+  return(game_data)
 }
 
 
@@ -103,18 +132,29 @@ parse_branch <- function(branch_string) {
   return(output)
 }
 
-
-
-
-bracket_matcher <- function(string){
-#  nesting_brackets <- "\\((?>[^()]|(?R))*\\)"
-  nesting_brackets <- "(?<!\\\\)\\((?>[^()]|(?R))*\\)(?!\\\\)"
-  matched <- gregexpr(nesting_brackets, string, perl = TRUE)[[1]]
-  return(matched)
+parse_sgf <- function(sgf_string, to.json = FALSE) {
+  sgf_string <- check_comment_escapes(sgf_string)
+  if (length(sgf_string) > 1) stop("parse_sgf accepts only single strings")
+  sgf_string <- gsub("^\\(|\\)$", "", sgf_string)
+  output <- split_sgf(sgf_string)
+  output$nodes <- parse_branch(output$nodes)
+  if ("branches" %in% names(output)) {
+    for(i in 1:(length(output$branches))){
+      output$branches[[i]] <- parse_sgf(output$branches[[i]]) # wow!
+    }
+  }
+  if (to.json) output <- jsonlite::toJSON(output, pretty = TRUE)
+  return(output)
 }
 
+
+
+
+###### old versions
+
+
 # i suspect I can use regmatches here to clean up this code...
-parse_sgf <- function(sgf_string, to.json = FALSE) {
+parse_sgf_old <- function(sgf_string, to.json = FALSE) {
   if(length(sgf_string) > 1) stop("parse_sgf accepts only single strings")
   x <- bracket_matcher(sgf_string)
   if(length(x) > 1) stop("string contains more than one game! Kaya is not designed for this, so please separate these first.")
