@@ -7,7 +7,6 @@ test_that("encountered bugs are resolved", {
 
 
 
-
 my_files <- list.files(".")
 
 # segfault error solved
@@ -15,6 +14,19 @@ my_files <- list.files(".")
 # when you completely remove comments from the properly-escaped string, loads just fine!
 
 my_files <- list.files(".", pattern = "\\.sgf$", recursive = TRUE, full.names = TRUE)
+
+# I guess kaya odesn't like empty nodes, but those are legal in SGF context ;;;; is fine!
+
+[1] "./1668/7/HoninboDosaku-YasuiSantetsu17.sgf"    
+[2] "./1957/12/SakataEio-ShimamuraToshihiro5352.sgf"
+[3] "./1996/10/LeeChangho-KobayashiSatoru20595.sgf" 
+[4] "./2011/2/HaSungbong-KamimuraHaruo66132.sgf"    
+[5] "./2011/2/MiyazakiRyutaro-HaSungbong66130.sgf"  
+[6] "./2011/2/ShimojiGensho-HaSungbong66133.sgf"    
+[7] "./2011/3/HaSungbong-OhashiHirofumi66140.sgf"   
+[8] "./2011/5/HaSungbong-FuruyaYutaka66143.sgf"     
+[9] "./2013/1/LeeYounggu-LeeDonghoon46204.sgf"      
+
 
 valid <- validate_sgf(my_files)
 
