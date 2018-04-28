@@ -1,6 +1,7 @@
 
 parse_sgf <- function(sgf_string, to.json = FALSE) {
   sgf_string <- check_comment_escapes(sgf_string)
+  sgf_string <- purge_comments(sgf_string)
   if (length(sgf_string) > 1) stop("parse_sgf accepts only single strings")
   sgf_string <- gsub(" *$|^ *", "", sgf_string)
   sgf_string <- gsub("^\\(|\\)$", "", sgf_string)
@@ -31,7 +32,7 @@ parse_node <- function(node_string) {
   return(output)
 }
 
-parse_tag <- function(tag_data) {
+parse_tag <- function(tag_data, strict = FALSE) {
   output <- list()
   if(length(tag_data) == 1){
     sgf_tag <- split_tag(tag_data)
@@ -41,7 +42,7 @@ parse_tag <- function(tag_data) {
     for(i in 1:length(tag_data)) output <- c(output, parse_tag(tag_data[i]))
   }
   if(any(duplicated(names(output)))) stop("duplicated tags in the same node")
-#  if(any(nchar(names(output)) > 2)) stop("SGF tags are invalid; they contain too many characters")
+  if(strict) if(any(nchar(names(output)) > 2)) stop("SGF tags are invalid; they contain too many characters")
   return(output)
 }
 

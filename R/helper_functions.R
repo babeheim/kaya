@@ -1,9 +1,16 @@
 
 
+purge_comments <- function(escaped_string) {
+  comment_groups <- gregexpr("C\\[.*?(?<!\\\\)\\]", escaped_string, perl = TRUE)
+  regmatches(escaped_string, comment_groups) <- ""
+  return(escaped_string)
+}
+
 check_comment_escapes <- function(string) {
   string <- gsub("\\\\\\[", "\\[", string)
   string <- gsub("\\\\\\]", "\\]", string)
   # maybe resolve the kgs problem right here?
+  # but creates the iron giant problem!
   n_left_brackets <- length(gregexpr("(?<!\\\\)\\]", string, perl = TRUE)[[1]])
   n_right_brackets <- length(gregexpr("(?<!\\\\)\\[", string, perl = TRUE)[[1]])
   if(n_left_brackets != n_right_brackets) stop("sgf seems invalid; square brackets don't balance, must fix first")
