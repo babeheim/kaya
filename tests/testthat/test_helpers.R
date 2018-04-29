@@ -1,4 +1,23 @@
 
+
+# purge comments!
+
+test_that("purge_comments removes comments only", {
+
+  test <- "(;PB[bret]PW[paul];B[dd];W[qq]C[I resign])"
+  x <- purge_comments(test)
+  expect_true(x == "(;PB[bret]PW[paul];B[dd];W[qq])")
+
+  test <- "(;PB[bret]PW[paul];B[dd];W[qq]C[the comment tag is C\\[.])"
+  x <- purge_comments(test)
+  expect_true(x == "(;PB[bret]PW[paul];B[dd];W[qq])")
+
+  test <- "(;PB[bret]PW[paul];B[dd];W[qq]PC[the comment tag is C\\[.])"
+  x <- purge_comments(test)
+  expect_true(x == test)
+
+})
+
 # strip comments
 
 test_that("strip_comments removes comments", {
