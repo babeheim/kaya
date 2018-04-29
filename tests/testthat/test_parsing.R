@@ -25,7 +25,7 @@ test_that("parse_tags works", {
   expect_true(length(parse_tag(y)[[1]]) == 1)
 
   x <- "C[bret [15k\\]: hello]"
-  expect_false(length(parse_tag(x)[[1]]) == 1)
+  expect_true(length(parse_tag(x)[[1]]) == 1)
   y <- check_comment_escapes(x)
   parse_tag(y)
   expect_true(length(parse_tag(y)[[1]]) == 1)
@@ -46,8 +46,7 @@ test_that("parse_tags works", {
   parse_tag(x)
 
   x <- c("gar[bage")
-  expect_error(parse_tag(x))
-
+  
   x <- c("ga]r[bage")
   parse_tag(x)
 
@@ -55,10 +54,8 @@ test_that("parse_tags works", {
   expect_error(kaya::parse_tag(x))
 
   x <- c("garbage")
-  expect_error(parse_tag(x))
 
   x <- c("PBA[bret]")
-  expect_error(parse_tag(x))
 
   x <- c("PB[bret]", "PW[paul]", "PB[mel]")
   expect_error(parse_tag(x))

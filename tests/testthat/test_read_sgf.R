@@ -105,13 +105,32 @@ test_that("paired unescaped square bracket in comments ok", {
   expect_true(validate_games(my_game))
 })
 
+test_that("kgs-style right escaping works", {
 
-# test_that("kgs-style right escaping works", {
-#   my_game <- './unusual_sgf/metadata_with_kgs_square_brackets.sgf'
-#   sgf_lines <- readLines(my_game, warn = FALSE)
-#   d <- read_sgf(my_game, rotate = FALSE)
-#   expect_true(validate_games(my_game))
-# })
+  my_game <- './unusual_sgf/metadata_with_kgs_square_brackets.sgf'
+  sgf_lines <- readLines(my_game, warn = FALSE)
+  d <- read_sgf(my_game, rotate = FALSE)
+  expect_true(validate_games(my_game))
+
+  my_game <- './unusual_sgf/metadata_with_kgs_square_brackets_variant.sgf'
+  sgf_lines <- readLines(my_game, warn = FALSE)
+  d <- read_sgf(my_game, rotate = FALSE)
+  expect_true(validate_games(my_game))
+})
+
+
+test_that("iron giant face loads", {
+
+  my_game <- './unusual_sgf/metadata_with_iron_giant_face_escaped.sgf'
+  sgf_lines <- readLines(my_game, warn = FALSE)
+  d <- read_sgf(my_game, rotate = FALSE)
+  expect_true(validate_games(my_game))
+
+  my_game <- './unusual_sgf/metadata_with_iron_giant_face.sgf'
+  expect_error(d <- read_sgf(my_game, rotate = FALSE))
+
+})
+
 
 
 test_that("no-move game reads correctly", {
@@ -126,14 +145,15 @@ test_that("no-move game reads correctly", {
 })
 
 
+test_that("games with characters outside sgf tree are okay", {
+  my_game <- './invalid_sgf/characters_outside_games.sgf'
+  expect_silent(d <- read_sgf(my_game))
+})
+
 # invalid games
 
 
 
-test_that("games with characters outside sgf tree fail", {
-  my_game <- './invalid_sgf/characters_outside_games.sgf'
-  expect_error(d <- read_sgf(my_game))
-})
 
 
 test_that("extra brackets caught",{

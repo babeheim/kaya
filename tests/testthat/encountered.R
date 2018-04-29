@@ -13,22 +13,23 @@ my_files <- list.files(".")
 # the problem was THERE WERE TOO MANY COMMENTS
 # when you completely remove comments from the properly-escaped string, loads just fine!
 
+
+my_files <- list.files(".", recursive = TRUE, full.names = TRUE)
+
+valid <- rep(NA, length(my_files))
+for(i in 1:length(my_files)){
+  raw <- paste0(readLines(my_files[i], warn = FALSE), collapse = "")
+  raw <- gsub("---$", "", raw)
+  valid[i] <- validate_sgf(string = raw)
+  if(i %% 1000 == 0) print(i)
+}
+
+
 my_files <- list.files(".", pattern = "\\.sgf$", recursive = TRUE, full.names = TRUE)
 
 # I guess kaya odesn't like empty nodes, but those are legal in SGF context ;;;; is fine!
 
-[1] "./1668/7/HoninboDosaku-YasuiSantetsu17.sgf"    
-[2] "./1957/12/SakataEio-ShimamuraToshihiro5352.sgf"
-[3] "./1996/10/LeeChangho-KobayashiSatoru20595.sgf" 
-[4] "./2011/2/HaSungbong-KamimuraHaruo66132.sgf"    
-[5] "./2011/2/MiyazakiRyutaro-HaSungbong66130.sgf"  
-[6] "./2011/2/ShimojiGensho-HaSungbong66133.sgf"    
-[7] "./2011/3/HaSungbong-OhashiHirofumi66140.sgf"   
-[8] "./2011/5/HaSungbong-FuruyaYutaka66143.sgf"     
-[9] "./2013/1/LeeYounggu-LeeDonghoon46204.sgf"      
-
-
-valid <- validate_sgf(my_files)
+valid <- validate_sgf(x)
 
 my_files[!valid]
 
@@ -36,15 +37,17 @@ my_files[!valid]
 valid <- rep(NA, length(my_files))
 for(i in 1:length(my_files)){
   valid[i] <- validate_sgf(my_files[i])
+  if(i %% 1000 == 0) print(i)
 }
-
 
 
 # put game file here
 
-sgf_file <- "./encountered_bugs/2010-08-22_atticus_mikan_W+43.50.sgf"
+#########################
+sgf_file <- "./encountered_bugs/LeeYounggu-LeeDonghoon46204.sgf"
+#########################
 
-read_sgf(sgf_file)
+d <- read_sgf(sgf_file)
 
 # i cannot explain whats going on here, other than it's extremely nested....
 # need minimal working example!
@@ -53,39 +56,39 @@ read_sgf(sgf_file)
 # validate_sgf(sgf_file)
 
 
+# bracket_pattern <- "\\[((?>\\\\\\[|\\\\\\]|[^\\[\\]])|(?R))*\\]"
+
+# \[((?>\\\[|\\\]|[^\[\]])|(?R))*\]
+
+
 
 # now go step by step
 
 # read_sgf
 raw <- paste0(readLines(sgf_file, warn = FALSE), collapse = "")
+  # raw <- gsub("---$", "", raw)
+  # raw <- gsub("\xb4", "'", raw)
+
+# parse_sgf(raw)
 
 # check_comment_escapes
 string <- raw
-string <- gsub("\\\\\\[", "\\[", string)
-string <- gsub("\\\\\\]", "\\]", string)
-# whats going on here?
-n_left_brackets <- length(gregexpr("(?<!\\\\)\\]", string, perl = TRUE)[[1]])
-n_right_brackets <- length(gregexpr("(?<!\\\\)\\[", string, perl = TRUE)[[1]])
 
-if(n_left_brackets != n_right_brackets) stop("sgf seems invalid; square brackets don't balance, must fix first")
-#  comment_pattern <- "\\[(?>[^\\[\\]]|(?R))*\\]"
-#  comment_pattern <- "\\[((?>[^\\[\\]]+)|(?R))*\\]"
-bracket_pattern <- "\\[((?>\\\\\\[|\\\\\\]|[^\\[\\]])|(?R))*\\]"
+bracket_pattern <- "\\[(.*?)(?<!\\\\)\\]"
 check <- gregexpr(bracket_pattern, string, perl = TRUE)
 if (check[[1]][1]!="-1") {
   corrected <- regmatches(string, check)
   corrected <- lapply(corrected, function(z) gsub("(?<!\\\\)\\(", "\\\\(", z, perl = TRUE))
   corrected <- lapply(corrected, function(z) gsub("(?<!\\\\)\\)", "\\\\)", z, perl = TRUE))
-  corrected <- lapply(corrected, function(z) gsub("(?<!\\\\)\\](?!$)", "\\\\]", z, perl = TRUE))
-  corrected <- lapply(corrected, function(z) gsub("(?<!\\\\|^)\\[", "\\\\[", z, perl = TRUE))
+  # corrected <- lapply(corrected, function(z) gsub("(?<!\\\\)\\](?!$)", "\\\\]", z, perl = TRUE))
+  # corrected <- lapply(corrected, function(z) gsub("(?<!\\\\|^)\\[", "\\\\[", z, perl = TRUE))
   corrected <- lapply(corrected, function(z) gsub("(?<!\\\\)\\;", "\\\\;", z, perl = TRUE))
   regmatches(string, check) <- corrected
 }
 
-# segfault if try to do this in functions, but manually ti works??
 
 # parse_sgf
-sgf_string <- strip_comments(string)
+sgf_string <- purge_comments(string)
 # sgf_string <- check_comment_escapes(sgf_string)
 if (length(sgf_string) > 1) stop("parse_sgf accepts only single strings")
 sgf_string <- gsub(" *$|^ *", "", sgf_string)
@@ -104,6 +107,8 @@ branch_string <- output$nodes
 node_vec <- split_branch(branch_string)
 output <- list()
 for(i in 1:length(node_vec)) output$nodes[[i]] <- parse_node(node_vec[i])
+
+# 1520.081
 
 # ????
 
