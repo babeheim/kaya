@@ -1,7 +1,7 @@
 
 
 purge_comments <- function(escaped_string) {
-  comment_groups <- gregexpr("C\\[.*?(?<!\\\\)\\]", escaped_string, perl = TRUE)
+  comment_groups <- gregexpr("(?<![a-zA-Z])C\\[.*?(?<!\\\\)\\]", escaped_string, perl = TRUE)
   regmatches(escaped_string, comment_groups) <- ""
   return(escaped_string)
 }
@@ -30,9 +30,10 @@ check_comment_escapes <- function(string) {
   return(string)
 }
 
-validate_sgf <- function(path){
+validate_sgf <- function(path = NA, string = NA){
   if(length(path) == 1) {
-    res <- try(read_sgf(path), silent = TRUE)
+    if(is.na(string)) res <- try(read_sgf(path), silent = TRUE)
+    if(!is.na(string)) res <- try(parse_sgf(string), silent = TRUE)
     if(class(res) == "list") output <- TRUE
     if(class(res) == "try-error") output <- FALSE
   } else {
