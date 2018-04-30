@@ -1,5 +1,60 @@
 
 
+# group_parentheses
+
+test_that("group_parentheses works", {
+
+  # the current version cannot distinguish
+
+  x <- "(root)"
+  y <- group_parentheses(x)
+  expect_true(length(y) == 1)
+
+  x <- "(root)---"
+  y <- group_parentheses(x)
+  expect_true(length(y) == 1)
+
+  x <- "(root(branch1)(branch2))"
+  y <- group_parentheses(x)
+  expect_true(length(y) == 1)
+
+  x <- "root(branch1)(branch2)"
+  y <- group_parentheses(x) 
+  expect_true(length(y) == 2)
+
+  x <- "root(branch1(branch11)(branch12))(branch2)"
+  y <- group_parentheses(x)
+  expect_true(length(y) == 2)
+
+  x <- "test(this)"
+  y <- group_parentheses(x)
+  expect_true(length(y) == 1)
+
+  x <- "test(this (and) this)"
+  y <- group_parentheses(x)
+  expect_true(nchar(y) == 17)
+
+  # all parentheses MUST be escaped or paired
+  x <- "test(this \\(and this)"
+  y <- group_parentheses(x)
+  expect_true(nchar(y) == 17)
+
+  # this is also failing...
+  x <- "test(this \\(and\\) this)"
+  y <- group_parentheses(x)
+  expect_true(nchar(y) == 19)
+
+  x <- "root(branch1(branch11)(branch12))(branch2)---"
+  y <- group_parentheses(x)
+  expect_true(length(y) == 2)
+
+  x <- "(branch1)(branch2)"
+  y <- group_parentheses(x)
+  expect_true(length(y) == 2)
+
+})
+
+
 # purge comments!
 
 test_that("purge_comments removes comments only", {

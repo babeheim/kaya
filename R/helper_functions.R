@@ -1,4 +1,19 @@
 
+# the problem: 
+# (;FF[4]GM[1]SZ[19];B[aa];W[bb](;B[cc];W[dd]C[test (with parentheses)  or rather one ( parentheses];B[ad];W[bd])(;B[hh];W[hg]))
+
+
+string <- "and(this \\(is complete)(this is also but nested (and i want to skip over) it)"
+parenthesis_pattern <- "(?<!\\\\)\\(((?>\\\\\\(|\\\\\\)|[^\\(\\)])|(?R))*(?<!\\\\)\\)"
+m <- gregexpr(parenthesis_pattern, string, perl = TRUE)
+regmatches(string, m)[[1]]
+
+group_parentheses <- function(string){
+  parenthesis_pattern <- "(?<!\\\\)\\(((?>\\\\\\(|\\\\\\)|[^\\(\\)])|(?R))*(?<!\\\\)\\)"
+  m <- gregexpr(parenthesis_pattern, string, perl = TRUE)
+  output <- regmatches(string, m)[[1]]
+  return(output)
+}
 
 purge_comments <- function(escaped_string) {
   comment_groups <- gregexpr("(?<![a-zA-Z])C\\[.*?(?<!\\\\)\\]", escaped_string, perl = TRUE)
@@ -14,8 +29,6 @@ check_comment_escapes <- function(string) {
     corrected <- lapply(corrected, function(z) gsub("(?<!\\\\)\\(", "\\\\(", z, perl = TRUE))
     corrected <- lapply(corrected, function(z) gsub("(?<!\\\\)\\)", "\\\\)", z, perl = TRUE))
     corrected <- lapply(corrected, function(z) gsub("(?<!\\\\)\\;", "\\\\;", z, perl = TRUE))
-#   corrected <- lapply(corrected, function(z) gsub("(?<!\\\\)\\](?!$)", "\\\\]", z, perl = TRUE))
-#    corrected <- lapply(corrected, function(z) gsub("(?<!\\\\|^)\\[", "\\\\[", z, perl = TRUE))
     regmatches(string, check) <- corrected
   }
   return(string)

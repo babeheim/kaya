@@ -69,7 +69,9 @@ raw <- paste0(readLines(sgf_file, warn = FALSE), collapse = "")
   # raw <- gsub("---$", "", raw)
   # raw <- gsub("\xb4", "'", raw)
 
-# parse_sgf(raw)
+# parse_tree(raw)
+
+raw <- "(;PB[bret])---"
 
 # check_comment_escapes
 string <- raw
@@ -87,14 +89,18 @@ if (check[[1]][1]!="-1") {
 }
 
 
-# parse_sgf
+# parse_tree
 sgf_string <- purge_comments(string)
 # sgf_string <- check_comment_escapes(sgf_string)
-if (length(sgf_string) > 1) stop("parse_sgf accepts only single strings")
-sgf_string <- gsub(" *$|^ *", "", sgf_string)
-sgf_string <- gsub("^\\(|\\)$", "", sgf_string)
+if (length(sgf_string) > 1) stop("parse_tree accepts only single strings")
 
-# split_sgf
+sgf_string <- gsub(" *$|^ *", "", sgf_string)
+sgf_string <- gsub("^\\(|\\)$", "", sgf_string)  # this fails when you have junk after the parenthesis...
+
+
+
+
+# split_tree
 output <- list()
 node_pattern <- "(^.*?(?<!\\\\))(\\(|$)" 
 # group from start of line to first unescaped (, or end of line
@@ -108,9 +114,7 @@ node_vec <- split_branch(branch_string)
 output <- list()
 for(i in 1:length(node_vec)) output$nodes[[i]] <- parse_node(node_vec[i])
 
-# 1520.081
-
-# ????
+# \(.*?(?<!\\)\)
 
 # simplify_game
 

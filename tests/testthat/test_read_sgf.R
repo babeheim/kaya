@@ -3,22 +3,33 @@
 test_that("one file parses", {
   my_files <- "./redbean_sgf/redbean_no_variation.sgf"
   sgf_lines <- paste0(readLines(my_files, warn = FALSE), collapse = "")
-  x <- parse_sgf(sgf_lines)
+  x <- parse_tree(sgf_lines)
   expect_true(!is.null(names(x)))
 })
 
 test_that("one file parses and simplifies", {
   my_files <- "./redbean_sgf/redbean_no_variation.sgf"
   sgf_lines <- paste0(readLines(my_files, warn = FALSE), collapse = "")
-  x <- parse_sgf(sgf_lines)
+  x <- parse_tree(sgf_lines)
   x <- simplify_game(x)
   expect_true(!is.null(names(x)))
 })
 
+
+test_that("one file parses and simplifies", {
+  my_files <- "./redbean_sgf/redbean_print1.sgf"
+  sgf_lines <- paste0(readLines(my_files, warn = FALSE), collapse = "")
+  x <- parse_tree(sgf_lines)
+  x <- simplify_game(x)
+  y <- read_sgf(my_files)
+  expect_true(!is.null(names(x)))
+})
+
+
 test_that("blah", {
   my_game <- "./redbean_sgf/redbean_no_variation.sgf"
   sgf_lines <- paste0(readLines(my_game, warn = FALSE), collapse = "")
-  d <- parse_sgf(sgf_lines)
+  d <- parse_tree(sgf_lines)
   d <- simplify_game(d)
   expect_true(length(d) > 0)
   expect_true(validate_games(my_game))
@@ -28,7 +39,7 @@ test_that("loads lines with no errors", {
   my_files <- list.files("./redbean_sgf", pattern="*.sgf", full.names = TRUE)
   for(i in 1:length(my_files)){
     sgf_lines <- paste0(readLines(my_files[i], warn = FALSE), collapse = "")
-    expect_silent(x <- parse_sgf(sgf_lines))
+    expect_silent(x <- parse_tree(sgf_lines))
   }
 })
 
@@ -98,14 +109,13 @@ test_that("comments work", {
   expect_true(validate_games(my_game))
 })
 
-test_that("paired unescaped square bracket in comments ok", {
+test_that("unescaped left bracket fails, regardless", {
   my_game <- './unusual_sgf/metadata_with_square_brackets.sgf'
   sgf_lines <- readLines(my_game, warn = FALSE)
-  d <- read_sgf(my_game, rotate = FALSE)
-  expect_true(validate_games(my_game))
+  expect_error(d <- read_sgf(my_game, rotate = FALSE))
 })
 
-test_that("kgs-style right escaping works", {
+test_that("kgs-style left bracket + escaped right bracket works", {
 
   my_game <- './unusual_sgf/metadata_with_kgs_square_brackets.sgf'
   sgf_lines <- readLines(my_game, warn = FALSE)
@@ -126,12 +136,12 @@ test_that("iron giant face loads", {
   d <- read_sgf(my_game, rotate = FALSE)
   expect_true(validate_games(my_game))
 
+  # note: this creates an error when loaded, but can I warn about this situation somehow?
   my_game <- './unusual_sgf/metadata_with_iron_giant_face.sgf'
+  sgf_lines <- readLines(my_game, warn = FALSE)
   expect_error(d <- read_sgf(my_game, rotate = FALSE))
 
 })
-
-
 
 test_that("no-move game reads correctly", {
   my_game <- './unusual_sgf/only_metadata.sgf'
@@ -147,6 +157,7 @@ test_that("no-move game reads correctly", {
 
 test_that("games with characters outside sgf tree are okay", {
   my_game <- './invalid_sgf/characters_outside_games.sgf'
+  sgf_lines <- paste0(readLines(my_game, warn = FALSE), collapse = "")
   expect_silent(d <- read_sgf(my_game))
 })
 

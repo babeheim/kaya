@@ -2,7 +2,7 @@
 
 test_that("game with passes can be reoriented", {
   sgf_lines <- paste0(readLines("./real_sgf/2009-09-01-10.sgf"), collapse = "")
-  expect_silent(parse_sgf(sgf_lines))
+  expect_silent(parse_tree(sgf_lines))
 })
 
 

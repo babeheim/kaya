@@ -1,7 +1,7 @@
 
-split_tag <- function(tag_string) {
+# this doesnt work because the left bracket can exist un-escaped in valid comments, and must not be parsed
+split_tag_old <- function(tag_string) {
   if(length(tag_string) != 1) stop("split_tag can only accept individual strings")
-  output <- list()
   tag_string <- strsplit(tag_string, "(?<!\\\\)\\[|(?<!\\\\)\\](?<!\\\\)\\[|(?<!\\\\)\\]", perl = TRUE)[[1]]
   tag_string <- stringi::stri_trans_general(tag_string, "latin-ascii")
   tag_string <- gsub("[\x01-\x1F]", "", tag_string)
@@ -10,6 +10,18 @@ split_tag <- function(tag_string) {
   if(tag_string[1] == "") stop("input tag is improper, cannot locate key/value pair")
   tag_string[tag_string == ""] <- NA
   return(tag_string)
+}
+
+split_tag <- function(tag_string){
+  if(length(tag_string) != 1) stop("split_tag can only accept individual strings")
+  bracket_locations <- "\\[(.*?)(?<!\\\\)\\]"
+  m <- gregexpr(bracket_locations, tag_string, perl = TRUE)
+  tag_content <- regmatches(tag_string, m)[[1]]
+  tag_content <- gsub("^\\[|\\]$", "", tag_content)
+  tag_name <- substr(tag_string, 1, regexpr("\\[", tag_string) - 1)
+  if(tag_name == "") stop("input tag is improper, cannot locate key/value pair")
+  tag_content <- c(tag_name, tag_content)
+  return(tag_content)
 }
 
 split_node <- function(node_string) {
@@ -30,30 +42,25 @@ split_branch <- function(branch_string) {
   return(output)
 }
 
-split_sgf <- function(sgf_string) {
-  sgf_string <- gsub(" *$|^ *", "", sgf_string)
+split_tree <- function(tree_string) {
+  tree_string <- gsub(" *$|^ *", "", tree_string)
   output <- list()
   node_pattern <- "(^.*?(?<!\\\\))(\\(|$)" 
   # group from start of line to first unescaped (, or end of line
-  m <- gregexpr(node_pattern, sgf_string, perl = TRUE)
-  node_data <- regmatches(sgf_string, m)[[1]]
+  m <- gregexpr(node_pattern, tree_string, perl = TRUE)
+  node_data <- regmatches(tree_string, m)[[1]]
   output$nodes <- gsub("\\($", "", node_data)
-  parenthesis_pattern <- "\\(((?>=\\\\\\(|\\\\\\)|[^\\(\\)])|(?R))*\\)"
-  # group by outer parentheses pairs except escaped pairs
-  m <- gregexpr(parenthesis_pattern, sgf_string, perl = TRUE)
-  if (m[[1]][1] != (-1)) {
-    branch_data <- as.list(regmatches(sgf_string, m)[[1]])
-    branch_data <- lapply(branch_data, function(z) gsub("\\)$", "", z))
-    branch_data <- lapply(branch_data, function(z) gsub("^\\(", "", z))
-    output$branches <- branch_data
+  subtree_data <- as.list(group_parentheses(tree_string))
+  if (length(subtree_data) > 0) {
+    output$branches <- subtree_data
   }
   return(output)
 }
 
 # takes multiple games as inputs and breaks them up!
-split_gametree <- function(gametree) {
+split_sgf <- function(gametree) {
   parenthesis_pattern <- "\\(((?>=\\\\\\(|\\\\\\)|[^\\(\\)])|(?R))*\\)"
-  m <- gregexpr(parenthesis_pattern, sgf_string, perl = TRUE)
-  game_data <- as.list(regmatches(sgf_string, m)[[1]])
+  m <- gregexpr(parenthesis_pattern, tree_string, perl = TRUE)
+  game_data <- as.list(regmatches(tree_string, m)[[1]])
   return(game_data)
 }

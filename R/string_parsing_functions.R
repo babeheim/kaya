@@ -1,15 +1,16 @@
 
-parse_sgf <- function(sgf_string, to.json = FALSE) {
-  sgf_string <- check_comment_escapes(sgf_string)
-  sgf_string <- purge_comments(sgf_string)
-  if (length(sgf_string) > 1) stop("parse_sgf accepts only single strings")
-  sgf_string <- gsub(" *$|^ *", "", sgf_string)
-  sgf_string <- gsub("^\\(|\\)$", "", sgf_string)
-  output <- split_sgf(sgf_string)
+parse_tree <- function(tree_string, to.json = FALSE) {
+  if (length(tree_string) > 1) stop("parse_tree accepts only single strings")
+  tree_string <- group_parentheses(tree_string)
+  tree_string <- check_comment_escapes(tree_string)
+  tree_string <- purge_comments(tree_string)
+  tree_string <- gsub(" *$|^ *", "", tree_string)
+  tree_string <- gsub("^\\(|\\)$", "", tree_string)
+  output <- split_tree(tree_string)
   output$nodes <- parse_branch(output$nodes)
   if ("branches" %in% names(output)) {
     for(i in 1:(length(output$branches))){
-      output$branches[[i]] <- parse_sgf(output$branches[[i]]) # wow!
+      output$branches[[i]] <- parse_tree(output$branches[[i]]) # wow!
     }
   }
   if (to.json) output <- jsonlite::toJSON(output, pretty = TRUE)
@@ -43,36 +44,5 @@ parse_tag <- function(tag_data, strict = FALSE) {
   }
   if(any(duplicated(names(output)))) stop("duplicated tags in the same node")
   if(strict) if(any(nchar(names(output)) > 2)) stop("SGF tags are invalid; they contain too many characters")
-  return(output)
-}
-
-
-
-###### old versions
-
-
-# i suspect I can use regmatches here to clean up this code...
-parse_sgf_old <- function(sgf_string, to.json = FALSE) {
-  if(length(sgf_string) > 1) stop("parse_sgf accepts only single strings")
-  x <- bracket_matcher(sgf_string)
-  if(length(x) > 1) stop("string contains more than one game! Kaya is not designed for this, so please separate these first.")
-  if(!(x[1] == 1 & attr(x, "match.length")[1] == nchar(sgf_string))) stop("sgf_string is not surrounded by parentheses; this isn't a valid SGF")
-  if(length(x) == 1 & x[1] == 1){
-    sgf_string <- substr(sgf_string, 2, nchar(sgf_string) - 1)
-    x <- bracket_matcher(sgf_string)
-  }
-  # valid sgf, ok time to process
-  output <- list()
-  if(x[1] == (-1)) output$nodes <- parse_branch(sgf_string)
-  if(x[1] != (-1)){
-    right_pars <- c(as.numeric(x))
-    left_pars <- c(as.numeric(x + attr(x, "match.length") - 1))
-    if(right_pars[1] != 1) output$nodes <- parse_branch(substr(sgf_string, 1, right_pars[1] - 1))
-    output$branches <- list()
-    for(i in 1:(length(right_pars))){
-      output$branches[[i]] <- parse_sgf(substr(sgf_string, right_pars[i], left_pars[i])) # wow!
-    }
-  }
-  if(to.json) output <- jsonlite::toJSON(output, pretty = TRUE)
   return(output)
 }
