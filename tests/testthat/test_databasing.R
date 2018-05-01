@@ -47,16 +47,8 @@ test_that("database loads from files", {
 
   my_files <- list.files("./unusual_sgf", pattern="*.sgf", full.names = TRUE)
   out <- create_database(my_files)
-  expect_true(all(dim(out) == c(length(my_files), 23)))
+  expect_true(all(dim(out) == c(length(my_files), 27)))
 
-
-})
-
-
-test_that("database isn't fooled by bad games", {
-
-  my_files <- list.files("./invalid_sgf", pattern="*.sgf", full.names = TRUE)
-  expect_error(out <- create_database(my_files))
 
 })
 

@@ -1,9 +1,9 @@
 
 parse_tree <- function(tree_string, to.json = FALSE) {
   if (length(tree_string) > 1) stop("parse_tree accepts only single strings")
+  tree_string <- purge_comments(tree_string)
   tree_string <- group_parentheses(tree_string)
   tree_string <- check_comment_escapes(tree_string)
-  tree_string <- purge_comments(tree_string)
   tree_string <- gsub(" *$|^ *", "", tree_string)
   tree_string <- gsub("^\\(|\\)$", "", tree_string)
   output <- split_tree(tree_string)

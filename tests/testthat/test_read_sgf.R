@@ -110,7 +110,7 @@ test_that("comments work", {
 })
 
 test_that("unescaped left bracket fails, regardless", {
-  my_game <- './unusual_sgf/metadata_with_square_brackets.sgf'
+  my_game <- './invalid_sgf/metadata_with_square_brackets.sgf'
   sgf_lines <- readLines(my_game, warn = FALSE)
   expect_error(d <- read_sgf(my_game, rotate = FALSE))
 })
@@ -137,7 +137,7 @@ test_that("iron giant face loads", {
   expect_true(validate_games(my_game))
 
   # note: this creates an error when loaded, but can I warn about this situation somehow?
-  my_game <- './unusual_sgf/metadata_with_iron_giant_face.sgf'
+  my_game <- './invalid_sgf/metadata_with_iron_giant_face.sgf'
   sgf_lines <- readLines(my_game, warn = FALSE)
   expect_error(d <- read_sgf(my_game, rotate = FALSE))
 
@@ -156,7 +156,7 @@ test_that("no-move game reads correctly", {
 
 
 test_that("games with characters outside sgf tree are okay", {
-  my_game <- './invalid_sgf/characters_outside_games.sgf'
+  my_game <- './unusual_sgf/characters_outside_games.sgf'
   sgf_lines <- paste0(readLines(my_game, warn = FALSE), collapse = "")
   expect_silent(d <- read_sgf(my_game))
 })
@@ -164,21 +164,6 @@ test_that("games with characters outside sgf tree are okay", {
 # invalid games
 
 
-
-
-
-test_that("extra brackets caught",{
-  my_game <- './invalid_sgf/illegal_square_brackets.sgf'
-  expect_error(d <- read_sgf(my_game))
-  my_game <- './invalid_sgf/more_illegal_square_brackets.sgf'
-  expect_error(d <- read_sgf(my_game))
-})
-
-
-test_that("missing brackets caught",{
-  my_game <- './invalid_sgf/missing_right_bracket.sgf'
-  expect_error(d <- read_sgf(my_game))
-})
 
 
 test_that("duplicated tags caught",{
@@ -199,4 +184,10 @@ test_that("invalid sgf coordinates caught",{
   expect_false(validate_games(my_game))
 })
 
+
+
+test_that("encountered bugs are resolved", {
+  sgf_file <- "./unusual_sgf/whitespace_before_game.sgf"
+  expect_true(validate_sgf(sgf_file))
+})
 

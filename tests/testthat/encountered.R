@@ -1,11 +1,5 @@
 
 
-test_that("encountered bugs are resolved", {
-  sgf_file <- "./unusual_sgf/whitespace_before_game.sgf"
-  expect_true(validate_sgf(sgf_file))
-}
-
-
 
 my_files <- list.files(".")
 
@@ -19,7 +13,6 @@ my_files <- list.files(".", recursive = TRUE, full.names = TRUE)
 valid <- rep(NA, length(my_files))
 for(i in 1:length(my_files)){
   raw <- paste0(readLines(my_files[i], warn = FALSE), collapse = "")
-  raw <- gsub("---$", "", raw)
   valid[i] <- validate_sgf(string = raw)
   if(i %% 1000 == 0) print(i)
 }
@@ -28,6 +21,8 @@ for(i in 1:length(my_files)){
 my_files <- list.files(".", pattern = "\\.sgf$", recursive = TRUE, full.names = TRUE)
 
 # I guess kaya odesn't like empty nodes, but those are legal in SGF context ;;;; is fine!
+
+# make a test!!
 
 valid <- validate_sgf(x)
 
@@ -44,7 +39,7 @@ for(i in 1:length(my_files)){
 # put game file here
 
 #########################
-sgf_file <- "./encountered_bugs/LeeYounggu-LeeDonghoon46204.sgf"
+sgf_file <- "./encountered_bugs/janson-spv-9704052143"
 #########################
 
 d <- read_sgf(sgf_file)
@@ -70,8 +65,6 @@ raw <- paste0(readLines(sgf_file, warn = FALSE), collapse = "")
   # raw <- gsub("\xb4", "'", raw)
 
 # parse_tree(raw)
-
-raw <- "(;PB[bret])---"
 
 # check_comment_escapes
 string <- raw
