@@ -161,10 +161,29 @@ test_that("games with characters outside sgf tree are okay", {
   expect_silent(d <- read_sgf(my_game))
 })
 
+
+# multiple games
+
+test_that("multigame file parses", {
+  my_files <- "./unusual_sgf/two_games_one_file.sgf"
+  sgf_lines <- paste0(readLines(my_files, warn = FALSE), collapse = "")
+  x <- parse_tree(sgf_lines)
+  expect_true(length(x) == 2)
+  
+  my_files <- "./unusual_sgf/two_games_one_file.sgf"
+  sgf_lines <- paste0(readLines(my_files, warn = FALSE), collapse = "")
+  x <- parse_tree(sgf_lines)
+  expect_true(length(x) == 2)
+
+  my_files <- "./unusual_sgf/three_branching_games_one_file.sgf"
+  sgf_lines <- paste0(readLines(my_files, warn = FALSE), collapse = "")
+  x <- parse_tree(sgf_lines)
+  expect_true(length(x) == 3)
+})
+
+
+
 # invalid games
-
-
-
 
 test_that("duplicated tags caught",{
   my_game <- './invalid_sgf/duplicate_tag.sgf'

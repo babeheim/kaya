@@ -3,9 +3,9 @@ parse_tree <- function(tree_string, to.json = FALSE) {
   tree_string <- purge_comments(tree_string)
   tree_string <- stringi::stri_trans_general(tree_string, "latin-ascii")
   tree_string <- gsub("[\x01-\x1F]", "", tree_string)
+  tree_string <- check_comment_escapes(tree_string)
   tree_string <- group_parentheses(tree_string)
   if (length(tree_string) == 1) {
-    tree_string <- check_comment_escapes(tree_string)
     tree_string <- gsub(" *$|^ *", "", tree_string)
     tree_string <- gsub("^\\(|\\)$", "", tree_string)
     output <- split_tree(tree_string)

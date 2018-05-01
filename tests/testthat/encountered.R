@@ -8,26 +8,31 @@ my_files <- list.files(".")
 # when you completely remove comments from the properly-escaped string, loads just fine!
 
 
-my_files <- list.files(".", recursive = TRUE, full.names = TRUE)
+my_files <- list.files(".", pattern = "\\.sgf$", recursive = TRUE, full.names = TRUE)
 
 valid <- rep(NA, length(my_files))
 for(i in 1:length(my_files)){
-  raw <- paste0(readLines(my_files[i], warn = FALSE), collapse = "")
-  valid[i] <- validate_sgf(string = raw)
+#  raw <- paste0(readLines(my_files[i], warn = FALSE), collapse = "")
+  valid[i] <- validate_sgf(path = my_files[i])
   if(i %% 1000 == 0) print(i)
 }
 
 
 my_files <- list.files(".", pattern = "\\.sgf$", recursive = TRUE, full.names = TRUE)
 
+
 # I guess kaya odesn't like empty nodes, but those are legal in SGF context ;;;; is fine!
 
 # make a test!!
 
-valid <- validate_sgf(x)
+x <- my_files[1:1000]
+
+valid <- validate_sgf(my_files)
 
 my_files[!valid]
 
+
+my_files <- list.files(".", recursive = TRUE, full.names = TRUE)
 
 valid <- rep(NA, length(my_files))
 for(i in 1:length(my_files)){
@@ -39,7 +44,7 @@ for(i in 1:length(my_files)){
 # put game file here
 
 #########################
-sgf_file <- "./encountered_bugs/janson-spv-9704052143"
+sgf_file <- "./encountered_bugs/ChoHanseung-LeeChangho46968.sgf"
 #########################
 
 d <- read_sgf(sgf_file)

@@ -40,6 +40,7 @@ validate_sgf <- function(path = NA, string = NA){
   return(output)
 }
 
+# outstanding bug: how to handle files with more than game here - read_sgf can do it!
 create_database <- function(sgf_paths) {
   my_files <- sgf_paths
   jsons <- list()

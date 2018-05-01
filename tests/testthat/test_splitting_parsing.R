@@ -1,4 +1,6 @@
-
+# since sgfs work using ;, ( ) and [ ], we need
+# to produce tests for all of these
+# at every level
 
 # split_tag
 
@@ -230,6 +232,42 @@ test_that("parse_tree works correctly", {
   expect_true(names(d) == "nodes")
   expect_true(length(d$nodes) == 4)
   expect_true(length(d$nodes[[1]] ) == 3)
+
+  # parentheses inside the gametree's comments
+  tree_string <- "(;PB[bret]PW[blah]DT[2009-01-01 (tuesday)];B[aa];W[ab];B[ac])---"
+  d <- parse_tree(tree_string)
+
+  tree_string <- "(;PB[bret]PW[blah]DT[2009-01-01 \\(tuesday\\)];B[aa];W[ab];B[ac])---"
+  d <- parse_tree(tree_string)
+
+  tree_string <- "(;PB[bret]PW[blah]DT[2009-01-01 \\(tuesday];B[aa];W[ab];B[ac])---"
+  d <- parse_tree(tree_string)
+  # okay!
+
+  tree_string <- "(;PB[bret]PW[blah]DT[2009-01-01 tuesday\\)];B[aa];W[ab];B[ac])---"
+  d <- parse_tree(tree_string)
+  # okay!
+
+  tree_string <- "(;PB[bret]PW[blah]DT[2009-01-01 tuesday\\)];B[aa];W[ab];B[ac](;B[aa];W[ab];B[ac])(;B[aa];W[ab];B[ac]))"
+  d <- parse_tree(tree_string)
+  # okay
+
+  tree_string <- "(;PB[bret]PW[blah]DT[2009-01-01 tuesday\\(];B[aa];W[ab];B[ac](;B[aa];W[ab];B[ac])(;B[aa];W[ab];B[ac]))"
+  d <- parse_tree(tree_string)
+  # okay
+
+  tree_string <- "(;PB[bret]PW[blah]DT[2009-01-01 \\(tuesday\\)];B[aa];W[ab];B[ac](;B[aa];W[ab];B[ac])(;B[aa];W[ab];B[ac]))"
+  d <- parse_tree(tree_string)
+  # okay
+
+  # these fail but are considered valid sgf...only solution is to escape the tag contents...
+  tree_string <- "(;PB[bret]PW[blah]DT[2009-01-01 (tuesday];B[aa];W[ab];B[ac])---"
+  d <- parse_tree(tree_string)
+  # okay!
+
+  tree_string <- "(;PB[bret]PW[blah]DT[2009-01-01 )tuesday];B[aa];W[ab];B[ac])---"
+  d <- parse_tree(tree_string)
+  # okay!
 
 })
 
