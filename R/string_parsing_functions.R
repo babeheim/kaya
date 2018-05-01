@@ -1,19 +1,25 @@
 
 parse_tree <- function(tree_string, to.json = FALSE) {
-  if (length(tree_string) > 1) stop("parse_tree accepts only single strings")
   tree_string <- purge_comments(tree_string)
+  tree_string <- stringi::stri_trans_general(tree_string, "latin-ascii")
+  tree_string <- gsub("[\x01-\x1F]", "", tree_string)
   tree_string <- group_parentheses(tree_string)
-  tree_string <- check_comment_escapes(tree_string)
-  tree_string <- gsub(" *$|^ *", "", tree_string)
-  tree_string <- gsub("^\\(|\\)$", "", tree_string)
-  output <- split_tree(tree_string)
-  output$nodes <- parse_branch(output$nodes)
-  if ("branches" %in% names(output)) {
-    for(i in 1:(length(output$branches))){
-      output$branches[[i]] <- parse_tree(output$branches[[i]]) # wow!
+  if (length(tree_string) == 1) {
+    tree_string <- check_comment_escapes(tree_string)
+    tree_string <- gsub(" *$|^ *", "", tree_string)
+    tree_string <- gsub("^\\(|\\)$", "", tree_string)
+    output <- split_tree(tree_string)
+    output$nodes <- parse_branch(output$nodes)
+    if ("branches" %in% names(output)) {
+      for(i in 1:(length(output$branches))){
+        output$branches[[i]] <- parse_tree(output$branches[[i]]) # wow!
+      }
     }
+    if (to.json) output <- jsonlite::toJSON(output, pretty = TRUE)
+  } else {
+    output <- list()
+    for(i in 1:length(tree_string)) output[[i]] <- parse_tree(tree_string[i])
   }
-  if (to.json) output <- jsonlite::toJSON(output, pretty = TRUE)
   return(output)
 }
 

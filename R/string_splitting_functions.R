@@ -12,6 +12,8 @@ split_tag_old <- function(tag_string) {
   return(tag_string)
 }
 
+
+
 split_tag <- function(tag_string){
   if(length(tag_string) != 1) stop("split_tag can only accept individual strings")
   bracket_locations <- "\\[(.*?)(?<!\\\\)\\]"
