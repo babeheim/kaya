@@ -10,7 +10,7 @@ strip_comments <- function(move_nodes) {
 
 
 simplify_move_nodes <- function(branch) {
-  move_nodes <- branch$nodes
+  move_nodes <- branch
   move_nodes <- strip_comments(move_nodes)
   coord_sgf <- unlist(move_nodes)
   color <- names(coord_sgf)
@@ -27,15 +27,20 @@ simplify_move_nodes <- function(branch) {
 }
 
 
+# x <- "(;FF[4]GM[1]SZ[19];B[aa];W[bb];B[cc];W[dd];B[ad];W[bd])"
+# game_list <- parse_sgf(x, to.json = FALSE)
+
+# game_list[[1]]
+
 simplify_game <- function(game_list, rotate = TRUE) {
 
   meta <- list()
   moves <- data.frame(number = integer(), color = character(),
       coord_sgf = character())
 
-  has_meta <- !all(names(game_list$nodes[[1]]) %in% c("B", "W"))
+  has_meta <- !all(names(game_list[[1]]) %in% c("B", "W"))
   if (has_meta) {
-    meta <- game_list$nodes[[1]]
+    meta <- game_list[[1]]
     if ("AB" %in% names(meta)){
       ab_coord_sgf <- meta$AB
       ab_number <- rep(0, length(ab_coord_sgf))
@@ -55,7 +60,7 @@ simplify_game <- function(game_list, rotate = TRUE) {
     }
   }
 
-  has_moves <- any(unlist(lapply(game_list$nodes, function(z) any(names(z) %in% c("B", "W")))))
+  has_moves <- any(unlist(lapply(game_list, function(z) any(names(z) %in% c("B", "W")))))
   if (has_moves) {
     game_moves <- simplify_move_nodes(game_list)
     game_moves$number <- 1:nrow(game_moves)

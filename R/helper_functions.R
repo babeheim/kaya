@@ -2,32 +2,6 @@
 # the problem: 
 # (;FF[4]GM[1]SZ[19];B[aa];W[bb](;B[cc];W[dd]C[test (with parentheses)  or rather one ( parentheses];B[ad];W[bd])(;B[hh];W[hg]))
 
-group_parentheses <- function(string){
-  parenthesis_pattern <- "(?<!\\\\)\\(((?>\\\\\\(|\\\\\\)|[^\\(\\)])|(?R))*(?<!\\\\)\\)"
-  m <- gregexpr(parenthesis_pattern, string, perl = TRUE)
-  output <- regmatches(string, m)[[1]]
-  return(output)
-}
-
-purge_comments <- function(escaped_string) {
-  comment_groups <- gregexpr("(?<![a-zA-Z])C\\[.*?(?<!\\\\)\\]", escaped_string, perl = TRUE)
-  regmatches(escaped_string, comment_groups) <- ""
-  return(escaped_string)
-}
-
-check_comment_escapes <- function(string) {
-  bracket_pattern <- "\\[(.*?)(?<!\\\\)\\]"
-  check <- gregexpr(bracket_pattern, string, perl = TRUE)
-  if (check[[1]][1]!="-1") {
-    corrected <- regmatches(string, check)
-    corrected <- lapply(corrected, function(z) gsub("(?<!\\\\)\\(", "\\\\(", z, perl = TRUE))
-    corrected <- lapply(corrected, function(z) gsub("(?<!\\\\)\\)", "\\\\)", z, perl = TRUE))
-    corrected <- lapply(corrected, function(z) gsub("(?<!\\\\)\\;", "\\\\;", z, perl = TRUE))
-    regmatches(string, check) <- corrected
-  }
-  return(string)
-}
-
 validate_sgf <- function(path = NA, string = NA){
   if(length(path) == 1) {
     if(is.na(string)) res <- try(read_sgf(path), silent = TRUE)
