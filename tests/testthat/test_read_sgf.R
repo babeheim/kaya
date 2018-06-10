@@ -2,8 +2,6 @@
 
 # ok, NOW THAT ITS IN JSON HOW CAN I USE IT??
 
-x <- ";FF[4]GM[1]AB[aa][bb]"
-
 test_that("one file reads", {
   my_files <- list.files("./redbean_sgf", pattern="*.sgf", full.names = TRUE)
   expect_silent(x <- read_sgf(my_files[1], to.json = TRUE))
@@ -22,6 +20,13 @@ test_that("reads several files with no errors", {
     expect_silent(x <- read_sgf(my_files[i], to.json = FALSE))
   }
 })
+
+
+
+# each file is an unnamed list
+# the first entry is a list of all the metadata
+# remaining entries are the moves
+
 
 
 # x <- scrub_whitespace(x)

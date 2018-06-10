@@ -6,9 +6,10 @@
 # 2. replace each KEY[value] with "key":["value"] in each object
 # 3. replace ( )  with [ ] to make it a proper array 
 
-read_sgf <- function(path, to.json = FALSE){
+read_sgf <- function(path, to.json = FALSE, rotate = TRUE){
   raw <- paste0(readLines(path, warn = FALSE), collapse = "")
   output <- parse_sgf(raw, to.json = to.json)
+  if(!to.json) output <- simplify_game(output, rotate = rotate)
   return(output)
 }
 

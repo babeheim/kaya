@@ -8,65 +8,46 @@ strip_comments <- function(move_nodes) {
   return(out)
 }
 
+# if is.null(names(x[[i]])), its a branch
 
-simplify_move_nodes <- function(branch) {
-  move_nodes <- branch
-  move_nodes <- strip_comments(move_nodes)
-  coord_sgf <- unlist(move_nodes)
-  color <- names(coord_sgf)
-  color[color == "B"] <- "black"
-  color[color == "W"] <- "white"
-  moves <- data.frame(color, coord_sgf, stringsAsFactors = FALSE)
-  if ("branches" %in% names(branch)) {
-    first_branch <- branch$branches[[1]]
-    branch_moves <- simplify_move_nodes(first_branch)
-    moves <- rbind(moves, branch_moves)
-    # attach branches in the same way!
+simplify_move_list <- function(move_list){
+  is_node <- unlist(lapply(move_list, function(z) !is.null(names(z))))
+  output <- move_list[is_node]
+  output <- lapply(output, node_stripper)
+  if (any(!is_node)){
+    first_branch <- simplify_move_list(move_list[[which(!is_node)[1]]])
+    output <- c(output, first_branch)
   }
-  return(moves)
+  return(output)
 }
 
-
-# x <- "(;FF[4]GM[1]SZ[19];B[aa];W[bb];B[cc];W[dd];B[ad];W[bd])"
-# game_list <- parse_sgf(x, to.json = FALSE)
-
-# game_list[[1]]
+node_stripper <- function(game_node){
+  keep <- which(names(game_node) %in% c("AB", "AW", "W", "B"))
+  output <- game_node[keep]
+  return(output)
+}
 
 simplify_game <- function(game_list, rotate = TRUE) {
-
   meta <- list()
   moves <- data.frame(number = integer(), color = character(),
       coord_sgf = character())
-
   has_meta <- !all(names(game_list[[1]]) %in% c("B", "W"))
   if (has_meta) {
     meta <- game_list[[1]]
-    if ("AB" %in% names(meta)){
-      ab_coord_sgf <- meta$AB
-      ab_number <- rep(0, length(ab_coord_sgf))
-      ab_color <- rep("black", length(ab_coord_sgf))
-      ab_setup_moves <- data.frame(number = ab_number, color = ab_color,
-        coord_sgf = ab_coord_sgf, stringsAsFactors = FALSE)
-      moves <- rbind(ab_setup_moves, moves)
-    }
-    if ("AW" %in% names(meta)){
-      aw_coord_sgf <- meta$AW
-      aw_number <- rep(0, length(aw_coord_sgf))
-      aw_color <- rep("white", length(aw_coord_sgf))
-      aw_comment <- rep("", length(aw_coord_sgf))
-      aw_setup_moves <- data.frame(number = aw_number, color = aw_color,
-        coord_sgf = aw_coord_sgf, stringsAsFactors = FALSE)
-      moves <- rbind(aw_setup_moves, moves)
-    }
+    drop <- which(names(meta) %in% c("AB", "AW"))
+    if(length(drop) > 0) meta <- meta[-drop]
   }
-
+  # ignore AB and AW
   has_moves <- any(unlist(lapply(game_list, function(z) any(names(z) %in% c("B", "W")))))
   if (has_moves) {
-    game_moves <- simplify_move_nodes(game_list)
-    game_moves$number <- 1:nrow(game_moves)
-    moves <- rbind(moves, game_moves)
-    hash_id <- NA
-    n_moves <- 0
+    game_moves <- simplify_move_list(game_list)
+    game_moves <- unlist(game_moves)
+    color <- names(game_moves)
+    color <- substr(color, 1, 2)
+    number <- rep(NA, length(game_moves))
+    number[color %in% c("AB", "AW")] <- 0
+    number[color %in% c("B", "W")] <- 1:sum(color %in% c("B", "W"))
+    moves <- data.frame(number = number, coord_sgf = game_moves, color = color, stringsAsFactors = FALSE)
     if (nrow(moves) > 0) {
       moves$coord_sgf[is.na(moves$coord_sgf)] <- "tt"
       trans_coord_sgf <- moves$coord_sgf
@@ -74,22 +55,22 @@ simplify_game <- function(game_list, rotate = TRUE) {
       # do i need to subtract from 20?
       moves$column <- match(substr(trans_coord_sgf, 1, 1), letters[1:19])
       moves$row <- match(substr(trans_coord_sgf, 2, 2), letters[1:19])
-      moves <- moves[, c("color", "coord_sgf", "number", "column", "row")]
+      moves$color <- gsub("AB", "black", moves$color)
+      moves$color <- gsub("B", "black", moves$color)
+      moves$color <- gsub("AW", "white", moves$color)
+      moves$color <- gsub("W", "white", moves$color)
+      moves <- moves[, c("number", "color", "coord_sgf", "column", "row")]
       meta$hash_id <- substr(digest::sha1(moves[, c("column", "row")]), 1, 19)
-      meta$n_moves <- nrow(moves)
+      meta$n_moves <- max(moves$number)
     }
   }
-
   if (rotate == TRUE) {
     meta$kaya_notes <- "rotated game moves to standard orientation"
   }
-
   if(!has_meta & !has_moves) stop("not a valid game!")
-
   output <- meta
   if(nrow(moves) != 0) output$moves <- moves
   if(nrow(moves) == 0) output$n_moves <- 0
-
   return(output)
-
 }
+
