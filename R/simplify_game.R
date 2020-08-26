@@ -8,8 +8,6 @@ strip_comments <- function(move_nodes) {
   return(out)
 }
 
-# if is.null(names(x[[i]])), its a branch
-
 simplify_move_list <- function(move_list){
   is_node <- unlist(lapply(move_list, function(z) !is.null(names(z))))
   output <- move_list[is_node]

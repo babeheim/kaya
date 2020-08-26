@@ -71,7 +71,5 @@ write_tiny_gif <- function(game_object, file, delay = 2,
   file.remove(pane_temp)
 }
 
-
-
 # there has to be a way to incorporate the whole update_status function so
 # we dont have to rerun the same calculations over and over again?

@@ -1,6 +1,5 @@
 
 update_status <- function(game_moves, viz = FALSE){
-
   # expects a game_moves wth five columns:
   # number, row, column and color
   check1 <- class(game_moves) == "data.frame"

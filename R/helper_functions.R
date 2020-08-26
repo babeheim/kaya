@@ -1,7 +1,4 @@
 
-# the problem: 
-# (;FF[4]GM[1]SZ[19];B[aa];W[bb](;B[cc];W[dd]C[test (with parentheses)  or rather one ( parentheses];B[ad];W[bd])(;B[hh];W[hg]))
-
 validate_sgf <- function(path = NA, string = NA){
   if(length(path) == 1) {
     if(is.na(string)) res <- try(read_sgf(path), silent = TRUE)
@@ -14,22 +11,20 @@ validate_sgf <- function(path = NA, string = NA){
   return(output)
 }
 
-# outstanding bug: how to handle files with more than game here - read_sgf can do it!
 create_database <- function(sgf_paths) {
   my_files <- sgf_paths
   jsons <- list()
   for(i in 1:length(my_files)){
-    game_data <- read_sgf(my_files[i])
+    game_data <- read_sgf(my_files[i], validate = TRUE)
     game_data$m1 <- game_data$moves$coord_sgf[1]
     game_data$m2 <- game_data$moves$coord_sgf[2]
     jsons[[i]] <- toJSON(game_data[-which(names(game_data) %in% c("AB", "AW", "moves"))])
   }
   # read jsons into a single list of lists
   output <- lapply(jsons, function(z) fromJSON(z, simplifyVector=TRUE))
-  # toJSON(output, pretty=TRUE)
   # combine lists of lists into one big dataframe of lists, by using jsonlite cleverly
   output <- fromJSON(as.character(toJSON(output)), simplifyVector=TRUE)
-  output <- vectorize(output)
+  output <- bind_rows(output)
   return(output)
 }
 
@@ -37,7 +32,7 @@ validate_games <- function(path) {
   if(length(path) == 1){
     res <- try(game_data <- read_sgf(path), silent = TRUE)
     failed <- class(res) == "try-error"
-    if(failed) stop(paste(path, "is not a valid sgf"))
+    if(failed) stop(paste(path, " is not a valid sgf"))
     coords <- as.character(game_data$moves$coord_sgf)
     coords_invalid <- !all(unlist(strsplit(coords, "")) %in% letters[1:20])
     coords_wronglength <- !all(nchar(coords) %in% c(0, 2))

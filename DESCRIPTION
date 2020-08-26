@@ -7,7 +7,7 @@ Depends: R (>= 3.3.2),
  stringi,
  igraph,
  jsonlite,
- yamltools
+ dplyr
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
