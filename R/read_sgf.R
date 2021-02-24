@@ -40,6 +40,7 @@ escape_characters <- function(sgf_string) {
   values[[1]] <- gsub("(?<!\\\\)\\(", "\\\\(", values[[1]], perl = TRUE)
   values[[1]] <- gsub("(?<!\\\\)\\)", "\\\\)", values[[1]], perl = TRUE)
   values[[1]] <- gsub("\\;", "\\\\;", values[[1]])
+  values[[1]] <- gsub("\\\"", "\\\'", values[[1]])
   regmatches(x, m) <- values
   return(x)
 }

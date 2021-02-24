@@ -64,7 +64,7 @@ test_that("database loads from files", {
 
   my_files <- list.files("./real_sgf", pattern="*.sgf", full.names = TRUE)
   out <- create_database(my_files)
-  expect_true(all(dim(out) == c(length(my_files), 23)))
+  expect_true(all(dim(out) == c(length(my_files), 26)))
 
   my_files <- list.files("./redbean_sgf", pattern="*.sgf", full.names = TRUE)
   out <- create_database(my_files)

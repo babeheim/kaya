@@ -12,7 +12,7 @@ create_database <- function(sgf_paths) {
   output <- lapply(jsons, function(z) fromJSON(z, simplifyVector = TRUE))
   # combine lists of lists into one big dataframe of lists, by using jsonlite cleverly
   output <- fromJSON(as.character(toJSON(output)), simplifyVector = TRUE)
-  output <- bind_rows(output)
+  output <- as.data.frame(bind_rows(output))
   return(output)
 }
 
