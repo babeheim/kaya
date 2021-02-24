@@ -1,9 +1,9 @@
 
 create_database <- function(sgf_paths) {
-  my_files <- sgf_paths
+  sgf_paths <- sgf_paths
   jsons <- list()
-  for (i in 1:length(my_files)) {
-    game_data <- try(read_sgf(my_files[i]))
+  for (i in seq_along(sgf_paths)) {
+    game_data <- try(read_sgf(sgf_paths[i]))
     if (class(game_data) != "try-error") {
       game_data$m1 <- game_data$moves$coord_sgf[1]
       game_data$m2 <- game_data$moves$coord_sgf[2]
@@ -48,7 +48,7 @@ validate_sgfs <- function(files) {
       }
     }
   } else {
-    for (i in 1:length(files)) {
+    for (i in seq_along(files)) {
       output[i] <- validate_sgfs(files[i])
       if (i %% 100 == 0) print(i)
     }
