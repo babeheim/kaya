@@ -6,8 +6,6 @@ orient_sgf <- function(sgf_moves){
     # 0 for passes
   }
   coord_sgf <- as.character(sgf_moves)
-  # how to handle passes? convert to NA
-  # seperate this into its own function
   rows <- rep(1:19, each = 19)
   cols <- rep(1:19, times = 19)
   sector <- rep(NA, length = 361)

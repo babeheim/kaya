@@ -1,5 +1,4 @@
 
-
 strip_comments <- function(move_nodes) {
   out <- lapply(move_nodes, function(z) {
     keep <- which(names(z) %in% c("W", "B"))
@@ -8,18 +7,18 @@ strip_comments <- function(move_nodes) {
   return(out)
 }
 
-simplify_move_list <- function(move_list){
+simplify_move_list <- function(move_list) {
   is_node <- unlist(lapply(move_list, function(z) !is.null(names(z))))
   output <- move_list[is_node]
   output <- lapply(output, node_stripper)
-  if (any(!is_node)){
+  if (any(!is_node)) {
     first_branch <- simplify_move_list(move_list[[which(!is_node)[1]]])
     output <- c(output, first_branch)
   }
   return(output)
 }
 
-node_stripper <- function(game_node){
+node_stripper <- function(game_node) {
   keep <- which(names(game_node) %in% c("AB", "AW", "W", "B"))
   output <- game_node[keep]
   return(output)
@@ -71,4 +70,3 @@ simplify_game <- function(game_list, rotate = TRUE) {
   if(nrow(moves) == 0) output$n_moves <- 0
   return(output)
 }
-
