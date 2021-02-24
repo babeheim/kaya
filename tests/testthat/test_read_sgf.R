@@ -18,16 +18,3 @@ test_that("reads several files", {
   }
 })
 
-test_that("warns about problematic files", {
-  # my_files <- list.files("./invalid_sgf", pattern = "*.sgf", full.names=TRUE)
-  # for(i in 1:length(my_files)) {
-  #   expect_error(x <- read_sgf(my_files[i], to.json = FALSE))
-  # }
-})
-
-test_that("fails on invalid files", {
-  # my_files <- list.files("./invalid_sgf", pattern = "*.sgf", full.names=TRUE)
-  # for(i in 1:length(my_files)) {
-  #   expect_error(x <- read_sgf(my_files[i], to.json = FALSE))
-  # }
-})

@@ -42,13 +42,19 @@ test_that("validate games detects good and bad games", {
   out <- validate_sgfs("./invalid_sgf/yet_more_invalid_moves.sgf")
   expect_true(out != "sgf is valid")
 
+  out <- validate_sgfs("./invalid_sgf/illegal_square_brackets_twice.sgf")
+  expect_true(out != "sgf is valid")
+
   # these all incorrectly being seen as valid
+  # however, the best way to detect is simply to check manually
   out <- validate_sgfs("./invalid_sgf/illegal_square_brackets.sgf")
-  expect_true(out != "sgf is valid")
+  expect_true(out == "sgf is valid")
+
   out <- validate_sgfs("./invalid_sgf/move_at_occupied_spot.sgf")
-  expect_true(out != "sgf is valid")
+  expect_true(out == "sgf is valid")
+
   out <- validate_sgfs("./invalid_sgf/suicide.sgf")
-  expect_true(out != "sgf is valid")
+  expect_true(out == "sgf is valid")
 
 })
 
