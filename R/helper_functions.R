@@ -3,10 +3,13 @@ create_database <- function(sgf_paths) {
   my_files <- sgf_paths
   jsons <- list()
   for (i in 1:length(my_files)) {
-    game_data <- read_sgf(my_files[i])
-    game_data$m1 <- game_data$moves$coord_sgf[1]
-    game_data$m2 <- game_data$moves$coord_sgf[2]
-    jsons[[i]] <- toJSON(game_data[-which(names(game_data) %in% c("AB", "AW", "moves"))])
+    game_data <- try(read_sgf(my_files[i]))
+    if (class(game_data) != "try-error") {
+      game_data$m1 <- game_data$moves$coord_sgf[1]
+      game_data$m2 <- game_data$moves$coord_sgf[2]
+      jsons[[i]] <- toJSON(game_data[-which(names(game_data) %in% c("AB", "AW", "moves"))])
+    }
+    if (i %% 100 == 0) print(i)
   }
   # read jsons into a single list of lists
   output <- lapply(jsons, function(z) fromJSON(z, simplifyVector = TRUE))
@@ -47,6 +50,7 @@ validate_sgfs <- function(files) {
   } else {
     for (i in 1:length(files)) {
       output[i] <- validate_sgfs(files[i])
+      if (i %% 100 == 0) print(i)
     }
   }
   return(output)
