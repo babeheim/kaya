@@ -1,21 +1,19 @@
 
 create_database <- function(sgf_paths) {
-  sgf_paths <- sgf_paths
-  jsons <- list()
+  data_list <- list()
+  counter <- 1
   for (i in seq_along(sgf_paths)) {
-    game_data <- try(read_sgf(sgf_paths[i]))
+    game_data <- read_sgf(sgf_paths[i])
     if (class(game_data) != "try-error") {
       game_data$m1 <- game_data$moves$coord_sgf[1]
       game_data$m2 <- game_data$moves$coord_sgf[2]
-      jsons[[i]] <- toJSON(game_data[-which(names(game_data) %in% c("AB", "AW", "moves"))])
+      game_data$filename <- sgf_paths[i]
+      data_list[[counter]] <- game_data[-which(names(game_data) %in% c("AB", "AW", "moves"))]
+      counter <- counter + 1
     }
     if (i %% 100 == 0) print(i)
   }
-  # read jsons into a single list of lists
-  output <- lapply(jsons, function(z) fromJSON(z, simplifyVector = TRUE))
-  # combine lists of lists into one big dataframe of lists, by using jsonlite cleverly
-  output <- fromJSON(as.character(toJSON(output)), simplifyVector = TRUE)
-  output <- as.data.frame(bind_rows(output))
+  output <- as.data.frame(bind_rows(data_list))
   return(output)
 }
 
