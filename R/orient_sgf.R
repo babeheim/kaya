@@ -26,7 +26,7 @@ orient_sgf <- function(sgf_moves){
   tar <- which(cols > 10 & rows > 10 & rows < cols)
   sector[tar] <- 8
   liberty <- 1:361
-  lookup <- data.frame(rows, cols, liberty, sector)
+  lookup <- data.frame(row = rows, col = cols, liberty = liberty, sector = sector)
   coord_col_letter <- substr(coord_sgf, 1, 1)
   coord_row_letter <- substr(coord_sgf, 2, 2)
   coord_cols <- match(coord_col_letter, letters[1:19])
@@ -59,8 +59,8 @@ orient_sgf <- function(sgf_moves){
   x <- as.vector(t(liberty))
   x_trans <- as.vector(t(standard_liberty))
   coord_standard_liberty <- x[match(coord_liberty, x_trans)]
-  new_rows <- lookup$rows[match(coord_standard_liberty, lookup$liberty)]
-  new_cols <- lookup$cols[match(coord_standard_liberty, lookup$liberty)]
+  new_rows <- lookup$row[match(coord_standard_liberty, lookup$liberty)]
+  new_cols <- lookup$col[match(coord_standard_liberty, lookup$liberty)]
   new_coord_sgf <- paste(letters[new_cols], letters[new_rows], sep = "")
   # leave old moves if the new ones failed to match
   keep <- which(new_coord_sgf == "NANA")

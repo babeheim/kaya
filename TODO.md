@@ -1,4 +1,10 @@
 
+- `create_database` should store the source path in `file_path`
+
+- partial match warning: partial match of 'row' to 'rows'
+
+- validate_sgfs should account for the SIZE of the board in assessing move illegality
+
 - look at journal entry 2018-11-13 - Kaya vignettes, and compare with the vignettes/ folder
 
 - there has to be a way to incorporate the whole update_status function in write_tiny_gif.R, so we dont have to rerun the same calculations over and over again?
