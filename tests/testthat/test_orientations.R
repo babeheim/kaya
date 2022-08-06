@@ -193,12 +193,10 @@ test_that("non-rotated orientations are where they should be", {
 
 })
 
-
-
 test_that("games only with zero-sector moves don't rotate", {
   "(;B[jj])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = TRUE) -> d
   "(;B[jj])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = FALSE) -> d2
-  expect_equal(d2$moves, d$moves)
+  expect_equal(d2$moves$coord_sgf, d$moves$coord_sgf)
 })
 
 test_that("game with passes can be reoriented", {

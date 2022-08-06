@@ -46,17 +46,24 @@ simplify_game <- function(game_list, rotate = TRUE) {
     number[color %in% c("B", "W")] <- 1:sum(color %in% c("B", "W"))
     moves <- data.frame(number = number, coord_sgf = game_moves, color = color, stringsAsFactors = FALSE)
     if (nrow(moves) > 0) {
-      moves$coord_sgf[is.na(moves$coord_sgf)] <- "tt"
-      trans_coord_sgf <- moves$coord_sgf
-      if (rotate == TRUE) trans_coord_sgf <- orient_sgf(moves$coord_sgf)
-      # do i need to subtract from 20?
-      moves$column <- match(substr(trans_coord_sgf, 1, 1), letters[1:19])
-      moves$row <- match(substr(trans_coord_sgf, 2, 2), letters[1:19])
       moves$color <- gsub("AB", "black", moves$color)
       moves$color <- gsub("B", "black", moves$color)
       moves$color <- gsub("AW", "white", moves$color)
       moves$color <- gsub("W", "white", moves$color)
-      moves <- moves[, c("number", "color", "coord_sgf", "column", "row")]
+      moves$coord_sgf[is.na(moves$coord_sgf)] <- "tt"
+      trans_coord_sgf <- moves$coord_sgf
+      if (rotate == TRUE) {
+        moves$coord_sgf_original <- moves$coord_sgf
+        moves$coord_sgf <- orient_sgf(moves$coord_sgf)
+      }
+      # do i need to subtract from 20?
+      moves$column <- match(substr(moves$coord_sgf, 1, 1), letters[1:19])
+      moves$row <- match(substr(moves$coord_sgf, 2, 2), letters[1:19])
+      if (rotate) {
+        moves <- moves[, c("number", "color", "coord_sgf", "column", "row", "coord_sgf_original")]
+      } else {
+        moves <- moves[, c("number", "color", "coord_sgf", "column", "row")]
+      }
       meta$hash_id <- substr(digest::sha1(moves[, c("column", "row")]), 1, 19)
       meta$n_moves <- max(moves$number)
     }
