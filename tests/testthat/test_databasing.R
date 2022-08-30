@@ -1,4 +1,5 @@
 
+
 test_that("validate games detects good and bad games", {
 
   my_files <- list.files("./real_sgf", pattern="*.sgf", full.names = TRUE)
@@ -10,7 +11,7 @@ test_that("validate games detects good and bad games", {
   expect_true(all(out == "sgf is valid"))
 
   my_files <- list.files("./branching_sgf", pattern="*.sgf", full.names = TRUE)
-  out <- validate_sgfs(my_files)
+  expect_warning(out <- validate_sgfs(my_files))
   expect_true(all(out == "sgf is valid"))
 
   # invalid games are invalid!
@@ -21,7 +22,7 @@ test_that("validate games detects good and bad games", {
   out <- validate_sgfs("./invalid_sgf/extralong_tag.sgf")
   expect_true(out != "sgf is valid")
   
-  out <- validate_sgfs("./invalid_sgf/invalid_moves.sgf")
+  expect_warning(out <- validate_sgfs("./invalid_sgf/invalid_moves.sgf"))
   expect_true(out != "sgf is valid")
   
   out <- validate_sgfs("./invalid_sgf/metadata_with_iron_giant_face.sgf")
@@ -33,13 +34,13 @@ test_that("validate games detects good and bad games", {
   out <- validate_sgfs("./invalid_sgf/metadata_with_square_brackets.sgf")
   expect_true(out != "sgf is valid")
   
-  out <- validate_sgfs("./invalid_sgf/more_invalid_moves.sgf")
+  expect_warning(out <- validate_sgfs("./invalid_sgf/more_invalid_moves.sgf"))
   expect_true(out != "sgf is valid")
   
   out <- validate_sgfs("./invalid_sgf/no_sgf.sgf")
   expect_true(out != "sgf is valid")
   
-  out <- validate_sgfs("./invalid_sgf/yet_more_invalid_moves.sgf")
+  expect_warning(out <- validate_sgfs("./invalid_sgf/yet_more_invalid_moves.sgf"))
   expect_true(out != "sgf is valid")
 
   out <- validate_sgfs("./invalid_sgf/illegal_square_brackets_twice.sgf")
@@ -71,7 +72,7 @@ test_that("database loads from files", {
   expect_true(all(dim(out) == c(length(my_files), 23)))
 
   my_files <- list.files("./branching_sgf", pattern="*.sgf", full.names = TRUE)
-  out <- create_database(my_files)
+  expect_warning(out <- create_database(my_files))
   expect_true(all(dim(out) == c(length(my_files), 18)))
 
 })

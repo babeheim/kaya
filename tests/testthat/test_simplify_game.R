@@ -1,4 +1,62 @@
 
+test_that("simplify_game works on most strings", {
+
+  x <- "(;FF[4]GM[1]SZ[19];B[aa];W[bb](;B[cc]C[here's ( johnny )];W[dd];B[ad];W[bd])(;B[hh];W[hg]))"
+  gl <- parse_sgf(x, to.json = FALSE)
+  expect_silent(simplify_game(gl, rotate = FALSE))
+  expect_silent(simplify_game(gl, rotate = TRUE))
+
+  x <- "(;FF[4]GM[1]SZ[19];B[aa];W[bb](;B[cc]C[here's ( johnny )];W[dd];B[ad];W[bd])(;B[hh];W[hg]))"
+  gl <- parse_sgf(x, to.json = FALSE)
+  expect_silent(simplify_game(gl, rotate = FALSE))
+  expect_silent(simplify_game(gl, rotate = TRUE))
+
+  x <- "(;FF[4]GM[1]SZ[19];B[aa];W[bb];B[cc];W[dd];B[ad];W[bd])"
+  gl <- parse_sgf(x, to.json = FALSE)
+  expect_silent(simplify_game(gl, rotate = FALSE))
+  expect_silent(simplify_game(gl, rotate = TRUE))
+
+  x <- "(;FF[4]GM[1]SZ[19];B[aa];W[bb](;B[cc]N[Var A];W[dd];B[ad];W[bd])(;B[hh]N[Var B];W[hg])(;B[gg]N[Var C];W[gh];B[hh];W[hg];B[kk]))"
+  gl <- parse_sgf(x, to.json = FALSE)
+  expect_silent(simplify_game(gl, rotate = FALSE))
+  expect_silent(simplify_game(gl, rotate = TRUE))
+
+  # officially only "]", "\" and ":" have to be escaped in SGFs specs
+  # which means other structural markup, ")" and ";" can mess everything up
+
+  x <- "(;FF[4]GM[1]SZ[19];B[aa];W[bb](;B[cc]C[here's\\:johnny];W[dd];B[ad];W[bd])(;B[hh];W[hg]))"
+  gl <- parse_sgf(x, to.json = FALSE)
+  expect_silent(simplify_game(gl, rotate = FALSE))
+  expect_silent(simplify_game(gl, rotate = TRUE))
+
+  x <- "(;FF[4]GM[1]SZ[19];B[aa];W[bb](;B[cc]C[here's\\]johnny];W[dd];B[ad];W[bd])(;B[hh];W[hg]))"
+  gl <- parse_sgf(x, to.json = FALSE)
+  expect_silent(simplify_game(gl, rotate = FALSE))
+  expect_silent(simplify_game(gl, rotate = TRUE))
+
+  x <- "(;FF[4]GM[1]SZ[19];B[aa];W[bb](;B[cc]C[here's\\johnny];W[dd];B[ad];W[bd])(;B[hh];W[hg]))"
+  gl <- parse_sgf(x, to.json = FALSE)
+  expect_silent(simplify_game(gl, rotate = FALSE))
+  expect_silent(simplify_game(gl, rotate = TRUE))
+
+  x <- "(;FF[4]GM[1]SZ[19];B[aa];W[bb](;B[cc]C[here's;johnny];W[dd];B[ad];W[bd])(;B[hh];W[hg]))"
+  gl <- parse_sgf(x, to.json = FALSE)
+  expect_silent(simplify_game(gl, rotate = FALSE))
+  expect_silent(simplify_game(gl, rotate = TRUE))
+
+  x <- "(;FF[4]GM[1]SZ[19];B[aa];W[bb](;B[cc]N[Var A];W[dd];B[ad];W[bd])(;B[hh]N[Var B];W[hg])(;B[gg]N[Var C];W[gh];B[hh]  (;W[hg]N[Var A];B[kk])  (;W[kl]N[Var B])))"
+  gl <- parse_sgf(x, to.json = FALSE)
+  expect_silent(simplify_game(gl, rotate = FALSE))
+  expect_silent(simplify_game(gl, rotate = TRUE))
+
+  x <- "(;FF[4]GM[1]SZ[19];B[aa];W[bb](;B[cc]N[Var A];W[dd];B[ad];W[bd])(;B[hh]N[Var B];W[hg])(;B[gg]N[Var C];W[gh];B[hh](;W[hg]N[Var A];B[kk])(;W[kl]N[Var B])))"
+  gl <- parse_sgf(x, to.json = FALSE)
+  expect_silent(simplify_game(gl, rotate = FALSE))
+  expect_silent(simplify_game(gl, rotate = TRUE))
+
+})
+
+
 test_that("all rotated orientations are in sector one", {
 
   "(;B[aa])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = TRUE) -> d

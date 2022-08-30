@@ -1,3 +1,4 @@
+
 reflect_45 <- function(x) t(x)
 
 reflect_y <- function(x) x[,ncol(x):1]
@@ -16,110 +17,148 @@ rotate_90 <- function(x) {
   x |> reflect_x() |> reflect_45()
 }
 
-orient_sgf <- function (sgf_moves) {
-    if (!all(nchar(sgf_moves) %in% c(0, 2))) {
-        stop("input is not a vector of sgf coordinates")
+rotate_180 <- function(x) {
+  x |> rotate_90() |> rotate_90()
+}
+
+
+apply_orientations <- function(board_matrix) {
+
+  out <- cbind(
+    as.vector(board_matrix),
+    as.vector(reflect_315(board_matrix)),
+    as.vector(rotate_90(board_matrix)),
+    as.vector(reflect_y(board_matrix)),
+    as.vector(rotate_180(board_matrix)),
+    as.vector(reflect_45(board_matrix)),
+    as.vector(rotate_n90(board_matrix)),
+    as.vector(reflect_x(board_matrix))
+  )
+
+  return(out)
+
+}
+
+generate_board_sectors <- function(board_size) {
+
+  cols <- rep(1:board_size, each = board_size)
+  rows <- rep(1:board_size, times = board_size)
+
+  board_sectors <- matrix(NA, ncol = board_size, nrow = board_size)
+
+  mid <- (board_size + 1) / 2
+
+  # the center point has no sector
+  tar <- which(cols == mid & rows == mid)
+  board_sectors[tar] <- 0
+
+  tar <- which(cols > mid & rows < mid & ((board_size + 1) - rows) < cols)
+  board_sectors[tar] <- 1
+  tar <- which(cols > mid & rows < mid & ((board_size + 1) - rows) > cols)
+  board_sectors[tar] <- 2
+  tar <- which(cols < mid & rows < mid & rows < cols)
+  board_sectors[tar] <- 3
+  tar <- which(cols < mid & rows < mid & rows > cols)
+  board_sectors[tar] <- 4
+  tar <- which(cols < mid & rows > mid & rows < ((board_size + 1) - cols))
+  board_sectors[tar] <- 5
+  tar <- which(cols < mid & rows > mid & rows > ((board_size + 1) - cols))
+  board_sectors[tar] <- 6
+  tar <- which(cols > mid & rows > mid & rows > cols)
+  board_sectors[tar] <- 7
+  tar <- which(cols > mid & rows > mid & rows < cols)
+  board_sectors[tar] <- 8
+
+  # diagonals
+  tar <- which(cols > mid & rows > mid & rows == cols)
+  board_sectors[tar] <- 7
+  tar <- which(cols < mid & rows > mid & ((board_size + 1) - rows) == cols)
+  board_sectors[tar] <- 5
+  tar <- which(cols < mid & rows < mid & rows == cols)
+  board_sectors[tar] <- 3
+  tar <- which(cols > mid & rows < mid & ((board_size + 1) - rows) == cols)
+  board_sectors[tar] <- 1
+
+  # central rows and columns
+  tar <- which(cols == mid & rows != mid & rows > cols)
+  board_sectors[tar] <- 7
+  tar <- which(cols != mid & rows == mid & rows > cols)
+  board_sectors[tar] <- 5
+  tar <- which(cols == mid & rows != mid & rows < cols)
+  board_sectors[tar] <- 3
+  tar <- which(cols != mid & rows == mid & rows < cols)
+  board_sectors[tar] <- 1
+
+  return(board_sectors)
+
+}
+
+# # spot-check
+# generate_board_sectors(3)
+# generate_board_sectors(9)
+# generate_board_sectors(19)
+
+
+orient_sgf <- function (game_coord_sgf, board_size = 19) {
+
+  if (!all(is.na(nchar(game_coord_sgf)) | nchar(game_coord_sgf) == 2)) {
+    stop("input is not a vector of sgf coordinates")
+  }
+
+  # we only consider odd-numbered boards for orientation
+  stopifnot(board_size %% 2 == 1)
+
+  board_liberties <- matrix(1:(board_size^2), ncol = board_size)
+
+  board_orientations <- apply_orientations(board_liberties)
+
+  board_sectors <- generate_board_sectors(board_size)
+
+  sector_orientations <- apply_orientations(board_sectors)
+
+  sgf_addresses <- c(letters, LETTERS)
+  board_coord_sgf <- paste0(
+    rep(sgf_addresses[1:board_size], each = board_size),
+    rep(sgf_addresses[1:board_size], times = board_size)
+  )
+
+  if (!all(is.na(game_coord_sgf) | game_coord_sgf %in% board_coord_sgf)) warning("not all game moves on the board")
+
+  link <- match(game_coord_sgf, board_coord_sgf)
+  game_orientations <- board_orientations[link, , drop = FALSE]
+  game_sector_orientations <- sector_orientations[link, , drop = FALSE]
+  # drop = FALSE necessary to guarantee its still a matrix
+
+  # determine best orientation: so long as there are > 1 remaining orientations, keep filtering to the *lowest* sector option for each 'next_move'
+  remaining <- 1:8
+  next_move <- 1
+  while (length(remaining) > 1 & next_move <= length(game_coord_sgf)) {
+    if (!all(is.na(game_sector_orientations[next_move,]))) {
+      keep <- which(game_sector_orientations[next_move, remaining] == min(game_sector_orientations[next_move, remaining]))
+      remaining <- remaining[keep]
     }
-    coord_sgf <- as.character(sgf_moves)
-    
-    
-    # define a sector lookup table
-    rows <- rep(1:19, each = 19)
-    cols <- rep(1:19, times = 19)
-    sector <- rep(NA, length = 361)
+    next_move <- next_move + 1
+  }
+  # take the first of the remaining options (if more than one)
+  remaining <- remaining[1]
 
-    tar <- which(cols == 10 & rows == 10)
-    sector[tar] <- NA
+  # ##########
+  # diagnostic plotter
+  # board_cols <- rep(1:board_size, each = board_size)
+  # board_rows <- (-1) * rep(1:board_size, times = board_size)
 
-    tar <- which(cols > 10 & rows < 10 & (20 - rows) < cols)
-    sector[tar] <- 1
-    tar <- which(cols > 10 & rows < 10 & (20 - rows) > cols)
-    sector[tar] <- 2
-    tar <- which(cols < 10 & rows < 10 & rows < cols)
-    sector[tar] <- 3
-    tar <- which(cols < 10 & rows < 10 & rows > cols)
-    sector[tar] <- 4
-    tar <- which(cols < 10 & rows > 10 & rows < (20 - cols))
-    sector[tar] <- 5
-    tar <- which(cols < 10 & rows > 10 & rows > (20 - cols))
-    sector[tar] <- 6
-    tar <- which(cols > 10 & rows > 10 & rows > cols)
-    sector[tar] <- 7
-    tar <- which(cols > 10 & rows > 10 & rows < cols)
-    sector[tar] <- 8
+  # par(mfrow = c(2, 4))
 
-    # diagonals
-    tar <- which(cols > 10 & rows > 10 & rows == cols)
-    sector[tar] <- 7
-    tar <- which(cols < 10 & rows > 10 & (20 - rows) == cols)
-    sector[tar] <- 5
-    tar <- which(cols < 10 & rows < 10 & rows == cols)
-    sector[tar] <- 3
-    tar <- which(cols > 10 & rows < 10 & (20 - rows) == cols)
-    sector[tar] <- 1
+  # for (i in 1:8) {
+  #   plot(NULL, xlim = c(1, board_size), ylim = -c(board_size, 1), xlab = "", ylab = "", frame.plot = FALSE, axes = FALSE)
+  #   abline(h = -(1:board_size), col = gray(0.8))
+  #   abline(v = (1:board_size), col = gray(0.8))
+  #   text(board_cols[game_orientations[,i]], board_rows[game_orientations[,i]], labels = 1:nrow(game_orientations), col = ifelse(i == remaining, "red", "black"))
+  # }
+  # ##########
 
-    # central rows and columns
-    tar <- which(cols == 10 & rows != 10 & rows > cols)
-    sector[tar] <- 7
-    tar <- which(cols != 10 & rows == 10 & rows > cols)
-    sector[tar] <- 5
-    tar <- which(cols == 10 & rows != 10 & rows < cols)
-    sector[tar] <- 3
-    tar <- which(cols != 10 & rows == 10 & rows < cols)
-    sector[tar] <- 1
+  game_coord_sgf <- board_coord_sgf[game_orientations[,remaining]]
 
-    liberty <- 1:361
-    lookup <- data.frame(row = rows, col = cols, liberty = liberty, 
-        sector = sector)
+  return(game_coord_sgf)
 
-    coord_col_letter <- substr(coord_sgf, 1, 1)
-    coord_row_letter <- substr(coord_sgf, 2, 2)
-    coord_cols <- match(coord_col_letter, letters[1:19])
-    coord_rows <- match(coord_row_letter, letters[1:19])
-    coord_rows[coord_rows > 19] <- NA
-    coord_cols[coord_cols > 19] <- NA
-    coord_liberty <- rep(NA, length(coord_rows))
-    for (i in 1:length(coord_rows)) {
-        if (!is.na(coord_rows[i])) {
-            coord_liberty[i] <- lookup$liberty[lookup$row == 
-                coord_rows[i] & lookup$col == coord_cols[i]]
-        }
-    }
-    coord_sector <- lookup$sector[match(coord_liberty, lookup$liberty)]
-    if (!all(is.na(coord_sector))) {
-        first_sector <- coord_sector[min(which(!is.na(coord_sector)))]
-    }
-    else {
-        first_sector <- 1
-    }
-    liberty <- matrix(1:361, ncol = 19, byrow = TRUE)
-
-    if (first_sector == 1) 
-        standard_liberty <- liberty
-    if (first_sector == 2) 
-        standard_liberty <- liberty |> reflect_315()
-    if (first_sector == 3) 
-        standard_liberty <- liberty |> rotate_90()
-    if (first_sector == 4) 
-        standard_liberty <- liberty |> reflect_y()
-    if (first_sector == 5) 
-        standard_liberty <- liberty |> rotate_n90() |> rotate_n90()
-    if (first_sector == 6) 
-        standard_liberty <- liberty |> reflect_45()
-    if (first_sector == 7) 
-        standard_liberty <- liberty |> rotate_n90()
-    if (first_sector == 8) 
-        standard_liberty <- liberty |> reflect_x()
-
-    x <- as.vector(t(liberty))
-    x_trans <- as.vector(t(standard_liberty))
-    coord_standard_liberty <- x[match(coord_liberty, x_trans)]
-    new_rows <- lookup$row[match(coord_standard_liberty, lookup$liberty)]
-    new_cols <- lookup$col[match(coord_standard_liberty, lookup$liberty)]
-    new_coord_sgf <- paste(letters[new_cols], letters[new_rows], 
-        sep = "")
-    keep <- which(new_coord_sgf == "NANA")
-    if (length(keep) > 0) 
-        new_coord_sgf[keep] <- coord_sgf[keep]
-    return(new_coord_sgf)
 }

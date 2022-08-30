@@ -1,22 +1,4 @@
 
-create_database <- function(sgf_paths) {
-  data_list <- list()
-  counter <- 1
-  for (i in seq_along(sgf_paths)) {
-    game_data <- read_sgf(sgf_paths[i])
-    if (class(game_data) != "try-error") {
-      game_data$m1 <- game_data$moves$coord_sgf[1]
-      game_data$m2 <- game_data$moves$coord_sgf[2]
-      game_data$filename <- sgf_paths[i]
-      data_list[[counter]] <- game_data[-which(names(game_data) %in% c("AB", "AW", "moves"))]
-      counter <- counter + 1
-    }
-    if (i %% 100 == 0) print(i)
-  }
-  output <- as.data.frame(bind_rows(data_list))
-  return(output)
-}
-
 validate_sgfs <- function(files) {
   output <- rep("", length(files))
   if (length(files) == 1) {
@@ -27,8 +9,9 @@ validate_sgfs <- function(files) {
       output <- paste(files, "is not a valid sgf file")
     } else {
       coords <- as.character(game_data$moves$coord_sgf)
-      coords_invalid <- !all(unlist(strsplit(coords, "")) %in% letters[1:20])
-      coords_wronglength <- !all(nchar(coords) %in% c(0, 2))
+      coord_chars <- unlist(strsplit(coords, ""))
+      coords_invalid <- !all(is.na(coord_chars) | coord_chars %in% c(letters, LETTERS))
+      coords_wronglength <- !all(is.na(coords) | nchar(coords) == 2)
       if (coords_invalid | coords_wronglength) {
         output <- "coordinates are invalid"
       }
