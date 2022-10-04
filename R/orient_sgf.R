@@ -6,19 +6,19 @@ reflect_y <- function(x) x[,ncol(x):1]
 reflect_x <- function(x) x[nrow(x):1,]
 
 reflect_315 <- function(x) {
-  x |> reflect_y() |> reflect_x() |> reflect_45()
+  x %>% reflect_y() %>% reflect_x() %>% reflect_45()
 }
 
 rotate_n90 <- function(x) {
-  x |> reflect_315() |> reflect_y()
+  x %>% reflect_315() %>% reflect_y()
 }
 
 rotate_90 <- function(x) {
-  x |> reflect_x() |> reflect_45()
+  x %>% reflect_x() %>% reflect_45()
 }
 
 rotate_180 <- function(x) {
-  x |> rotate_90() |> rotate_90()
+  x %>% rotate_90() %>% rotate_90()
 }
 
 

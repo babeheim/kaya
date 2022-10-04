@@ -59,96 +59,96 @@ test_that("simplify_game works on most strings", {
 
 test_that("all rotated orientations are in sector one", {
 
-  "(;B[aa])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = TRUE) -> d
+  "(;B[aa])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = TRUE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_true(in_sector_one)
 
-  "(;B[as])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = TRUE) -> d
+  "(;B[as])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = TRUE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_true(in_sector_one)
 
-  "(;B[sa])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = TRUE) -> d
+  "(;B[sa])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = TRUE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_true(in_sector_one)
 
-  "(;B[ss])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = TRUE) -> d
+  "(;B[ss])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = TRUE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_true(in_sector_one)
 
-  "(;B[dd])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = TRUE) -> d
+  "(;B[dd])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = TRUE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_true(in_sector_one)
 
-  "(;B[dp])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = TRUE) -> d
+  "(;B[dp])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = TRUE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_true(in_sector_one)
 
-  "(;B[pd])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = TRUE) -> d
+  "(;B[pd])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = TRUE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_true(in_sector_one)
 
-  "(;B[pp])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = TRUE) -> d
+  "(;B[pp])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = TRUE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_true(in_sector_one)
 
 
-  "(;B[dj])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = TRUE) -> d
+  "(;B[dj])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = TRUE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_true(in_sector_one)
 
-  "(;B[jd])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = TRUE) -> d
+  "(;B[jd])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = TRUE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_true(in_sector_one)
 
-  "(;B[pj])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = TRUE) -> d
+  "(;B[pj])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = TRUE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_true(in_sector_one)
 
-  "(;B[jp])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = TRUE) -> d
+  "(;B[jp])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = TRUE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_true(in_sector_one)
 
-  "(;B[ad])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = TRUE) -> d
+  "(;B[ad])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = TRUE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_true(in_sector_one)
 
-  "(;B[da])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = TRUE) -> d
+  "(;B[da])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = TRUE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_true(in_sector_one)
 
-  "(;B[ds])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = TRUE) -> d
+  "(;B[ds])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = TRUE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_true(in_sector_one)
 
-  "(;B[ap])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = TRUE) -> d
+  "(;B[ap])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = TRUE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_true(in_sector_one)
 
-  "(;B[pa])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = TRUE) -> d
+  "(;B[pa])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = TRUE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_true(in_sector_one)
 
-  "(;B[sd])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = TRUE) -> d
+  "(;B[sd])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = TRUE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_true(in_sector_one)
 
-  "(;B[pa])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = TRUE) -> d
+  "(;B[pa])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = TRUE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_true(in_sector_one)
 
-  "(;B[sd])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = TRUE) -> d
+  "(;B[sd])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = TRUE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_true(in_sector_one)
 
-  "(;B[sp])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = TRUE) -> d
+  "(;B[sp])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = TRUE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_true(in_sector_one)
 
-  "(;B[ps])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = TRUE) -> d
+  "(;B[ps])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = TRUE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_true(in_sector_one)
 
-  "(;B[jj];W[sa])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = TRUE) -> d
+  "(;B[jj];W[sa])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = TRUE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_false(in_sector_one)
   in_sector_one <- d$moves$column[2] > 10 & d$moves$row[2] <= 10 & (20 - d$moves$row[2]) <= d$moves$column[2]
@@ -160,100 +160,100 @@ test_that("all rotated orientations are in sector one", {
 
 test_that("non-rotated orientations are where they should be", {
 
-  "(;B[aa])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = FALSE) -> d
+  "(;B[aa])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = FALSE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_false(in_sector_one)
 
-  "(;B[as])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = FALSE) -> d
+  "(;B[as])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = FALSE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_false(in_sector_one)
 
-  "(;B[sa])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = FALSE) -> d
+  "(;B[sa])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = FALSE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_true(in_sector_one)
 
-  "(;B[ss])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = FALSE) -> d
+  "(;B[ss])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = FALSE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_false(in_sector_one)
 
-  "(;B[dd])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = FALSE) -> d
+  "(;B[dd])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = FALSE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_false(in_sector_one)
 
-  "(;B[dp])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = FALSE) -> d
+  "(;B[dp])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = FALSE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_false(in_sector_one)
 
-  "(;B[pd])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = FALSE) -> d
+  "(;B[pd])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = FALSE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_true(in_sector_one)
 
-  "(;B[pp])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = FALSE) -> d
+  "(;B[pp])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = FALSE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_false(in_sector_one)
 
 
-  "(;B[dj])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = FALSE) -> d
+  "(;B[dj])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = FALSE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_false(in_sector_one)
 
-  "(;B[jd])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = FALSE) -> d
+  "(;B[jd])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = FALSE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_false(in_sector_one)
 
-  "(;B[pj])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = FALSE) -> d
+  "(;B[pj])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = FALSE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_true(in_sector_one)
 
-  "(;B[jp])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = FALSE) -> d
+  "(;B[jp])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = FALSE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_false(in_sector_one)
 
-  "(;B[ad])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = FALSE) -> d
+  "(;B[ad])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = FALSE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_false(in_sector_one)
 
-  "(;B[da])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = FALSE) -> d
+  "(;B[da])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = FALSE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_false(in_sector_one)
 
-  "(;B[ds])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = FALSE) -> d
+  "(;B[ds])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = FALSE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_false(in_sector_one)
 
-  "(;B[ap])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = FALSE) -> d
+  "(;B[ap])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = FALSE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_false(in_sector_one)
 
-  "(;B[pa])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = FALSE) -> d
+  "(;B[pa])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = FALSE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_false(in_sector_one)
 
-  "(;B[sd])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = FALSE) -> d
+  "(;B[sd])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = FALSE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_true(in_sector_one)
 
-  "(;B[pa])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = FALSE) -> d
+  "(;B[pa])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = FALSE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_false(in_sector_one)
 
-  "(;B[sd])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = FALSE) -> d
+  "(;B[sd])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = FALSE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_true(in_sector_one)
 
-  "(;B[sp])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = FALSE) -> d
+  "(;B[sp])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = FALSE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_false(in_sector_one)
 
-  "(;B[ps])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = FALSE) -> d
+  "(;B[ps])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = FALSE) -> d
   in_sector_one <- d$moves$column[1] > 10 & d$moves$row[1] <= 10 & (20 - d$moves$row[1]) <= d$moves$column[1]
   expect_false(in_sector_one)
 
 })
 
 test_that("games only with zero-sector moves don't rotate", {
-  "(;B[jj])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = TRUE) -> d
-  "(;B[jj])" |> parse_sgf(to.json = FALSE) |> simplify_game(rotate = FALSE) -> d2
+  "(;B[jj])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = TRUE) -> d
+  "(;B[jj])" %>% parse_sgf(to.json = FALSE) %>% simplify_game(rotate = FALSE) -> d2
   expect_equal(d2$moves$coord_sgf, d$moves$coord_sgf)
 })
 
