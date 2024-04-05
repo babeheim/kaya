@@ -15,7 +15,7 @@ write_gif <- function(game_object, file,
   print("compiling gif")
   system(convert_call)
   pane_temp <- list.files(".", pattern = "animated_pane*")
-  file.remove(pane_temp)
+  #file.remove(pane_temp)
 }
 
 write_tiny_gif <- function(game_object, file, delay = 2, 
