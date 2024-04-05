@@ -10,7 +10,7 @@ update_status <- function(game_moves, viz = FALSE) {
   n_moves <- max(game_moves$number)
   game_moves$n_liberties <- NA
   for (i in 1:n_moves) {
-    message(i)
+    #message(i)
     current_row <- which(game_moves$number == i)
     is_pass <- is.na(game_moves$column[current_row])
     # passes are defined by NA in column and row
@@ -45,11 +45,12 @@ update_status <- function(game_moves, viz = FALSE) {
       active_rows <- which(game_moves$number <= i & game_moves$group_id != "removed")
       game_moves$n_liberties[active_rows] <- count_liberties(game_moves[active_rows,])
       
-      print(game_moves$n_liberties[length(active_rows)])
+      #print(game_moves$n_liberties[length(active_rows)])
 
       # 3. remove enemy groups with 0 liberties! 
       update_rows <- which(game_moves$color == other_color & game_moves$number < i & game_moves$group_id != "removed")
       group_liberties <- tapply(game_moves$n_liberties[update_rows], game_moves$group_id[update_rows], sum)
+      print(group_liberties)
       removable_groups <- names(which(group_liberties <= 0))
       if (length(removable_groups) > 0) {
         game_moves$group_id[update_rows][which(game_moves$group_id[update_rows] %in% removable_groups)] <- "removed"
