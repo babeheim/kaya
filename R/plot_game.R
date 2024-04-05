@@ -93,12 +93,28 @@ write_tiny_gif <- function(game_object, file, delay = 2,
 }
 
 plot_game <- function(game_object, number = FALSE, stop = NA, ...) {
+  kou_fight_patch <- function(moves){
+  game_moves_kou <- moves %>%
+    dplyr::group_by(coord_sgf) %>%
+    dplyr::mutate(maxnumber = max(number)) %>%
+    dplyr::mutate(group_id = case_when(
+      number < maxnumber ~ paste0(group_id,"_kou",number),
+      number == maxnumber ~ group_id
+    )) %>%
+    dplyr::select(-all_of(c("maxnumber"))) %>%
+    dplyr::arrange(number) %>%
+    as.data.frame()
+  return(game_moves_kou)
+}
   board_size <- as.numeric(game_object$SZ)[1]
   if (is.na(stop)) stop <- game_object$n_moves
   moves <- game_object$moves[game_object$moves$number <= stop, ]
   # evaluate
   moves$row <- moves$row * (-1)
   moves$group_id <- make_ids(nrow(moves), nchar = 3)
+  if (sum(duplicated(moves$coord_sgf)) > 0){
+    moves <- kou_fight_patch(moves)
+  }
   moves$group_id <- update_status(moves)
   moves$rev_color <- ifelse(moves$color == "black", "white", "black" )
   tar <- which(moves$number <= stop & moves$group_id != "removed")
