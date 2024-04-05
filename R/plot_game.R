@@ -1,6 +1,7 @@
 
 write_gif <- function(game_object, file,
-  number = FALSE, delay = 50, n_loops = 0, start = NA, stop = NA) {
+  number = FALSE, delay = 50, n_loops = 0, start = NA, stop = NA,
+  .keep = FALSE,engient = "cli") {
   if (is.na(start)) start <- 1
   if (is.na(stop)) stop <- game_object$n_moves
   for (i in start:stop){
@@ -10,22 +11,57 @@ write_gif <- function(game_object, file,
     dev.off()
   }
   my_filename <- file
-  convert_call <- paste0("convert -loop ", n_loops,
-   " -delay ", delay, " animated_pane* ", my_filename)
+  pane_temp <- list.files(".", pattern = "animated_pane*",full.names = TRUE)
+  if (engient == "cli"){
+    convert_call <- paste0("convert -loop ", n_loops,
+     " -delay ", delay, " animated_pane* ", my_filename 
+  )
   print("compiling gif")
   system(convert_call)
-  pane_temp <- list.files(".", pattern = "animated_pane*")
-  #file.remove(pane_temp)
+  } else {
+    images <- NULL
+    for (i in 1:length(pane_temp)){
+      imagetemp <- magick::image_read(pane_temp[i])
+      imagetemp <- magick::image_scale(imagetemp, "400x400")
+      if (is.null(images)){
+        images <- imagetemp
+        } else {
+          images <- c(images,imagetemp)
+      }
+    }
+    animation1 <- magick::image_animate(images)
+    magick::image_write(animation1, my_filename )
+  }
+  if (!.keep) {
+    file.remove(pane_temp)
+  }
 }
 
 write_tiny_gif <- function(game_object, file, delay = 2, 
-  n_loops = 0, start = NA, stop = NA) {
+  n_loops = 0, start = NA, stop = NA,
+  .keep = FALSE,engient = "cli") {
+  kou_fight_patch <- function(moves){
+  game_moves_kou <- moves %>%
+    dplyr::group_by(coord_sgf) %>%
+    dplyr::mutate(maxnumber = max(number)) %>%
+    dplyr::mutate(group_id = case_when(
+      number < maxnumber ~ paste0(group_id,"_kou",number),
+      number == maxnumber ~ group_id
+    )) %>%
+    dplyr::select(-all_of(c("maxnumber"))) %>%
+    dplyr::arrange(number) %>%
+    as.data.frame()
+  return(game_moves_kou)
+}
   if (is.na(stop)) stop <- game_object$n_moves
   board_size <- as.numeric(game_object$SZ)[1]
   game_moves <- game_object$moves
   # necessary to get the plot right
   game_moves$row <- (-1) * game_moves$row
   game_moves$group_id <- make_ids(nrow(game_moves), nchar=3)
+  if (sum(duplicated(moves$coord_sgf)) > 0){
+    moves <- kou_fight_patch(moves)
+  }
   n_moves <- max(game_moves$number)
   game_moves$n_liberties <- NA
   for (i in 1:stop) {
@@ -84,12 +120,30 @@ write_tiny_gif <- function(game_object, file, delay = 2,
     }
   }
   my_filename <- file
-  convert_call <- paste0("convert -loop ", n_loops,
-   " -delay ", delay, " animated_pane* ", my_filename)
+  pane_temp <- list.files(".", pattern = "animated_pane*",full.names = TRUE)
+  if (engient == "cli"){
+    convert_call <- paste0("convert -loop ", n_loops,
+     " -delay ", delay, " animated_pane* ", my_filename 
+  )
   print("compiling gif")
   system(convert_call)
-  pane_temp <- list.files(".", pattern = "animated_pane*")
-  file.remove(pane_temp)
+  } else {
+    images <- NULL
+    for (i in 1:length(pane_temp)){
+      imagetemp <- magick::image_read(pane_temp[i])
+      imagetemp <- magick::image_scale(imagetemp, "400x400")
+      if (is.null(images)){
+        images <- imagetemp
+        } else {
+          images <- c(images,imagetemp)
+      }
+    }
+    animation1 <- magick::image_animate(images)
+    magick::image_write(animation1, my_filename )
+  }
+  if (!.keep) {
+    file.remove(pane_temp)
+  }
 }
 
 plot_game <- function(game_object, number = FALSE, stop = NA, ...) {
