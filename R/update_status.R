@@ -136,7 +136,7 @@ id_groups <- function(moves){
 
 id_direct_connections <- function(moves){
   direct_mat <- matrix(FALSE, nrow = nrow(moves), ncol = nrow(moves))
-  diag(direct_mat) <- TRUE
+  #diag(direct_mat) <- TRUE
   for (i in 1:nrow(moves)){
     i_y <- moves$row[i]
     i_x <- moves$column[i]
