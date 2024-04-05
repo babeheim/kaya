@@ -10,6 +10,7 @@ update_status <- function(game_moves, viz = FALSE) {
   n_moves <- max(game_moves$number)
   game_moves$n_liberties <- NA
   for (i in 1:n_moves) {
+    message(i)
     current_row <- which(game_moves$number == i)
     is_pass <- is.na(game_moves$column[current_row])
     # passes are defined by NA in column and row
@@ -22,7 +23,8 @@ update_status <- function(game_moves, viz = FALSE) {
         game_moves$group_id != "removed" & !is.na(game_moves$row))
       if (length(extant_moves) > 0) {
         collision <- any(game_moves$column[extant_moves] == game_moves$column[current_row] & 
-          game_moves$row[extant_moves] == game_moves$row[current_row])
+          game_moves$row[extant_moves] == game_moves$row[current_row] & !grepl("_kou",game_moves$group_id[current_row])
+                        )
         if(collision) stop(paste0("illegal collision detected, move ", i, " is to an occupied location"))
       }
 
@@ -42,11 +44,13 @@ update_status <- function(game_moves, viz = FALSE) {
       # 2. recount liberties for all stones
       active_rows <- which(game_moves$number <= i & game_moves$group_id != "removed")
       game_moves$n_liberties[active_rows] <- count_liberties(game_moves[active_rows,])
+      
+      print(game_moves$n_liberties[length(active_rows)])
 
       # 3. remove enemy groups with 0 liberties! 
       update_rows <- which(game_moves$color == other_color & game_moves$number < i & game_moves$group_id != "removed")
       group_liberties <- tapply(game_moves$n_liberties[update_rows], game_moves$group_id[update_rows], sum)
-      removable_groups <- names(which(group_liberties == 0))
+      removable_groups <- names(which(group_liberties <= 0))
       if (length(removable_groups) > 0) {
         game_moves$group_id[update_rows][which(game_moves$group_id[update_rows] %in% removable_groups)] <- "removed"
       }
@@ -67,7 +71,7 @@ update_status <- function(game_moves, viz = FALSE) {
       update_rows <- which(game_moves$color == current_color & game_moves$number <= i &
         game_moves$group_id != "removed" & !is.na(game_moves$row))
       group_liberties <- tapply(game_moves$n_liberties[update_rows], game_moves$group_id[update_rows], sum)
-      removable_groups <- names(which(group_liberties == 0))
+      removable_groups <- names(which(group_liberties <= 0))
       if (length(removable_groups) > 0) {
         warning(paste0("suicide detected at move ", i))
       }
