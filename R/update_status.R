@@ -94,7 +94,7 @@ count_liberties <- function(moves, board_size = 19){
       i_x != 1
     east_free <- !any(moves$row == (i_y) & moves$column == (i_x + 1)) &
       i_x != board_size
-    check_boarder <- sum(c(i_x %in% c(1,board_size) , i_y %in% c(-1,(-1)*board_size)))
+    check_boarder <- sum(c( i_y %in% c(-1,(-1)*board_size)))
     if (check_boarder > 0){
       n_liberties[i] <- sum(south_free, north_free, west_free, east_free) -1
     } else {
