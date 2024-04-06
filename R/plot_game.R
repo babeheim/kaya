@@ -6,7 +6,12 @@ write_gif <- function(game_object, file,
   ) {
   if (is.na(start)) start <- 1
   if (is.na(stop)) stop <- game_object$n_moves
+  pb <- progress::progress_bar$new(
+ format = 'Plotting [:bar] :percent eta: :eta',
+ total = stop - start +1, clear = FALSE, width = 80
+)
   for (i in start:stop){
+    pb$tick()
     pane_filename <- paste0("animated_pane_", sprintf("%04d", i), ".png")
     png(pane_filename, height = 5.25, width = 5, units = "in", res = 300)
     plot_game(game_object, stop = i, 
@@ -34,6 +39,7 @@ write_gif <- function(game_object, file,
           images <- c(images,imagetemp)
       }
     }
+    print("compiling gif")
     animation1 <- magick::image_animate(images,delay = delay,loop = n_loops)
     magick::image_write(animation1, my_filename )
   }
@@ -69,7 +75,12 @@ write_tiny_gif <- function(game_object, file, delay = 2,
   }
   n_moves <- max(game_moves$number)
   game_moves$n_liberties <- NA
+   pb <- progress::progress_bar$new(
+ format = 'Plotting [:bar] :percent eta: :eta',
+ total = stop , clear = FALSE, width = 80
+)
   for (i in 1:stop) {
+    pb$tick()
     current_row <- which(game_moves$number == i)
     is_pass <- is.na(game_moves$column[current_row])
     # passes are defined by NA in column and row
