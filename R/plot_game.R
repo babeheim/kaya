@@ -9,7 +9,10 @@ write_gif <- function(game_object, file,
   for (i in start:stop){
     pane_filename <- paste0("animated_pane_", sprintf("%04d", i), ".png")
     png(pane_filename, height = 5.25, width = 5, units = "in", res = 300)
-    plot_game(game_object, stop = i, goban.color = goban.color, line.color = line.color)
+    plot_game(game_object, stop = i, 
+              goban.color = goban.color, line.color = line.color,
+              number = number
+             )
     dev.off()
   }
   my_filename <- file
