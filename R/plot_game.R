@@ -1,13 +1,15 @@
 
 write_gif <- function(game_object, file,
   number = FALSE, delay = 50, n_loops = 0, start = NA, stop = NA,
-  .keep = FALSE,engient = "cli") {
+  .keep = FALSE,engient = "cli",
+  goban.color = "darkgoldenrod1", line.color = "black"
+  ) {
   if (is.na(start)) start <- 1
   if (is.na(stop)) stop <- game_object$n_moves
   for (i in start:stop){
     pane_filename <- paste0("animated_pane_", sprintf("%04d", i), ".png")
     png(pane_filename, height = 5.25, width = 5, units = "in", res = 300)
-    plot_game(game_object, stop = i)
+    plot_game(game_object, stop = i, goban.color = goban.color, line.color = line.color)
     dev.off()
   }
   my_filename <- file
@@ -146,7 +148,8 @@ write_tiny_gif <- function(game_object, file, delay = 2,
   }
 }
 
-plot_game <- function(game_object, number = FALSE, stop = NA, ...) {
+plot_game <- function(game_object, number = FALSE, stop = NA,goban.color = "darkgoldenrod1",
+ line.color = "black", ...) {
   kou_fight_patch <- function(moves){
   game_moves_kou <- moves %>%
     dplyr::group_by(coord_sgf) %>%
@@ -172,7 +175,7 @@ plot_game <- function(game_object, number = FALSE, stop = NA, ...) {
   moves$group_id <- update_status(moves)
   moves$rev_color <- ifelse(moves$color == "black", "white", "black" )
   tar <- which(moves$number <= stop & moves$group_id != "removed")
-  plot_empty_board(board_size)
+  plot_empty_board(board_size,goban.color = goban.color,line.color = line.color)
   goban.side <- par("pin")[1]
   stone.size <- goban.side / (19.44 * 0.076)
   points(moves$column[tar], moves$row[tar], cex = stone.size,
