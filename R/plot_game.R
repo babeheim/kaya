@@ -31,7 +31,7 @@ write_gif <- function(game_object, file,
           images <- c(images,imagetemp)
       }
     }
-    animation1 <- magick::image_animate(images)
+    animation1 <- magick::image_animate(images,delay = delay,loop = n_loops)
     magick::image_write(animation1, my_filename )
   }
   if (!.keep) {
