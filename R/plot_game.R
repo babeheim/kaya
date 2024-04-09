@@ -10,13 +10,14 @@ write_gif <- function(game_object, file,
  format = 'Plotting [:bar] :percent eta: :eta',
  total = stop - start +1, clear = FALSE, width = 80
 )
+  title_text <- glue::glue("{game_object$PB} {game_object$BR}(back) vs {game_object$PW} {game_object$WR}(white) {game_object$RE} ")
   for (i in start:stop){
     pb$tick()
     pane_filename <- paste0("animated_pane_", sprintf("%04d", i), ".png")
     png(pane_filename, height = 5.25, width = 5, units = "in", res = 300)
-    plot_game(game_object, stop = i, 
+    plot_game(game_object, stop = i,
               goban.color = goban.color, line.color = line.color,
-              number = number
+              number = number,lab_title = title_text
              )
     dev.off()
   }
@@ -24,7 +25,7 @@ write_gif <- function(game_object, file,
   pane_temp <- list.files(".", pattern = "animated_pane*",full.names = TRUE)
   if (engient == "cli"){
     convert_call <- paste0("convert -loop ", n_loops,
-     " -delay ", delay, " animated_pane* ", my_filename 
+     " -delay ", delay, " animated_pane* ", my_filename
   )
   print("compiling gif")
   system(convert_call)
@@ -48,7 +49,7 @@ write_gif <- function(game_object, file,
   }
 }
 
-write_tiny_gif <- function(game_object, file, delay = 2, 
+write_tiny_gif <- function(game_object, file, delay = 2,
   n_loops = 0, start = NA, stop = NA,
   .keep = FALSE,engient = "cli") {
   kou_fight_patch <- function(moves){
@@ -91,7 +92,7 @@ write_tiny_gif <- function(game_object, file, delay = 2,
       # 0. check that the current move's location isn't occupied
       extant_moves <- which(game_moves$number < i & game_moves$group_id != "removed" & !is.na(game_moves$row))
       if (length(extant_moves) > 0) {
-        collision <- any(game_moves$column[extant_moves] == game_moves$column[current_row] & 
+        collision <- any(game_moves$column[extant_moves] == game_moves$column[current_row] &
           game_moves$row[extant_moves] == game_moves$row[current_row])
         if (collision) stop(paste0("illegal collision detected, move ", i, " is to an occupied location"))
       }
@@ -107,7 +108,7 @@ write_tiny_gif <- function(game_object, file, delay = 2,
       active_rows <- which(game_moves$number <= i & game_moves$group_id != "removed")
       game_moves$n_liberties[active_rows] <- count_liberties(game_moves[active_rows,])
 
-      # 3. remove enemy groups with 0 liberties! 
+      # 3. remove enemy groups with 0 liberties!
       update_rows <- which(game_moves$color == other_color & game_moves$number < i & game_moves$group_id != "removed")
       group_liberties <- tapply(game_moves$n_liberties[update_rows], game_moves$group_id[update_rows], sum)
       removable_groups <- names(which(group_liberties == 0))
@@ -119,7 +120,7 @@ write_tiny_gif <- function(game_object, file, delay = 2,
       png(pane_filename, height = 2, width = 2, units = "in", res = 300)
       par(mar=c(0.1, 0.1, 0.1, 0.1))
       active_rows <- which(game_moves$number <= i & game_moves$group_id != "removed")
-      plot(1, 1, col=NULL, xlim=c(0, (board_size + 1)), ylim = -c((board_size + 1), 0), 
+      plot(1, 1, col=NULL, xlim=c(0, (board_size + 1)), ylim = -c((board_size + 1), 0),
         axes=FALSE, xaxt="n", yaxt="n", xlab="", ylab="")
       polygon(c(0, 0, (board_size + 1), (board_size + 1)), -c(0, (board_size + 1), (board_size + 1), 0))
       line.color <- gray(0.9)
@@ -139,7 +140,7 @@ write_tiny_gif <- function(game_object, file, delay = 2,
   pane_temp <- list.files(".", pattern = "animated_pane*",full.names = TRUE)
   if (engient == "cli"){
     convert_call <- paste0("convert -loop ", n_loops,
-     " -delay ", delay, " animated_pane* ", my_filename 
+     " -delay ", delay, " animated_pane* ", my_filename
   )
   print("compiling gif")
   system(convert_call)
@@ -163,7 +164,7 @@ write_tiny_gif <- function(game_object, file, delay = 2,
 }
 
 plot_game <- function(game_object, number = FALSE, stop = NA,goban.color = "darkgoldenrod1",
- line.color = "black", ...) {
+ line.color = "black", lab_title = NULL, ...) {
   kou_fight_patch <- function(moves){
   game_moves_kou <- moves %>%
     dplyr::group_by(coord_sgf) %>%
@@ -196,6 +197,10 @@ plot_game <- function(game_object, number = FALSE, stop = NA,goban.color = "dark
     pch = 21, bg = moves$color[tar])
   if (number == TRUE) text(moves$column[tar], moves$row[tar],
     labels = moves$number[tar], col = moves$rev_color[tar])
+  if (!is.null(lab_title)){
+    title(main = lab_title)
+  }
+
 }
 
 plot_empty_board <- function(board_size = 19, goban.color = "darkgoldenrod1",
