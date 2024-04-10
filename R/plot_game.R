@@ -51,7 +51,7 @@ write_gif <- function(game_object, file,
 
 write_tiny_gif <- function(game_object, file, delay = 2,
   n_loops = 0, start = NA, stop = NA,
-  .keep = FALSE,engient = "cli") {
+  .keep = FALSE,engient = "cli",lab_title = FALSE) {
   kou_fight_patch <- function(moves){
   game_moves_kou <- moves %>%
     dplyr::group_by(coord_sgf) %>%
@@ -71,8 +71,11 @@ write_tiny_gif <- function(game_object, file, delay = 2,
   # necessary to get the plot right
   game_moves$row <- (-1) * game_moves$row
   game_moves$group_id <- make_ids(nrow(game_moves), nchar=3)
-  if (sum(duplicated(moves$coord_sgf)) > 0){
-    moves <- kou_fight_patch(moves)
+  if(lab_title){
+    title_text <- glue::glue("{game_object$PB} {game_object$BR}(back) vs {game_object$PW} {game_object$WR}(white) {game_object$RE} ")
+  }
+  if (sum(duplicated(game_moves$coord_sgf)) > 0){
+    game_moves <- kou_fight_patch(game_moves)
   }
   n_moves <- max(game_moves$number)
   game_moves$n_liberties <- NA
@@ -118,7 +121,7 @@ write_tiny_gif <- function(game_object, file, delay = 2,
 
       pane_filename <- paste0("animated_pane_", sprintf("%04d", i), ".png")
       png(pane_filename, height = 2, width = 2, units = "in", res = 300)
-      par(mar=c(0.1, 0.1, 0.1, 0.1))
+      par(mar=c(0.1, 0.1, 0.3, 0.1))
       active_rows <- which(game_moves$number <= i & game_moves$group_id != "removed")
       plot(1, 1, col=NULL, xlim=c(0, (board_size + 1)), ylim = -c((board_size + 1), 0),
         axes=FALSE, xaxt="n", yaxt="n", xlab="", ylab="")
@@ -133,6 +136,9 @@ write_tiny_gif <- function(game_object, file, delay = 2,
       current_row <- which(game_moves$number == i)
       points(game_moves$column[current_row],
        game_moves$row[current_row], col="red", pch=20, cex=0.5)
+      if (lab_title){
+        title(main = title_text,cex.main = 0.4)
+         }
       dev.off()
     }
   }
