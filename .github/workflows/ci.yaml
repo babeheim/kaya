@@ -41,7 +41,7 @@ jobs:
           library(devtools)
           load_all()
           library(testthat)
-          testthat::test_dir("tests/testthat", reporter = "summary")
+          testthat::test_dir("tests/testthat")
         shell: Rscript {0}
 
       - name: Upload Test Results (on failure)
