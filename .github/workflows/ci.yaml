@@ -33,9 +33,13 @@ jobs:
           pak::local_install_dev_deps(dependencies = TRUE, lib=Sys.getenv("R_LIBS_USER"))
         shell: Rscript {0}
 
-
       - name: Install Package
         run: R CMD INSTALL .
+
+      - name: Install testthat and devtools
+        run: |
+          Rscript -e "if (!requireNamespace('devtools', quietly = TRUE)) install.packages('devtools')"
+          Rscript -e "if (!requireNamespace('testthat', quietly = TRUE)) install.packages('testthat')"
 
       - name: Run Tests
         run: |
