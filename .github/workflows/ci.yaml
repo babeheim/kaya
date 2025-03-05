@@ -29,9 +29,10 @@ jobs:
 
       - name: Install R Dependencies
         run: |
-          install.packages("pak", repos = "https://r-lib.github.io/p/pak/stable/")
-          pak::local_install_dev_deps(dependencies = TRUE)
+          install.packages("pak", repos = "https://r-lib.github.io/p/pak/stable/", lib=Sys.getenv("R_LIBS_USER"))
+          pak::local_install_dev_deps(dependencies = TRUE, lib=Sys.getenv("R_LIBS_USER"))
         shell: Rscript {0}
+
 
       - name: Install Package
         run: R CMD INSTALL .
