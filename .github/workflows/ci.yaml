@@ -17,7 +17,7 @@ jobs:
         uses: r-lib/actions/setup-r@v2
 
       - name: Set R library path
-        run: echo "R_LIBS_USER=$(Rscript -e 'cat(Sys.getenv(\"R_LIBS_USER\"))')" >> $GITHUB_ENV
+        run: Rscript -e 'writeLines(paste0("R_LIBS_USER=", Sys.getenv("R_LIBS_USER")))' >> $GITHUB_ENV
 
       - name: Cache R packages
         uses: actions/cache@v3
