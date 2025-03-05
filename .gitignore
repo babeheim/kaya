@@ -37,7 +37,6 @@
 ehthumbs.db
 Thumbs.db
 
-*.png
 *.jpg
 
 # common binaries
@@ -55,7 +54,7 @@ Thumbs.db
 
 *.json
 *.html
-*.gif
+
 
 /docs/*
 journal/
