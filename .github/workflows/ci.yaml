@@ -40,7 +40,7 @@ jobs:
       - name: Run Tests
         run: |
           library(testthat)
-          testthat::test_package(".")
+          testthat::test_dir("tests/testthat", reporter = "summary")
         shell: Rscript {0}
 
       - name: Upload Test Results (on failure)
