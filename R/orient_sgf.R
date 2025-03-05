@@ -93,10 +93,6 @@ generate_board_sectors <- function(board_size) {
 
 }
 
-# # spot-check
-# generate_board_sectors(3)
-# generate_board_sectors(9)
-# generate_board_sectors(19)
 
 
 orient_sgf <- function (game_coord_sgf, board_size = 19) {
@@ -141,21 +137,6 @@ orient_sgf <- function (game_coord_sgf, board_size = 19) {
   }
   # take the first of the remaining options (if more than one)
   remaining <- remaining[1]
-
-  # ##########
-  # diagnostic plotter
-  # board_cols <- rep(1:board_size, each = board_size)
-  # board_rows <- (-1) * rep(1:board_size, times = board_size)
-
-  # par(mfrow = c(2, 4))
-
-  # for (i in 1:8) {
-  #   plot(NULL, xlim = c(1, board_size), ylim = -c(board_size, 1), xlab = "", ylab = "", frame.plot = FALSE, axes = FALSE)
-  #   abline(h = -(1:board_size), col = gray(0.8))
-  #   abline(v = (1:board_size), col = gray(0.8))
-  #   text(board_cols[game_orientations[,i]], board_rows[game_orientations[,i]], labels = 1:nrow(game_orientations), col = ifelse(i == remaining, "red", "black"))
-  # }
-  # ##########
 
   game_coord_sgf <- board_coord_sgf[game_orientations[,remaining]]
 
