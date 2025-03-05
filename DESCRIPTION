@@ -1,13 +1,14 @@
 Package: kaya
-Title: kaya Go game analysis
-Version: 0.0.0.9000
+Title: Kaya: An R Package for SGF Processing and Go Game Analysis
+Version: 2.7.0
 Authors@R: person("Bret", "Beheim", email = "beheim@gmail.com", role = c("aut", "cre"))
-Description: collection of tools for analyzing Go (Baduk, Wequi) game records in R
+Description: collection of tools for analyzing Go (Baduk, Wequi) game records stored in the Smart Game Format (SGF)
 Depends: R (>= 3.3.2),
  stringi,
  igraph,
  jsonlite,
- dplyr
+ dplyr,
+ magick
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
