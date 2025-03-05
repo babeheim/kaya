@@ -1,0 +1,50 @@
+name: R package testing
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+
+      - name: Set R library path
+        run: echo "R_LIBS_USER=$(Rscript -e 'cat(Sys.getenv(\"R_LIBS_USER\"))')" >> $GITHUB_ENV
+
+      - name: Cache R packages
+        uses: actions/cache@v3
+        with:
+          path: ${{ env.R_LIBS_USER }}
+          key: ${{ runner.os }}-R-${{ hashFiles('DESCRIPTION') }}
+          restore-keys: |
+            ${{ runner.os }}-R-
+
+      - name: Install R Dependencies
+        run: |
+          install.packages("pak", repos = "https://r-lib.github.io/p/pak/stable/")
+          pak::local_install_dev_deps(dependencies = TRUE)
+        shell: Rscript {0}
+
+      - name: Install Package
+        run: R CMD INSTALL .
+
+      - name: Run Tests
+        run: |
+          library(testthat)
+          testthat::test_package(".")
+        shell: Rscript {0}
+
+      - name: Upload Test Results (on failure)
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: testthat-results
+          path: tests/testthat.Rout.fail
