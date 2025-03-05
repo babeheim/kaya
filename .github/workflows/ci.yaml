@@ -39,6 +39,8 @@ jobs:
 
       - name: Run Tests
         run: |
+          library(devtools)
+          load_all()
           library(testthat)
           testthat::test_dir("tests/testthat", reporter = "summary")
         shell: Rscript {0}
