@@ -1,16 +1,20 @@
 Package: kaya
+Type: Package
 Title: Kaya: An R Package for SGF Processing and Go Game Analysis
 Version: 2.7.0
+Date: 2024-04-10
 Authors@R: person("Bret", "Beheim", email = "beheim@gmail.com", role = c("aut", "cre"))
-Description: collection of tools for analyzing Go (Baduk, Wequi) game records stored in the Smart Game Format (SGF)
-Depends: R (>= 3.3.2),
- stringi,
- igraph,
- jsonlite,
- dplyr,
- magick
-License: GPL (>= 3)
+Description: A package for analyzing and visualizing Go game records (SGF format).
+    Includes functions for parsing SGF files, validating games, detecting patterns, 
+    and generating visualizations such as animated GIFs and printable kifus.
+Depends: R (>= 3.3.2)
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Imports: testthat
-Suggests: devtools
+Imports: igraph,
+  digest,
+  jsonlite,
+  dplyr,
+  magick,
+  magrittr
+Suggests: testthat, devtools

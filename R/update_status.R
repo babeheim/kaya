@@ -119,8 +119,8 @@ make_ids <- function(n, reserved = "", seed = NA, nchars = NA){
 
 id_groups <- function(moves){
   direct_mat <- id_direct_connections(moves)
-  color_network <- graph_from_adjacency_matrix(direct_mat)
-  group_id <- components(color_network)$membership
+  color_network <- igraph::graph_from_adjacency_matrix(direct_mat)
+  group_id <- igraph::components(color_network)$membership
   return(group_id)
 }
 

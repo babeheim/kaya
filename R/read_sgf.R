@@ -12,8 +12,8 @@ parse_sgf <- function(x, to.json = TRUE){
   x <- escape_characters(x)
   x <- node_to_object(x)
   x <- branch_to_array(x)
-  x <- fromJSON(x, simplifyVector = FALSE)
-  if (to.json) x <- toJSON(x, pretty = TRUE)
+  x <- jsonlite::fromJSON(x, simplifyVector = FALSE)
+  if (to.json) x <- jsonlite::toJSON(x, pretty = TRUE)
   return(x)
 }
 
@@ -101,7 +101,7 @@ parse_tag <- function(tag_data, strict = FALSE) {
     sgf_tag <- split_tag(tag_data)
     output <- sgf_tag[2:length(sgf_tag)]
     if (length(output) == 1) output <- paste0("\"", output, "\"")
-    if (length(output) > 1) output <- as.character(toJSON(output))
+    if (length(output) > 1) output <- as.character(jsonlite::toJSON(output))
     output <- paste(paste0("\"", sgf_tag[1], "\":"), output) # might have trouble here
   } else {
     for (i in 1:length(tag_data)) output <- c(output, parse_tag(tag_data[i]))

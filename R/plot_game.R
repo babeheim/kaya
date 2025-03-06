@@ -38,7 +38,7 @@ write_tiny_gif <- function(game_object, file, fps = 10,
 
   # necessary to get the plot right
   game_moves$row <- (-1) * game_moves$row
-  game_moves$group_id <- make_ids(nrow(game_moves), nchar=3)
+  game_moves$group_id <- make_ids(nrow(game_moves), nchars=3)
   game_moves$n_liberties <- NA
 
   frame_files <- character()
@@ -141,7 +141,7 @@ plot_game <- function(game_object, number = FALSE, stop = NA, ...) {
   moves <- game_object$moves[game_object$moves$number <= stop, ]
   # evaluate
   moves$row <- moves$row * (-1)
-  moves$group_id <- make_ids(nrow(moves), nchar = 3)
+  moves$group_id <- make_ids(nrow(moves), nchars = 3)
   moves$group_id <- update_status(moves)
   moves$rev_color <- ifelse(moves$color == "black", "white", "black" )
   tar <- which(moves$number <= stop & moves$group_id != "removed")

@@ -4,7 +4,7 @@ create_database <- function(sgf_paths) {
   counter <- 1
   for (i in seq_along(sgf_paths)) {
     game_data <- read_sgf(sgf_paths[i])
-    if (class(game_data) != "try-error") {
+    if (!inherits(game_data, "try-error")) {
       game_data$m1 <- game_data$moves$coord_sgf[1]
       game_data$m2 <- game_data$moves$coord_sgf[2]
       game_data$filename <- sgf_paths[i]
@@ -13,6 +13,6 @@ create_database <- function(sgf_paths) {
     }
     if (i %% 100 == 0) print(i)
   }
-  output <- as.data.frame(bind_rows(data_list))
+  output <- as.data.frame(dplyr::bind_rows(data_list))
   return(output)
 }
